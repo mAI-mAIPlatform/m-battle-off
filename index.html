@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.2.9 - mAI</title>
+    <title>mBattle v0.3.0 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -50,6 +50,13 @@
         /* --- PROGRESS BAR --- */
         .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; }
         .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
+        
+        /* --- BATTLE PASS --- */
+        .pass-track { display: flex; gap: 16px; overflow-x: auto; padding: 20px 0; scroll-behavior: smooth; }
+        .pass-step { min-width: 100px; height: 140px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; flex-col; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.2s; }
+        .pass-step.claimed { opacity: 0.5; filter: grayscale(1); border-color: #22c55e; }
+        .pass-step.active { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); transform: scale(1.05); z-index: 10; }
+        .pass-line { position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 0; pointer-events: none; }
     </style>
 </head>
 <body>
@@ -104,11 +111,8 @@
             <div id="mobile-controls" class="hidden absolute inset-0 z-40">
                 <div id="stick-left-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
                 <div id="stick-right-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
-                
                 <button id="btn-gadget" class="absolute bottom-32 right-8 w-12 h-12 rounded-full bg-green-900/90 border-2 border-green-500 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg" ontouchstart="event.stopPropagation(); game.player?.useGadget()" onmousedown="game.player?.useGadget()"><span class="font-tech font-bold text-[10px] z-10">GADGET</span><div class="absolute -top-1 -right-1 bg-black border border-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center" id="gadget-count">3</div></button>
-                
                 <button id="btn-dash" class="absolute bottom-8 right-32 w-14 h-14 rounded-full glass-panel border border-white/40 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg bg-blue-900/30" ontouchstart="event.stopPropagation(); game.player?.dash()" onmousedown="game.player?.dash()"><span class="text-2xl">⚡</span><div id="dash-cd" class="absolute inset-0 bg-black/70 origin-bottom h-0 transition-all duration-75 rounded-full"></div></button>
-                
                 <button id="btn-ulti" class="absolute bottom-8 right-8 w-20 h-20 rounded-full bg-gray-900 border-4 border-gray-600 active:scale-90 flex items-center justify-center pointer-events-auto overflow-hidden shadow-2xl disabled:opacity-50 disabled:grayscale transition-all" ontouchstart="event.stopPropagation(); game.player?.useUlti()" onmousedown="game.player?.useUlti()" disabled><span class="font-tech font-black text-xs z-10 tracking-wider">ULTI</span><div id="ulti-fill" class="absolute bottom-0 w-full bg-gradient-to-t from-yellow-500 to-yellow-300 opacity-90 h-0 transition-all"></div></button>
             </div>
         </div>
@@ -116,13 +120,13 @@
         <!-- MENU SCREEN -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             
-            <!-- TOP BAR (HEADER) -->
+            <!-- TOP BAR -->
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
                     <div>
                         <div class="font-tech font-bold leading-none text-lg">mBATTLE</div>
-                        <div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.2.9</div>
+                        <div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.0</div>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -134,12 +138,11 @@
             <!-- MAIN SCROLLABLE CONTENT -->
             <div class="flex-1 overflow-y-auto safe-pb p-5 hide-scrollbar relative">
                 
-                <!-- TAB: PLAY (HOME) -->
+                <!-- TAB: PLAY -->
                 <div id="tab-play" class="tab-content flex flex-col items-center justify-center min-h-[70vh] gap-6 animate-fadeIn">
-                    
-                    <!-- Rank Card with Progression -->
-                    <div class="w-full max-w-md glass-panel p-5 border-l-4 border-yellow-500 bg-yellow-900/10">
-                        <div class="flex items-center justify-between mb-2">
+                    <!-- Rank Card -->
+                    <div class="w-full max-w-md glass-panel p-5 border-l-4 border-yellow-500 bg-yellow-900/10 relative overflow-hidden">
+                        <div class="flex items-center justify-between mb-2 relative z-10">
                             <div>
                                 <div class="text-[10px] text-gray-400 uppercase font-bold">Rang Actuel</div>
                                 <div class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 font-tech" id="menu-rank">BRONZE I</div>
@@ -149,15 +152,14 @@
                                 <div class="font-bold text-white text-xl" id="menu-trophies">0</div>
                             </div>
                         </div>
-                        <!-- Next Rank Info -->
-                        <div class="flex justify-between text-[10px] font-bold text-gray-300 mt-1">
+                        <div class="flex justify-between text-[10px] font-bold text-gray-300 mt-1 relative z-10">
                             <span id="rank-progress-text">Encore 100 🏆 avant BRONZE II</span>
                             <span id="rank-progress-pct">0%</span>
                         </div>
-                        <div class="rank-progress-bg"><div id="rank-progress-fill" class="rank-progress-fill"></div></div>
+                        <div class="rank-progress-bg relative z-10"><div id="rank-progress-fill" class="rank-progress-fill"></div></div>
                     </div>
 
-                    <!-- Active Hero & Mode Preview -->
+                    <!-- Active Hero & Mode -->
                     <div class="grid grid-cols-2 gap-4 w-full max-w-md">
                         <div onclick="ui.showTab('starters')" class="glass-panel p-4 flex flex-col items-center justify-center aspect-square active:scale-95 transition bg-blue-900/10 border-blue-500/30">
                             <div class="text-[10px] text-blue-300 font-bold mb-2 uppercase">Héros</div>
@@ -171,11 +173,30 @@
                         </div>
                     </div>
 
-                    <!-- BIG PLAY BUTTON -->
+                    <!-- PLAY -->
                     <button onclick="game.start()" class="w-full max-w-md bg-gradient-to-r from-blue-600 to-indigo-600 h-20 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-4 active:scale-95 transition transform hover:-translate-y-1 mt-4 border border-white/20">
                         <span class="text-3xl font-black italic tracking-tighter">JOUER</span>
                         <span class="text-2xl animate-pulse">🚀</span>
                     </button>
+                </div>
+
+                <!-- TAB: PASS -->
+                <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
+                    <h2 class="text-3xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
+                    <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
+                        <div class="flex justify-between items-end mb-2">
+                            <div>
+                                <div class="text-xs text-gray-300 font-bold uppercase">Saison 1: Titan</div>
+                                <div class="text-2xl font-black text-white">Palier <span id="pass-lvl">1</span></div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-xs text-yellow-400 font-bold" id="pass-xp-txt">0/100 XP</div>
+                            </div>
+                        </div>
+                        <div class="h-3 bg-black/50 rounded-full overflow-hidden"><div id="pass-bar" class="h-full bg-yellow-500 w-0 transition-all duration-300"></div></div>
+                        <div class="text-[10px] text-gray-400 mt-2 italic">Gagne des parties ou fais +200 score pour l'XP.</div>
+                    </div>
+                    <div class="pass-track scrollbar-hide" id="pass-track"></div>
                 </div>
 
                 <!-- TAB: HEROES -->
@@ -194,36 +215,34 @@
 
                 <!-- TAB: SHOP -->
                 <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE</h2>
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2>
                     <div class="glass-panel p-5 mb-6 flex items-center justify-between bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
-                        <div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau</div><div class="text-xs text-gray-400">Gratuit !</div></div></div>
+                        <div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau Quotidien</div><div class="text-xs text-gray-400">Refresh: <span id="shop-timer">--:--</span></div></div></div>
                         <button onclick="ui.claimDaily()" id="btn-daily" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95">RÉCLAMER</button>
                     </div>
-                    <div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5">
-                        <div class="text-5xl mb-2">📦</div>
-                        <div class="font-bold text-lg">Caisse Mystère</div>
-                        <div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div>
-                        <button onclick="ui.buy('box')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button>
-                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div>
                 </div>
 
                 <!-- TAB: STATS -->
                 <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> DOSSIER</h2>
                     <div class="grid grid-cols-2 gap-4">
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-8"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-3xl font-bold" id="stat-kills">0</div></div>
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-8"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-3xl font-bold" id="stat-wave">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires Duel</div><div class="text-2xl font-bold" id="stat-wins">0</div></div>
+                        <div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div>
                     </div>
                 </div>
             </div>
 
-            <!-- BOTTOM NAVIGATION BAR (APP STYLE) -->
-            <div class="w-full glass-nav h-[80px] pb-safe flex justify-around items-center px-2 z-40 relative">
-                <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 w-16 active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
-                <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 w-16"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
-                <button onclick="ui.showTab('modes')" id="nav-modes" class="nav-item flex flex-col items-center p-2 w-16"><span class="text-2xl icon mb-1">🌍</span><span class="text-[9px] font-bold">MODES</span></button>
-                <button onclick="ui.showTab('shop')" id="nav-shop" class="nav-item flex flex-col items-center p-2 w-16"><span class="text-2xl icon mb-1">🛒</span><span class="text-[9px] font-bold">SHOP</span></button>
-                <button onclick="ui.showTab('infos')" id="nav-infos" class="nav-item flex flex-col items-center p-2 w-16"><span class="text-2xl icon mb-1">ℹ️</span><span class="text-[9px] font-bold">STATS</span></button>
+            <!-- BOTTOM NAVIGATION -->
+            <div class="w-full glass-nav h-[80px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
+                <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
+                <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
+                <button onclick="ui.showTab('pass')" id="nav-pass" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🎫</span><span class="text-[9px] font-bold">PASS</span></button>
+                <button onclick="ui.showTab('shop')" id="nav-shop" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🛒</span><span class="text-[9px] font-bold">SHOP</span></button>
+                <button onclick="ui.showTab('infos')" id="nav-infos" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">ℹ️</span><span class="text-[9px] font-bold">STATS</span></button>
             </div>
         </div>
 
@@ -245,7 +264,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.2.9 - RANK PROGRESSION UPDATE */
+        /* mBATTLE TITAN v0.3.0 - PASS & SHOP UPDATE */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal" },
@@ -259,18 +278,29 @@
         const MODES = { survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true } };
         const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#020617', grid: 'rgba(56,189,248,0.08)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.08)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.08)', wall: '#164e63' } };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
-        
-        // NEW RANK DATA
-        const RANKS = [
-            {n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"},
-            {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"},
-            {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"},
-            {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"},
-            {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}
-        ];
+        const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
 
-        let USER = { coins: 500, gems: 10, trophies: 0, unlocked: ['soldier'], levels: { soldier: 1 }, selected: 'soldier', stats: { kills: 0, maxWave: 0 }, lastDaily: 0 };
-        const Storage = { save() { localStorage.setItem('mBattle_Data_v5', JSON.stringify(USER)); }, load() { const d = localStorage.getItem('mBattle_Data_v5'); if(d) { const l = JSON.parse(d); USER = { ...USER, ...l }; if(!USER.levels.ronin) USER.levels.ronin=1; if(!USER.levels.cyber) USER.levels.cyber=1; } } };
+        let USER = { 
+            coins: 500, gems: 10, trophies: 0, unlocked: ['soldier'], levels: { soldier: 1 }, selected: 'soldier', 
+            stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 }, lastDaily: 0,
+            pass: { tier: 1, xp: 0, claimed: [] },
+            shop: { lastRefresh: 0, items: [] }
+        };
+        const Storage = { 
+            save() { localStorage.setItem('mBattle_Data_v6', JSON.stringify(USER)); }, 
+            load() { 
+                const d = localStorage.getItem('mBattle_Data_v6'); 
+                if(d) { 
+                    const l = JSON.parse(d); 
+                    USER = { ...USER, ...l }; 
+                    // Migrations
+                    if(!USER.pass) USER.pass = { tier: 1, xp: 0, claimed: [] };
+                    if(!USER.shop) USER.shop = { lastRefresh: 0, items: [] };
+                    if(!USER.stats.games) USER.stats.games = 0;
+                }
+                ui.refreshShop(); // Check if needs refresh
+            } 
+        };
         const Rnd = (min,max) => Math.random()*(max-min)+min;
         const Dist = (e1,e2) => Math.hypot(e1.x-e2.x, e1.y-e2.y);
         const ColRect = (c, r) => c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h;
@@ -288,7 +318,82 @@
                 const btn = document.getElementById('nav-' + id); 
                 if(btn) btn.classList.add('active', 'selected'); 
                 if(id === 'starters' || id === 'modes') this.renderLists(); 
-                if(id === 'infos') this.updateStats(); 
+                if(id === 'infos') this.updateStats();
+                if(id === 'pass') this.renderPass();
+                if(id === 'shop') this.renderShop();
+            },
+            refreshShop() {
+                if(Date.now() > USER.shop.lastRefresh + 86400000) {
+                    USER.shop.lastRefresh = Date.now();
+                    USER.shop.items = [];
+                    // Generate 2 offers
+                    const types = ['coins', 'gems', 'box'];
+                    for(let i=0; i<2; i++) {
+                        const t = types[Math.floor(Math.random()*types.length)];
+                        if(t === 'coins') USER.shop.items.push({ type: 'coins', cost: 20, val: 300, curr: 'gems' });
+                        if(t === 'gems') USER.shop.items.push({ type: 'gems', cost: 500, val: 30, curr: 'coins' });
+                        if(t === 'box') USER.shop.items.push({ type: 'box', cost: 80, val: 1, curr: 'coins' });
+                    }
+                    Storage.save();
+                }
+            },
+            renderShop() {
+                const now = Date.now();
+                const btn = el('btn-daily');
+                if(btn) {
+                    if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } 
+                    else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); }
+                }
+                // Timer
+                const left = (USER.shop.lastRefresh + 86400000) - now;
+                const hrs = Math.floor(left / 3600000);
+                const mins = Math.floor((left % 3600000) / 60000);
+                setText('shop-timer', `${hrs}h ${mins}m`);
+
+                const c = el('shop-offers'); c.innerHTML = '';
+                // Standard Box
+                c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5">
+                        <div class="text-5xl mb-2">📦</div>
+                        <div class="font-bold text-lg">Caisse Mystère</div>
+                        <div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div>
+                        <button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button>
+                    </div>`;
+                
+                // Dynamic Offers
+                USER.shop.items.forEach((item, idx) => {
+                    let icon = item.type==='coins' ? '🪙' : (item.type==='gems' ? '💎' : '📦');
+                    let name = item.type==='coins' ? 'Pack de Pièces' : (item.type==='gems' ? 'Sac de Gemmes' : 'Mega Caisse');
+                    let curIcon = item.curr==='coins' ? '🪙' : '💎';
+                    let color = item.type==='gems' ? 'bg-purple-600/90' : 'bg-yellow-600/90';
+                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5 border border-white/10">
+                        <div class="text-5xl mb-2">${icon}</div>
+                        <div class="font-bold text-lg">${name}</div>
+                        <div class="text-xs text-gray-400 mb-4">+${item.val} ${icon}</div>
+                        <button onclick="ui.buySpecial(${idx})" class="w-full ${color} py-3 rounded-xl font-bold text-sm">ACHETER (${item.cost} ${curIcon})</button>
+                    </div>`;
+                });
+            },
+            renderPass() {
+                setText('pass-lvl', USER.pass.tier);
+                setText('pass-xp-txt', `${USER.pass.xp}/100 XP`);
+                setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
+                
+                const tr = el('pass-track'); tr.innerHTML = '<div class="pass-line"></div>';
+                for(let i=1; i<=50; i++) {
+                    let rwd = (i%10===0) ? '📦' : ((i%2===0) ? '🪙' : '💎');
+                    let val = (i%10===0) ? 1 : ((i%2===0) ? 50 : 5);
+                    let claimed = USER.pass.claimed.includes(i);
+                    let locked = USER.pass.tier < i;
+                    let stateClass = claimed ? 'claimed' : (locked ? 'locked' : 'active cursor-pointer');
+                    let fn = (!claimed && !locked) ? `onclick="ui.claimPass(${i})"` : '';
+                    
+                    tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>
+                        <div class="font-bold text-xs mb-2 text-gray-400">#${i}</div>
+                        <div class="text-4xl mb-2">${rwd}</div>
+                        <div class="text-[10px] font-bold">${val}</div>
+                        ${claimed ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl text-green-400 font-bold">OK</div>' : ''}
+                    </div>`;
+                }
             },
             renderLists() {
                 const sl = el('list-starters'); sl.innerHTML = ''; 
@@ -317,79 +422,72 @@
                     const a = ARENAS[k], active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : 'bg-white/5 border-white/5 text-gray-400'; 
                     al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; 
                 });
-                const now = Date.now(), btn = el('btn-daily'); 
-                if(btn) { 
-                    if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } 
-                    else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); } 
-                }
             },
             updateMenu() {
                 const s = STARTERS[USER.selected], m = MODES[game.conf.mode], a = ARENAS[game.conf.arena];
                 setText('top-coins', USER.coins); setText('top-gems', USER.gems); setText('menu-trophies', USER.trophies);
-                
-                // --- RANK CALCULATION V2 ---
-                let rIdx = 0;
-                for(let i=0; i<RANKS.length; i++) {
-                    if(USER.trophies >= RANKS[i].t) rIdx = i;
-                }
-                const currRank = RANKS[rIdx];
-                const nextRank = RANKS[rIdx+1];
-                
-                const re = el('menu-rank'); 
-                if(re) { 
-                    re.innerText = currRank.n; 
-                    re.style.backgroundImage = `linear-gradient(to right, #fff, ${currRank.c})`;
-                }
-
-                // Progression logic
+                let rIdx = 0; for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) rIdx = i; }
+                const currRank = RANKS[rIdx], nextRank = RANKS[rIdx+1];
+                const re = el('menu-rank'); if(re) { re.innerText = currRank.n; re.style.backgroundImage = `linear-gradient(to right, #fff, ${currRank.c})`; }
                 if(nextRank) {
-                    const diff = nextRank.t - USER.trophies;
-                    const range = nextRank.t - currRank.t;
-                    const done = USER.trophies - currRank.t;
-                    const pct = Math.min(100, Math.max(0, (done / range) * 100));
-                    
-                    setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`);
-                    setText('rank-progress-pct', Math.floor(pct) + '%');
-                    setStyle('rank-progress-fill', 'width', pct + '%');
+                    const diff = nextRank.t - USER.trophies, range = nextRank.t - currRank.t, done = USER.trophies - currRank.t, pct = Math.min(100, Math.max(0, (done / range) * 100));
+                    setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`); setText('rank-progress-pct', Math.floor(pct) + '%'); setStyle('rank-progress-fill', 'width', pct + '%');
                 } else {
-                    setText('rank-progress-text', "RANG MAXIMUM !");
-                    setText('rank-progress-pct', "100%");
-                    setStyle('rank-progress-fill', 'width', '100%');
+                    setText('rank-progress-text', "RANG MAXIMUM !"); setText('rank-progress-pct', "100%"); setStyle('rank-progress-fill', 'width', '100%');
                 }
-                // ---------------------------
-
                 setText('play-starter', s.name); setText('play-icon', s.icon); setText('play-lvl', "Niveau "+(USER.levels[USER.selected]||1)); setText('play-mode', m.name); setText('play-mode-icon', m.icon); setText('play-arena', a.name);
             },
-            updateStats() { setText('stat-kills', USER.stats.kills); setText('stat-wave', USER.stats.maxWave); },
-            hud() {
-                if(!game.player) return; const p = game.player;
-                setStyle('hud-hp-bar', 'width', (p.hp/p.maxHp*100)+'%');
-                setText('hud-score', game.score); setText('hud-sub', game.conf.mode==='duel'?'1 VS 1':'VAGUE '+game.wave);
-                for(let i=1; i<=3; i++) setStyle('ammo-'+i, 'opacity', i <= Math.floor(p.ammo) ? 1 : 0.3);
-                setStyle('ulti-fill', 'height', p.super+'%');
-                const ub=el('btn-ulti'); if(ub) { if(p.super>=100){ub.disabled=false;ub.classList.add('animate-pulse');}else{ub.disabled=true;ub.classList.remove('animate-pulse');} }
-                setStyle('dash-cd', 'height', Math.max(0,p.dashT/60*100)+'%');
-                setText('gadget-count', p.gadgetCharges);
-                const gb=el('btn-gadget'); if(gb) { gb.disabled = p.gadgetCharges<=0; if(p.gadgetCharges<=0)gb.classList.add('opacity-50');else gb.classList.remove('opacity-50'); }
-                const boss=game.ents.find(e=>e.isBoss||e.isBot); const bui=el('boss-ui');
-                if(boss && bui){ bui.classList.remove('hidden'); setText('boss-name', boss.isBot?"RIVAL":"BOSS"); setStyle('boss-bar', 'width', (boss.hp/boss.maxHp*100)+'%'); setText('boss-pct', Math.ceil(boss.hp/boss.maxHp*100)+'%'); } else if(bui) bui.classList.add('hidden');
-                if(game.gasRadius) { const op = Math.max(0, Math.min(0.5, 1 - (game.gasRadius/(game.world/1.5)))); setStyle('gas-overlay', 'opacity', op); }
-            },
-            notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
-            flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
-            feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
-            levelUp() { const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ const b=document.createElement('button'); b.className='glass-panel p-4 text-left flex items-center gap-4 active:scale-95 transition bg-blue-900/40 border border-blue-500/30'; b.innerHTML=`<div class="text-3xl">${p.icon}</div><div><div class="font-bold text-yellow-400 text-lg">${p.name}</div><div class="text-xs text-gray-300">${p.desc}</div></div>`; b.onclick=()=>{p.fn(game.player); s.classList.add('hidden'); game.state='PLAYING';}; c.appendChild(b); }); },
-            drawMinimap() {
-                const cvs = document.getElementById('minimap'); if(!cvs) return; const ctx = cvs.getContext('2d'); ctx.clearRect(0, 0, 140, 140); const scale = 140 / game.world;
-                if (game.player) { ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.arc(game.player.x * scale, game.player.y * scale, 3, 0, Math.PI * 2); ctx.fill(); }
-                (game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : '#f87171'; const r = (e.isBoss || e.isBot) ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
-                (game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.5)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
-                if(game.gasRadius) { ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(70, 70, game.gasRadius*scale, 0, Math.PI * 2); ctx.stroke(); }
+            updateStats() { 
+                setText('stat-kills', USER.stats.kills); setText('stat-wave', USER.stats.maxWave); 
+                setText('stat-games', USER.stats.games); setText('stat-wins', USER.stats.wins); 
+                setText('stat-dmg', Math.floor(USER.stats.dmg/1000)+"k"); 
             },
             unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
             upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); this.notif("+200 🪙", "#eab308"); this.renderLists(); this.updateMenu(); },
-            buy(t) { if(t==='box'&&USER.coins>=100){ USER.coins-=100; const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");}else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins'&&USER.gems>=50){USER.gems-=50;USER.coins+=500;this.notif("+500 🪙","#eab308");} Storage.save(); this.updateMenu(); }
+            claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); this.notif("+200 🪙", "#eab308"); this.renderLists(); this.updateMenu(); this.renderShop(); },
+            buy(t, cost, curr) { 
+                let ok = false;
+                if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; }
+                else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; }
+                
+                if(ok) {
+                    if(t==='box'){ 
+                        const r=Math.random(); 
+                        if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");}
+                        else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} 
+                    } 
+                    else if(t==='coins') { USER.coins += 300; this.notif("+300 🪙","#eab308"); }
+                    else if(t==='gems') { USER.gems += 30; this.notif("+30 💎","#a855f7"); }
+                    Storage.save(); this.updateMenu(); this.renderShop();
+                } else this.notif("PAS ASSEZ!", "#ef4444");
+            },
+            buySpecial(idx) {
+                const item = USER.shop.items[idx];
+                if(!item) return;
+                if(item.curr === 'coins' && USER.coins >= item.cost) {
+                    USER.coins -= item.cost;
+                    if(item.type==='gems') { USER.gems += item.val; this.notif(`+${item.val} 💎`, "#a855f7"); }
+                    if(item.type==='box') { this.buy('box', 0, 'free'); } 
+                    USER.shop.items.splice(idx, 1); // Remove after buy
+                    Storage.save(); this.updateMenu(); this.renderShop();
+                } else if(item.curr === 'gems' && USER.gems >= item.cost) {
+                    USER.gems -= item.cost;
+                    if(item.type==='coins') { USER.coins += item.val; this.notif(`+${item.val} 🪙`, "#eab308"); }
+                    USER.shop.items.splice(idx, 1);
+                    Storage.save(); this.updateMenu(); this.renderShop();
+                } else this.notif("PAS ASSEZ!", "#ef4444");
+            },
+            claimPass(tier) {
+                if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) {
+                    USER.pass.claimed.push(tier);
+                    let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5);
+                    let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems');
+                    if(type==='box') this.buy('box', 0, 'free');
+                    else if(type==='coins') { USER.coins+=val; this.notif(`+${val} 🪙`,"#eab308"); }
+                    else { USER.gems+=val; this.notif(`+${val} 💎`,"#a855f7"); }
+                    Storage.save(); this.renderPass(); this.updateMenu();
+                }
+            }
         };
 
         const Input={k:{},jL:{a:0,x:0,y:0,i:null},jR:{a:0,x:0,y:0,i:null},m:{x:0,y:0,d:0},init(){
@@ -512,10 +610,23 @@
                 this.state='GAMEOVER'; el('gameover-screen').classList.remove('hidden'); setText('go-reason', r); setText('go-score', this.score);
                 let gt = 1 + Math.floor(this.score / 100) * 2;
                 if(this.boost) gt *= 2; 
-                if(this.conf.mode==='duel' && r==="VICTOIRE") gt += 20;
+                if(this.conf.mode==='duel' && r==="VICTOIRE") { gt += 20; USER.stats.wins++; }
                 let gc = Math.floor(this.score/10); 
                 if(this.conf.mode==='duel' && r==="VICTOIRE") gc += 50;
-                USER.trophies+=gt; USER.coins+=gc; USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`);
+                
+                // PASS PROGRESSION
+                if(this.score >= 200 || (this.conf.mode==='duel' && r==="VICTOIRE")) {
+                    USER.pass.xp += 50;
+                    if(USER.pass.xp >= 100) {
+                        if(USER.pass.tier < 50) { USER.pass.tier++; USER.pass.xp -= 100; ui.notif("PASS LEVEL UP!", "#facc15"); }
+                        else USER.pass.xp = 100;
+                    }
+                }
+
+                USER.trophies+=gt; USER.coins+=gc; 
+                USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); 
+                USER.stats.games++;
+                Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`);
             },
             loop(){
                 requestAnimationFrame(()=>this.loop()); this.frame++; const ctx=this.ctx;
@@ -540,13 +651,13 @@
                         const b=this.projs[i];
                         if(b.melee){
                             b.x=game.player.x+Math.cos(game.player.angle)*40; b.y=game.player.y+Math.sin(game.player.angle)*40; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
-                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; this.texts.push({x:e.x,y:e.y-30,t:Math.floor(b.dmg),life:30,c:'#fff'}); if(e.hp<=0 && !e.dead) this.kill(e); }
+                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; if(b.friend) USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-30,t:Math.floor(b.dmg),life:30,c:'#fff'}); if(e.hp<=0 && !e.dead) this.kill(e); }
                             continue;
                         }
                         b.x+=b.vx; b.y+=b.vy; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
                         let wh=false; for(let k=this.map.length-1; k>=0; k--) { const w=this.map[k]; if(w.type!==1 && ColRect(b, w)) { if(w.type===0) wh=true; if(w.type===3 && b.friend) { this.map.splice(k,1); this.items.push({x:w.x+30, y:w.y+30, type:'cube'}); for(let j=0;j<5;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-5,5), vy:Rnd(-5,5), life:20, c:'#d97706', r:5}); wh=true; } } }
                         if(wh){this.projs.splice(i,1);continue;}
-                        if(b.friend){ for(let e of this.ents){ if(Dist(b,e)<b.r+e.r){ e.hp-=b.dmg; this.texts.push({x:e.x,y:e.y-20,t:Math.floor(b.dmg),life:30,c:'#fff'}); for(let k=0;k<3;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:e.c,r:3}); if(e.hp<=0 && !e.dead) this.kill(e); this.projs.splice(i,1); wh=true; break; } } } else { if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} }
+                        if(b.friend){ for(let e of this.ents){ if(Dist(b,e)<b.r+e.r){ e.hp-=b.dmg; USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-20,t:Math.floor(b.dmg),life:30,c:'#fff'}); for(let k=0;k<3;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:e.c,r:3}); if(e.hp<=0 && !e.dead) this.kill(e); this.projs.splice(i,1); wh=true; break; } } } else { if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} }
                     }
                     this.ents.forEach(e=>{if(e.hitCD)e.hitCD--}); for(let i=this.ents.length-1;i>=0;i--)if(this.ents[i].dead)this.ents.splice(i,1);
                     for(let i=this.items.length-1;i>=0;i--){const l=this.items[i];if(Dist(l,this.player)<30){if(l.type==='cube'){this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;ui.notif("POWER UP!","#22c55e");}else{if(l.t==='hp')this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);else this.player.xp+=30;}this.items.splice(i,1);}}
