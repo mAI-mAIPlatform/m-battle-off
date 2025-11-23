@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.3.3 - mAI</title>
+    <title>mBattle v0.3.6 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -12,8 +12,8 @@
         canvas { display: block; }
 
         /* --- UI & GLASS --- */
-        .glass-panel { background: rgba(13, 18, 30, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
-        .glass-nav { background: rgba(8, 12, 24, 0.95); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
+        .glass-nav { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
         
         .glass-btn { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.15); transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
@@ -51,14 +51,14 @@
         .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; border-radius: 10px; }
         
-        /* --- BATTLE PASS ULTRA LIQUID --- */
+        /* --- BATTLE PASS TRACK --- */
         .pass-track-container { overflow-x: auto; padding: 30px 10px; scroll-behavior: smooth; position: relative; }
         .pass-track { display: flex; gap: 30px; align-items: center; padding-left: 20px; padding-right: 20px; }
         .pass-connector { position: absolute; top: 50%; left: 40px; right: 40px; height: 6px; background: rgba(255,255,255,0.08); z-index: 0; pointer-events: none; border-radius: 3px; }
         
         .pass-step { 
             min-width: 130px; height: 170px; 
-            background: rgba(15, 23, 42, 0.6); 
+            background: rgba(30, 41, 59, 0.6); 
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 24px; 
@@ -78,14 +78,14 @@
         .pass-step.claimed::after { content: '✓'; position: absolute; top: -8px; right: -8px; background: #10b981; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; border: 3px solid #020617; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
 
         .pass-step.active { 
-            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(15, 23, 42, 0.9));
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9));
             border: 1px solid rgba(96, 165, 250, 0.6); 
             box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); 
             transform: scale(1.08) translateY(-5px); 
         }
         
         .pass-step.gift {
-            background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(15, 23, 42, 0.9));
+            background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(30, 41, 59, 0.9));
             border: 1px solid rgba(250, 204, 21, 0.6);
             box-shadow: 0 15px 40px rgba(234, 179, 8, 0.25);
         }
@@ -115,10 +115,8 @@
     <div id="vignette"></div>
     <div id="flash-layer"></div>
 
-    <!-- UI LAYER -->
     <div id="ui-layer" class="absolute inset-0 pointer-events-none overflow-hidden">
         
-        <!-- HUD (IN GAME) -->
         <div id="hud" class="hidden w-full h-full relative">
             <div class="absolute top-4 left-4 flex gap-4 pointer-events-auto">
                 <div class="glass-panel p-2 flex items-center gap-3 pr-4 scale-90 origin-top-left md:scale-100">
@@ -157,7 +155,6 @@
             <div id="kill-feed" class="absolute top-32 left-4 flex flex-col gap-2 w-48 pointer-events-none"></div>
             <div id="notif-area" class="absolute top-48 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-2 w-full z-30"></div>
             
-            <!-- MOBILE CONTROLS -->
             <div id="mobile-controls" class="hidden absolute inset-0 z-40">
                 <div id="stick-left-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
                 <div id="stick-right-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
@@ -167,17 +164,11 @@
             </div>
         </div>
 
-        <!-- MENU SCREEN -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
-            
-            <!-- TOP BAR -->
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div>
-                        <div class="font-tech font-bold leading-none text-lg">mBATTLE</div>
-                        <div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.3</div>
-                    </div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.6</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -185,114 +176,49 @@
                 </div>
             </div>
 
-            <!-- MAIN SCROLLABLE CONTENT -->
             <div class="flex-1 overflow-y-auto safe-pb p-5 hide-scrollbar relative">
-                
-                <!-- TAB: PLAY -->
                 <div id="tab-play" class="tab-content flex flex-col items-center justify-center min-h-[70vh] gap-6 animate-fadeIn">
-                    <!-- Rank Card -->
                     <div class="w-full max-w-md glass-panel p-5 border-l-4 border-yellow-500 bg-yellow-900/10 relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2 relative z-10">
-                            <div>
-                                <div class="text-[10px] text-gray-400 uppercase font-bold">Rang Actuel</div>
-                                <div class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 font-tech" id="menu-rank">BRONZE I</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-2xl">🏆</div>
-                                <div class="font-bold text-white text-xl" id="menu-trophies">0</div>
-                            </div>
+                            <div><div class="text-[10px] text-gray-400 uppercase font-bold">Rang Actuel</div><div class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-yellow-500 font-tech" id="menu-rank">BRONZE I</div></div>
+                            <div class="text-center"><div class="text-2xl">🏆</div><div class="font-bold text-white text-xl" id="menu-trophies">0</div></div>
                         </div>
                         <div class="flex justify-between text-[10px] font-bold text-gray-300 mt-1 relative z-10">
-                            <span id="rank-progress-text">Encore 100 🏆 avant BRONZE II</span>
-                            <span id="rank-progress-pct">0%</span>
+                            <span id="rank-progress-text">Encore 100 🏆 avant BRONZE II</span><span id="rank-progress-pct">0%</span>
                         </div>
                         <div class="rank-progress-bg relative z-10"><div id="rank-progress-fill" class="rank-progress-fill"></div></div>
                     </div>
-
-                    <!-- Active Hero & Mode -->
                     <div class="grid grid-cols-2 gap-4 w-full max-w-md">
                         <div onclick="ui.showTab('starters')" class="glass-panel p-4 flex flex-col items-center justify-center aspect-square active:scale-95 transition bg-blue-900/10 border-blue-500/30">
-                            <div class="text-[10px] text-blue-300 font-bold mb-2 uppercase">Héros</div>
-                            <div class="text-5xl mb-2 drop-shadow-xl" id="play-icon">🎯</div>
-                            <div class="font-black text-lg leading-none" id="play-starter">Soldier</div>
+                            <div class="text-[10px] text-blue-300 font-bold mb-2 uppercase">Héros</div><div class="text-5xl mb-2 drop-shadow-xl" id="play-icon">🎯</div><div class="font-black text-lg leading-none" id="play-starter">Soldier</div>
                         </div>
                         <div onclick="ui.showTab('modes')" class="glass-panel p-4 flex flex-col items-center justify-center aspect-square active:scale-95 transition bg-purple-900/10 border-purple-500/30">
-                            <div class="text-[10px] text-purple-300 font-bold mb-2 uppercase">Mission</div>
-                            <div class="text-5xl mb-2 drop-shadow-xl" id="play-mode-icon">🔥</div>
-                            <div class="font-black text-lg leading-none" id="play-mode">Survie</div>
+                            <div class="text-[10px] text-purple-300 font-bold mb-2 uppercase">Mission</div><div class="text-5xl mb-2 drop-shadow-xl" id="play-mode-icon">🔥</div><div class="font-black text-lg leading-none" id="play-mode">Survie</div>
                         </div>
                     </div>
-
-                    <!-- PLAY -->
                     <button onclick="game.start()" class="w-full max-w-md bg-gradient-to-r from-blue-600 to-indigo-600 h-20 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-4 active:scale-95 transition transform hover:-translate-y-1 mt-4 border border-white/20">
-                        <span class="text-3xl font-black italic tracking-tighter">JOUER</span>
-                        <span class="text-2xl animate-pulse">🚀</span>
+                        <span class="text-3xl font-black italic tracking-tighter">JOUER</span><span class="text-2xl animate-pulse">🚀</span>
                     </button>
                 </div>
 
-                <!-- TAB: PASS (REDESIGN V3) -->
                 <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-3xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
                         <div class="flex justify-between items-end mb-2">
-                            <div>
-                                <div class="text-xs text-gray-300 font-bold uppercase">Saison 1: Titan</div>
-                                <div class="text-2xl font-black text-white">Palier <span id="pass-lvl">1</span></div>
-                            </div>
-                            <div class="text-right">
-                                <div class="text-xs text-yellow-400 font-bold" id="pass-xp-txt">0/100 XP</div>
-                            </div>
+                            <div><div class="text-xs text-gray-300 font-bold uppercase">Saison 1: Titan</div><div class="text-2xl font-black text-white">Palier <span id="pass-lvl">1</span></div></div>
+                            <div class="text-right"><div class="text-xs text-yellow-400 font-bold" id="pass-xp-txt">0/100 XP</div></div>
                         </div>
                         <div class="h-3 bg-black/50 rounded-full overflow-hidden"><div id="pass-bar" class="h-full bg-yellow-500 w-0 transition-all duration-300"></div></div>
-                        <div class="text-[10px] text-gray-400 mt-2 italic">Gagne des parties ou fais +200 score pour l'XP.</div>
                     </div>
-                    
-                    <!-- NEW PASS TRACK V3 -->
-                    <div class="pass-track-container hide-scrollbar">
-                        <div class="pass-track" id="pass-track">
-                            <!-- JS Generated -->
-                        </div>
-                    </div>
+                    <div class="pass-track-container hide-scrollbar"><div class="pass-track" id="pass-track"></div></div>
                 </div>
 
-                <!-- TAB: HEROES -->
-                <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div>
-                </div>
-
-                <!-- TAB: MODES -->
-                <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2>
-                    <div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div>
-                    <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div>
-                </div>
-
-                <!-- TAB: SHOP -->
-                <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2>
-                    <div class="glass-panel p-5 mb-6 flex items-center justify-between bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
-                        <div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau Quotidien</div><div class="text-xs text-gray-400">Refresh: <span id="shop-timer">--:--</span></div></div></div>
-                        <button onclick="ui.claimDaily()" id="btn-daily" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95">RÉCLAMER</button>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div>
-                </div>
-
-                <!-- TAB: STATS -->
-                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> DOSSIER</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div>
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div>
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div>
-                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires Duel</div><div class="text-2xl font-bold" id="stat-wins">0</div></div>
-                        <div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div>
-                    </div>
-                </div>
+                <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div></div>
+                <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2><div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div><h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div></div>
+                <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2><div class="glass-panel p-5 mb-6 flex items-center justify-between bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30"><div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau Quotidien</div><div class="text-xs text-gray-400">Refresh: <span id="shop-timer">--:--</span></div></div></div><button onclick="ui.claimDaily()" id="btn-daily" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95">RÉCLAMER</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div></div>
+                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> DOSSIER</h2><div class="grid grid-cols-2 gap-4"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires Duel</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div></div>
             </div>
 
-            <!-- BOTTOM NAVIGATION -->
             <div class="w-full glass-nav h-[90px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
                 <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
                 <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
@@ -302,7 +228,6 @@
             </div>
         </div>
 
-        <!-- POPUPS -->
         <div id="levelup-screen" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn">
             <div class="w-full max-w-sm p-6 text-center"><h2 class="text-5xl font-tech text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 font-black mb-4 animate-bounce">LEVEL UP!</h2><div id="perk-container" class="grid gap-3"></div></div>
         </div>
@@ -320,7 +245,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.3.3 - BUG FIX CORE UI */
+        /* mBATTLE TITAN v0.3.6 - SMART SAVE */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal" },
@@ -332,9 +257,13 @@
             cyber:   { name: "Cyber",   icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport" }
         };
         const MODES = { survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true } };
-        const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#020617', grid: 'rgba(56,189,248,0.08)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.08)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.08)', wall: '#164e63' } };
+        const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' } };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
+
+        /* --- STORAGE & MIGRATION SYSTEM --- */
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v7';
+        const PREVIOUS_KEYS = ['mBattle_Data_v6', 'mBattle_Data_v5']; 
 
         let USER = { 
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier'], levels: { soldier: 1 }, selected: 'soldier', 
@@ -342,22 +271,50 @@
             pass: { tier: 1, xp: 0, claimed: [] },
             shop: { lastRefresh: 0, items: [] }
         };
-        const Storage = { 
-            save() { localStorage.setItem('mBattle_Data_v6', JSON.stringify(USER)); }, 
-            load() { 
-                const d = localStorage.getItem('mBattle_Data_v6'); 
-                if(d) { 
+
+        const Storage = {
+            save() {
+                localStorage.setItem(CURRENT_VERSION_KEY, JSON.stringify(USER));
+            },
+            load() {
+                // Try loading current version first
+                let d = localStorage.getItem(CURRENT_VERSION_KEY);
+                
+                // If not found, try migration from older versions
+                if (!d) {
+                    for (let key of PREVIOUS_KEYS) {
+                        d = localStorage.getItem(key);
+                        if (d) {
+                            console.log(`Migrating data from ${key} to ${CURRENT_VERSION_KEY}`);
+                            break; 
+                        }
+                    }
+                }
+
+                if (d) {
                     try {
-                        const l = JSON.parse(d); 
-                        USER = { ...USER, ...l }; 
-                        if(!USER.pass) USER.pass = { tier: 1, xp: 0, claimed: [] };
-                        if(!USER.shop) USER.shop = { lastRefresh: 0, items: [] };
-                        if(!USER.stats) USER.stats = { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 };
-                    } catch(e) { console.log("Resetting corrupt data"); }
+                        const saved = JSON.parse(d);
+                        // Smart Merge: Preserve user progress while adding new fields
+                        USER = { 
+                            ...USER, 
+                            ...saved, 
+                            // Deep merge critical objects
+                            stats: { ...USER.stats, ...(saved.stats||{}) }, 
+                            pass: { ...USER.pass, ...(saved.pass||{}) },
+                            shop: { ...USER.shop, ...(saved.shop||{}) },
+                            levels: { ...USER.levels, ...(saved.levels||{}) }
+                        };
+                        
+                        // Save immediately to new key
+                        this.save();
+                    } catch (e) {
+                        console.log("Data corruption detected during load/migration");
+                    }
                 }
                 ui.refreshShop();
-            } 
+            }
         };
+
         const Rnd = (min,max) => Math.random()*(max-min)+min;
         const Dist = (e1,e2) => Math.hypot(e1.x-e2.x, e1.y-e2.y);
         const ColRect = (c, r) => c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h;
@@ -368,7 +325,6 @@
         const setText = (id, txt) => { const e=el(id); if(e) e.innerText=txt; };
 
         const ui = {
-            // --- CORE UI RESTORED ---
             hud() {
                 if(!game.player) return; const p = game.player;
                 setStyle('hud-hp-bar', 'width', (p.hp/p.maxHp*100)+'%');
@@ -394,8 +350,6 @@
                 (game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.5)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
                 if(game.gasRadius) { ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(70, 70, game.gasRadius*scale, 0, Math.PI * 2); ctx.stroke(); }
             },
-            // --------------------
-
             showTab(id) { 
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
                 document.getElementById('tab-' + id).classList.remove('hidden'); 
@@ -422,107 +376,37 @@
                 }
             },
             renderShop() {
-                const now = Date.now();
-                const btn = el('btn-daily');
-                if(btn) {
-                    if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } 
-                    else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); }
-                }
-                const left = (USER.shop.lastRefresh + 86400000) - now;
-                const hrs = Math.floor(left / 3600000);
-                const mins = Math.floor((left % 3600000) / 60000);
+                const now = Date.now(); const btn = el('btn-daily');
+                if(btn) { if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); } }
+                const left = (USER.shop.lastRefresh + 86400000) - now; const hrs = Math.floor(left / 3600000); const mins = Math.floor((left % 3600000) / 60000);
                 setText('shop-timer', `${hrs}h ${mins}m`);
-
-                const c = el('shop-offers'); c.innerHTML = '';
-                c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5">
-                        <div class="text-5xl mb-2">📦</div>
-                        <div class="font-bold text-lg">Caisse Mystère</div>
-                        <div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div>
-                        <button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button>
-                    </div>`;
-                
+                const c = el('shop-offers'); c.innerHTML = `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5"><div class="text-5xl mb-2">📦</div><div class="font-bold text-lg">Caisse Mystère</div><div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div><button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button></div>`;
                 USER.shop.items.forEach((item, idx) => {
-                    let icon = item.type==='coins' ? '🪙' : (item.type==='gems' ? '💎' : '📦');
-                    let name = item.type==='coins' ? 'Pack de Pièces' : (item.type==='gems' ? 'Sac de Gemmes' : 'Mega Caisse');
-                    let curIcon = item.curr==='coins' ? '🪙' : '💎';
-                    let color = item.type==='gems' ? 'bg-purple-600/90' : 'bg-yellow-600/90';
-                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5 border border-white/10">
-                        <div class="text-5xl mb-2">${icon}</div>
-                        <div class="font-bold text-lg">${name}</div>
-                        <div class="text-xs text-gray-400 mb-4">+${item.val} ${icon}</div>
-                        <button onclick="ui.buySpecial(${idx})" class="w-full ${color} py-3 rounded-xl font-bold text-sm">ACHETER (${item.cost} ${curIcon})</button>
-                    </div>`;
+                    let icon = item.type==='coins' ? '🪙' : (item.type==='gems' ? '💎' : '📦'); let name = item.type==='coins' ? 'Pack de Pièces' : (item.type==='gems' ? 'Sac de Gemmes' : 'Mega Caisse'); let curIcon = item.curr==='coins' ? '🪙' : '💎'; let color = item.type==='gems' ? 'bg-purple-600/90' : 'bg-yellow-600/90';
+                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5 border border-white/10"><div class="text-5xl mb-2">${icon}</div><div class="font-bold text-lg">${name}</div><div class="text-xs text-gray-400 mb-4">+${item.val} ${icon}</div><button onclick="ui.buySpecial(${idx})" class="w-full ${color} py-3 rounded-xl font-bold text-sm">ACHETER (${item.cost} ${curIcon})</button></div>`;
                 });
             },
             renderPass() {
-                setText('pass-lvl', USER.pass.tier);
-                setText('pass-xp-txt', `${USER.pass.xp}/100 XP`);
-                setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
-                
+                setText('pass-lvl', USER.pass.tier); setText('pass-xp-txt', `${USER.pass.xp}/100 XP`); setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
                 const tr = el('pass-track'); tr.innerHTML = '<div class="pass-connector"></div>';
                 for(let i=1; i<=50; i++) {
-                    let rwd = (i%10===0) ? '📦' : ((i%2===0) ? '🪙' : '💎');
-                    let val = (i%10===0) ? 1 : ((i%2===0) ? 50 : 5);
-                    let claimed = USER.pass.claimed.includes(i);
-                    let unlocked = USER.pass.tier >= i;
-                    
-                    // Tier 1 is GIFT (Offert)
+                    let rwd = (i%10===0) ? '📦' : ((i%2===0) ? '🪙' : '💎'); let val = (i%10===0) ? 1 : ((i%2===0) ? 50 : 5);
+                    let claimed = USER.pass.claimed.includes(i); let unlocked = USER.pass.tier >= i;
                     let isGift = (i === 1);
-                    
                     let stateClass = claimed ? 'claimed' : (unlocked ? (isGift ? 'gift cursor-pointer' : 'active cursor-pointer') : 'locked');
                     let glow = unlocked && !claimed ? '<div class="glow"></div>' : '';
-                    
-                    let btnText = claimed ? 'REÇU' : (unlocked ? 'RÉCUPÉRER' : 'BLOQUÉ');
-                    if(isGift && !claimed) btnText = "CADEAU !";
-                    
+                    let btnText = claimed ? 'REÇU' : (unlocked ? 'RÉCUPÉRER' : 'BLOQUÉ'); if(isGift && !claimed) btnText = "CADEAU !";
                     let btnColor = claimed ? 'text-gray-500' : (unlocked ? (isGift ? 'text-yellow-300 font-black animate-pulse' : 'text-blue-400 font-black animate-pulse') : 'text-gray-600');
-                    
                     let badge = isGift ? "CADEAU" : `PALIER ${i}`;
-                    
                     let fn = (unlocked && !claimed) ? `onclick="ui.claimPass(${i})"` : '';
-                    
-                    tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>
-                        ${glow}
-                        <div class="tier-badge">${badge}</div>
-                        <div class="text-4xl mb-2 icon transition-transform duration-300 group-hover:scale-110">${rwd}</div>
-                        <div class="text-[10px] font-bold mb-2">+${val}</div>
-                        <div class="text-[8px] uppercase tracking-widest ${btnColor}">${btnText}</div>
-                    </div>`;
+                    tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>${glow}<div class="tier-badge">${badge}</div><div class="text-4xl mb-2 icon transition-transform duration-300 group-hover:scale-110">${rwd}</div><div class="text-[10px] font-bold mb-2">+${val}</div><div class="text-[8px] uppercase tracking-widest ${btnColor}">${btnText}</div></div>`;
                 }
-                
-                setTimeout(() => {
-                    // Scroll to first active or gift
-                    const target = document.querySelector('.pass-step.active') || document.querySelector('.pass-step.gift');
-                    if(target) target.scrollIntoView({behavior: "smooth", inline: "center"});
-                }, 100);
+                setTimeout(() => { const target = document.querySelector('.pass-step.active') || document.querySelector('.pass-step.gift'); if(target) target.scrollIntoView({behavior: "smooth", inline: "center"}); }, 100);
             },
             renderLists() {
-                const sl = el('list-starters'); sl.innerHTML = ''; 
-                Object.keys(STARTERS).forEach(k => { 
-                    const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5'; 
-                    const btn = unlocked ? `<button onclick="event.stopPropagation(); ui.upgrade('${k}')" class="mt-2 w-full bg-green-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">AMÉLIORER (${lvl*150}🪙)</button>` : `<button onclick="event.stopPropagation(); ui.unlock('${k}')" class="mt-2 w-full bg-yellow-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">ACHETER (${s.price}🪙)</button>`; 
-                    sl.innerHTML += `<div onclick="${unlocked ? `game.setStarter('${k}')` : ''}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
-                        <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
-                        <div class="font-black text-sm uppercase tracking-wider">${s.name}</div>
-                        <div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div>
-                        <div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>
-                        ${btn}
-                    </div>`; 
-                });
-                const ml = el('list-modes'); ml.innerHTML = ''; 
-                Object.keys(MODES).forEach(k => { 
-                    const m = MODES[k], active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : 'bg-white/5 border-white/5'; 
-                    ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border">
-                        <div class="text-4xl p-2 bg-black/30 rounded-full">${m.icon}</div>
-                        <div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div>
-                        <div class="text-2xl text-gray-600">➜</div>
-                    </div>`; 
-                });
-                const al = el('list-arenas'); al.innerHTML = ''; 
-                Object.keys(ARENAS).forEach(k => { 
-                    const a = ARENAS[k], active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : 'bg-white/5 border-white/5 text-gray-400'; 
-                    al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; 
-                });
+                const sl = el('list-starters'); sl.innerHTML = ''; Object.keys(STARTERS).forEach(k => { const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5'; const btn = unlocked ? `<button onclick="event.stopPropagation(); ui.upgrade('${k}')" class="mt-2 w-full bg-green-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">AMÉLIORER (${lvl*150}🪙)</button>` : `<button onclick="event.stopPropagation(); ui.unlock('${k}')" class="mt-2 w-full bg-yellow-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">ACHETER (${s.price}🪙)</button>`; sl.innerHTML += `<div onclick="${unlocked ? `game.setStarter('${k}')` : ''}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center"><div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div><div class="font-black text-sm uppercase tracking-wider">${s.name}</div><div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div><div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>${btn}</div>`; });
+                const ml = el('list-modes'); ml.innerHTML = ''; Object.keys(MODES).forEach(k => { const m = MODES[k], active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : 'bg-white/5 border-white/5'; ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; });
+                const al = el('list-arenas'); al.innerHTML = ''; Object.keys(ARENAS).forEach(k => { const a = ARENAS[k], active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : 'bg-white/5 border-white/5 text-gray-400'; al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
             },
             updateMenu() {
                 const s = STARTERS[USER.selected], m = MODES[game.conf.mode], a = ARENAS[game.conf.arena];
@@ -530,63 +414,27 @@
                 let rIdx = 0; for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) rIdx = i; }
                 const currRank = RANKS[rIdx], nextRank = RANKS[rIdx+1];
                 const re = el('menu-rank'); if(re) { re.innerText = currRank.n; re.style.backgroundImage = `linear-gradient(to right, #fff, ${currRank.c})`; }
-                if(nextRank) {
-                    const diff = nextRank.t - USER.trophies, range = nextRank.t - currRank.t, done = USER.trophies - currRank.t, pct = Math.min(100, Math.max(0, (done / range) * 100));
-                    setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`); setText('rank-progress-pct', Math.floor(pct) + '%'); setStyle('rank-progress-fill', 'width', pct + '%');
-                } else {
-                    setText('rank-progress-text', "RANG MAXIMUM !"); setText('rank-progress-pct', "100%"); setStyle('rank-progress-fill', 'width', '100%');
-                }
+                if(nextRank) { const diff = nextRank.t - USER.trophies, range = nextRank.t - currRank.t, done = USER.trophies - currRank.t, pct = Math.min(100, Math.max(0, (done / range) * 100)); setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`); setText('rank-progress-pct', Math.floor(pct) + '%'); setStyle('rank-progress-fill', 'width', pct + '%'); } else { setText('rank-progress-text', "RANG MAXIMUM !"); setText('rank-progress-pct', "100%"); setStyle('rank-progress-fill', 'width', '100%'); }
                 setText('play-starter', s.name); setText('play-icon', s.icon); setText('play-lvl', "Niveau "+(USER.levels[USER.selected]||1)); setText('play-mode', m.name); setText('play-mode-icon', m.icon); setText('play-arena', a.name);
             },
-            updateStats() { 
-                setText('stat-kills', USER.stats.kills); setText('stat-wave', USER.stats.maxWave); 
-                setText('stat-games', USER.stats.games); setText('stat-wins', USER.stats.wins); 
-                setText('stat-dmg', Math.floor(USER.stats.dmg/1000)+"k"); 
-            },
+            updateStats() { setText('stat-kills', USER.stats.kills); setText('stat-wave', USER.stats.maxWave); setText('stat-games', USER.stats.games); setText('stat-wins', USER.stats.wins); setText('stat-dmg', Math.floor(USER.stats.dmg/1000)+"k"); },
             unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); ui.notif(`DÉBLOQUÉ!`, "#22c55e"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
             upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); ui.notif(`NIVEAU UP!`, "#3b82f6"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
             claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); ui.notif("+200 🪙", "#eab308"); ui.renderLists(); ui.updateMenu(); ui.renderShop(); },
             buy(t, cost, curr) { 
-                let ok = false;
-                if(curr === 'free') ok = true;
-                else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; }
-                else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; }
-                
-                if(ok) {
-                    if(t==='box'){ 
-                        const r=Math.random(); 
-                        if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;ui.notif(`+${c} 🪙`,"#eab308");}
-                        else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;ui.notif(`+${g} 💎`,"#a855f7");} 
-                    } 
-                    else if(t==='coins') { USER.coins += 300; ui.notif("+300 🪙","#eab308"); }
-                    else if(t==='gems') { USER.gems += 30; ui.notif("+30 💎","#a855f7"); }
-                    Storage.save(); ui.updateMenu(); ui.renderShop();
-                } else ui.notif("PAS ASSEZ!", "#ef4444");
+                let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; }
+                if(ok) { if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;ui.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;ui.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; ui.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; ui.notif("+30 💎","#a855f7"); } Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444");
             },
             buySpecial(idx) {
-                const item = USER.shop.items[idx];
-                if(!item) return;
-                if(item.curr === 'coins' && USER.coins >= item.cost) {
-                    USER.coins -= item.cost;
-                    if(item.type==='gems') { USER.gems += item.val; ui.notif(`+${item.val} 💎`, "#a855f7"); }
-                    if(item.type==='box') { ui.buy('box', 0, 'free'); } 
-                    USER.shop.items.splice(idx, 1); // Remove after buy
-                    Storage.save(); ui.updateMenu(); ui.renderShop();
-                } else if(item.curr === 'gems' && USER.gems >= item.cost) {
-                    USER.gems -= item.cost;
-                    if(item.type==='coins') { USER.coins += item.val; ui.notif(`+${item.val} 🪙`, "#eab308"); }
-                    USER.shop.items.splice(idx, 1);
-                    Storage.save(); ui.updateMenu(); ui.renderShop();
-                } else ui.notif("PAS ASSEZ!", "#ef4444");
+                const item = USER.shop.items[idx]; if(!item) return;
+                if(item.curr === 'coins' && USER.coins >= item.cost) { USER.coins -= item.cost; if(item.type==='gems') { USER.gems += item.val; ui.notif(`+${item.val} 💎`, "#a855f7"); } if(item.type==='box') { ui.buy('box', 0, 'free'); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } 
+                else if(item.curr === 'gems' && USER.gems >= item.cost) { USER.gems -= item.cost; if(item.type==='coins') { USER.coins += item.val; ui.notif(`+${item.val} 🪙`, "#eab308"); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444");
             },
             claimPass(tier) {
                 if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) {
                     USER.pass.claimed.push(tier);
-                    let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5);
-                    let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems');
-                    if(type==='box') ui.buy('box', 0, 'free');
-                    else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); }
-                    else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); }
+                    let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5); let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems');
+                    if(type==='box') ui.buy('box', 0, 'free'); else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); } else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); }
                     Storage.save(); ui.renderPass(); ui.updateMenu();
                 }
             }
@@ -605,10 +453,10 @@
                 let lf=0,rf=0;
                 for(let i=0;i<e.touches.length;i++){
                     const t=e.touches[i],x=t.clientX,y=t.clientY;
-                    if(x<CFG.w/2){ // Left Stick
+                    if(x<CFG.w/2){ 
                         if(!this.jL.a && !isEnd){this.jL.a=1;this.jL.i=t.identifier;this.jL.ox=x;this.jL.oy=y;const l=el('stick-left-zone');if(l){l.style.left=(x-70)+'px';l.style.top=(y-70)+'px';l.classList.add('active');}}
                         if(this.jL.i===t.identifier){lf=1;const dx=x-this.jL.ox,dy=y-this.jL.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jL.x=Math.cos(a)*d/50;this.jL.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-left-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jL.x*40}px,${this.jL.y*40}px)`;}}
-                    }else{ // Right Stick
+                    }else{
                         if(!this.jR.a && !isEnd){this.jR.a=1;this.jR.i=t.identifier;this.jR.ox=x;this.jR.oy=y;const r=el('stick-right-zone');if(r){r.style.left=(x-70)+'px';r.style.top=(y-70)+'px';r.classList.add('active');}}
                         if(this.jR.i===t.identifier){rf=1;const dx=x-this.jR.ox,dy=y-this.jR.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jR.x=Math.cos(a)*d/50;this.jR.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-right-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jR.x*40}px,${this.jR.y*40}px)`;}}
                     }
@@ -621,8 +469,43 @@
             z.addEventListener('touchend',e=>h(e,true));
         }};
 
-        class Entity{constructor(x,y,r,c){this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false;}draw(ctx){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=this.c;ctx.fill();}}
-        class Wall{constructor(x,y,w,h,t){this.x=x;this.y=y;this.w=w;this.h=h;this.type=t;}draw(ctx,c){if(this.type===1){ctx.fillStyle='rgba(22,101,52,0.8)';ctx.fillRect(this.x,this.y,this.w,this.h);return;}if(this.type===3){ctx.fillStyle='#d97706';ctx.fillRect(this.x+5,this.y+5,this.w-10,this.h-10);ctx.fillStyle='#f59e0b';ctx.fillRect(this.x+5,this.y+5,this.w-10,this.h-15);ctx.font="bold 20px Arial";ctx.fillStyle='#78350f';ctx.fillText("⚡",this.x+this.w/2-10,this.y+this.h/2+5);return;}ctx.fillStyle=c;ctx.fillRect(this.x,this.y,this.w,this.h);ctx.fillStyle='rgba(255,255,255,0.1)';ctx.fillRect(this.x,this.y-15,this.w,15);}collide(e){return e.x+e.r>this.x&&e.x-e.r<this.x+this.w&&e.y+e.r>this.y&&e.y-e.r<this.y+this.h;}}
+        class Entity{constructor(x,y,r,c){this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false;}
+            draw(ctx){
+                // 3D Body Effect
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                // Shadow
+                ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15;
+                // Body
+                ctx.beginPath(); ctx.arc(0, 0, this.r, 0, Math.PI*2); ctx.fillStyle = this.c; ctx.fill();
+                // Inner Glow/Detail
+                ctx.shadowBlur = 0;
+                ctx.beginPath(); ctx.arc(-5, -5, this.r*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill();
+                ctx.restore();
+            }
+        }
+        class Wall{constructor(x,y,w,h,t){this.x=x;this.y=y;this.w=w;this.h=h;this.type=t;}
+            draw(ctx,c){
+                if(this.type===1){ctx.fillStyle='rgba(34,197,94,0.2)';ctx.strokeStyle='#15803d';ctx.lineWidth=2;ctx.strokeRect(this.x,this.y,this.w,this.h);ctx.fillRect(this.x,this.y,this.w,this.h);return;}
+                
+                // 3D Wall Extrusion
+                const h = 20; // height of wall
+                // Side face (darker)
+                ctx.fillStyle = '#0f172a'; 
+                ctx.fillRect(this.x, this.y + this.h, this.w, h); 
+                
+                // Top Face
+                ctx.fillStyle = c; 
+                ctx.shadowColor = 'black'; ctx.shadowBlur = 10;
+                ctx.fillRect(this.x, this.y, this.w, this.h);
+                ctx.shadowBlur = 0;
+                
+                // Inner Highlight
+                ctx.fillStyle = 'rgba(255,255,255,0.05)';
+                ctx.fillRect(this.x, this.y, this.w, 5);
+            }
+            collide(e){return e.x+e.r>this.x&&e.x-e.r<this.x+this.w&&e.y+e.r>this.y&&e.y-e.r<this.y+this.h;}
+        }
 
         class Player extends Entity{
             constructor(k){
@@ -644,10 +527,26 @@
                 const t=this.stats.type||'normal', cnt=t==='shotgun'?5:(1+(this.stats.multi||0)), spr=t==='shotgun'?0.3:0.05, dmg=this.stats.dmg*(1+this.cubes*0.1);
                 for(let i=0;i<cnt;i++){ const a=this.angle+(Math.random()-0.5)*spr+(i-(cnt-1)/2)*0.1, s=t==='sniper'?25:(t==='flame'?10:(t==='laser'?30:18)), l=t==='flame'?20:60; game.projs.push({x:this.x+Math.cos(this.angle)*25,y:this.y+Math.sin(this.angle)*25,vx:Math.cos(a)*s,vy:Math.sin(a)*s,dmg:dmg,life:l,r:t==='flame'?8:(t==='laser'?4:5),c:this.c,friend:true}); }
             }
-            dash(){ if(this.dashT>0)return; this.dashT=60; game.shake=10; const dx=Math.cos(this.angle)*180,dy=Math.sin(this.angle)*180; this.move(dx,dy); for(let i=0;i<5;i++)game.parts.push({x:this.x,y:this.y,vx:0,vy:0,life:20,c:'#fff',r:5}); }
+            dash(){ if(this.dashT>0)return; this.dashT=60; game.shake=10; const dx=Math.cos(this.angle)*180,dy=Math.sin(this.angle)*180; this.move(dx,dy); for(let i=0;i<8;i++)game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4}); }
             ulti(){ if(this.super<100)return; this.super=0; game.shake=20; ui.notif("ULTIMATE!","#facc15"); for(let i=0;i<36;i++){ const a=(Math.PI*2/36)*i; game.projs.push({x:this.x,y:this.y,vx:Math.cos(a)*15,vy:Math.sin(a)*15,dmg:50,life:80,r:8,c:'#facc15',friend:true}); } }
             useGadget() { if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); const t=this.stats.gadget; if(t==="heal")this.hp=Math.min(this.maxHp,this.hp+1000); if(t==="shield"){this.maxHp+=1000;this.hp+=1000;} if(t==="teleport"){this.x+=Math.cos(this.angle)*300;this.y+=Math.sin(this.angle)*300;} }
-            draw(ctx){ ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.beginPath(); ctx.ellipse(this.x,this.y+15,15,8,0,0,Math.PI*2); ctx.fill(); super.draw(ctx); ctx.save(); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.fillStyle='#1f2937'; ctx.fillRect(10,-5,24,10); ctx.restore(); }
+            draw(ctx){ 
+                // Player Shadow/Glow
+                ctx.save();
+                ctx.shadowColor = this.c; ctx.shadowBlur = 20;
+                super.draw(ctx);
+                // Weapon
+                ctx.translate(this.x,this.y); ctx.rotate(this.angle); 
+                ctx.fillStyle='#1e293b'; ctx.fillRect(10,-6,28,12); 
+                
+                // RELOAD BAR
+                if(this.reloadT > 0) {
+                    ctx.rotate(-this.angle);
+                    ctx.fillStyle = 'white';
+                    ctx.fillRect(-15, 30, 30 * (this.reloadT/this.stats.reload), 3);
+                }
+                ctx.restore();
+            }
         }
 
         class Bot extends Player{
@@ -670,12 +569,7 @@
         class Enemy extends Entity{
             constructor(t,m=1){
                 super(0,0,20,'#ef4444'); let safe=false; 
-                while(!safe){
-                    this.x=Rnd(100,game.world-100);this.y=Rnd(100,game.world-100);
-                    let wallCol = false;
-                    for(let w of game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; }
-                    if(!wallCol && Dist(this,game.player)>600) safe=true;
-                }
+                while(!safe){ this.x=Rnd(100,game.world-100);this.y=Rnd(100,game.world-100); let wallCol = false; for(let w of game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; } if(!wallCol && Dist(this,game.player)>600) safe=true; }
                 this.type=t; let hp=60,s=2.0; if(t==='fast'){hp=40;s=4.0;this.c='#f97316';this.r=15;} if(t==='tank'){hp=200;s=1.2;this.c='#7e22ce';this.r=30;} if(t==='boss'){hp=5000;s=1.8;this.c='#dc2626';this.r=60;this.isBoss=true;}
                 this.hp=hp*m; this.maxHp=this.hp; this.spd=s*0.85;
             }
@@ -685,7 +579,14 @@
                 if(Math.hypot(this.x-p.x,this.y-p.y)<this.r+p.r){p.hp-=1;ui.flash();if(p.hp<=0)game.over("Tué par "+this.type);}
                 if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) this.hp -= 5;
             }
-            draw(ctx){ if(this.isBoss){ctx.beginPath();ctx.arc(this.x,this.y,this.r+5,0,Math.PI*2);ctx.strokeStyle='#ef4444';ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);} super.draw(ctx); const pct=this.hp/this.maxHp; ctx.fillStyle='red';ctx.fillRect(this.x-20,this.y-this.r-10,40,4);ctx.fillStyle='#22c55e';ctx.fillRect(this.x-20,this.y-this.r-10,40*pct,4); }
+            draw(ctx){ 
+                if(this.isBoss){ctx.beginPath();ctx.arc(this.x,this.y,this.r+5,0,Math.PI*2);ctx.strokeStyle='#ef4444';ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);} 
+                super.draw(ctx); 
+                // Health Bar Above
+                const pct=this.hp/this.maxHp; 
+                ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(this.x-20,this.y-this.r-15,40,6);
+                ctx.fillStyle=this.isBoss?'#ef4444':'#22c55e';ctx.fillRect(this.x-19,this.y-this.r-14,38*pct,4); 
+            }
         }
 
         const game = {
@@ -710,25 +611,9 @@
             toMenu(){el('gameover-screen').classList.add('hidden');el('menu-screen').classList.remove('hidden');el('hud').classList.add('hidden');this.state='MENU';ui.updateMenu();game.boost=false;},
             over(r){
                 this.state='GAMEOVER'; el('gameover-screen').classList.remove('hidden'); setText('go-reason', r); setText('go-score', this.score);
-                let gt = 1 + Math.floor(this.score / 100) * 2;
-                if(this.boost) gt *= 2; 
-                if(this.conf.mode==='duel' && r==="VICTOIRE") { gt += 20; USER.stats.wins++; }
-                let gc = Math.floor(this.score/10); 
-                if(this.conf.mode==='duel' && r==="VICTOIRE") gc += 50;
-                
-                // PASS PROGRESSION
-                if(this.score >= 200 || (this.conf.mode==='duel' && r==="VICTOIRE")) {
-                    USER.pass.xp += 50;
-                    if(USER.pass.xp >= 100) {
-                        if(USER.pass.tier < 50) { USER.pass.tier++; USER.pass.xp -= 100; ui.notif("PASS LEVEL UP!", "#facc15"); }
-                        else USER.pass.xp = 100;
-                    }
-                }
-
-                USER.trophies+=gt; USER.coins+=gc; 
-                USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); 
-                USER.stats.games++;
-                Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`);
+                let gt = 1 + Math.floor(this.score / 100) * 2; if(this.boost) gt *= 2; if(this.conf.mode==='duel' && r==="VICTOIRE") { gt += 20; USER.stats.wins++; } let gc = Math.floor(this.score/10); if(this.conf.mode==='duel' && r==="VICTOIRE") gc += 50;
+                if(this.score >= 200 || (this.conf.mode==='duel' && r==="VICTOIRE")) { USER.pass.xp += 50; if(USER.pass.xp >= 100) { if(USER.pass.tier < 50) { USER.pass.tier++; USER.pass.xp -= 100; ui.notif("PASS LEVEL UP!", "#facc15"); } else USER.pass.xp = 100; } }
+                USER.trophies+=gt; USER.coins+=gc; USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); USER.stats.games++; Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`);
             },
             loop(){
                 requestAnimationFrame(()=>this.loop()); this.frame++; const ctx=this.ctx;
@@ -753,27 +638,39 @@
                         const b=this.projs[i];
                         if(b.melee){
                             b.x=game.player.x+Math.cos(game.player.angle)*40; b.y=game.player.y+Math.sin(game.player.angle)*40; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
-                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; if(b.friend) USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-30,t:Math.floor(b.dmg),life:30,c:'#fff'}); if(e.hp<=0 && !e.dead) this.kill(e); }
+                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; if(b.friend) USER.stats.dmg+=b.dmg; for(let k=0;k<3;k++)game.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:'#fff',r:3}); this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); if(e.hp<=0 && !e.dead) this.kill(e); }
                             continue;
                         }
                         b.x+=b.vx; b.y+=b.vy; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
                         let wh=false; for(let k=this.map.length-1; k>=0; k--) { const w=this.map[k]; if(w.type!==1 && ColRect(b, w)) { if(w.type===0) wh=true; if(w.type===3 && b.friend) { this.map.splice(k,1); this.items.push({x:w.x+30, y:w.y+30, type:'cube'}); for(let j=0;j<5;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-5,5), vy:Rnd(-5,5), life:20, c:'#d97706', r:5}); wh=true; } } }
-                        if(wh){this.projs.splice(i,1);continue;}
-                        if(b.friend){ for(let e of this.ents){ if(Dist(b,e)<b.r+e.r){ e.hp-=b.dmg; USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-20,t:Math.floor(b.dmg),life:30,c:'#fff'}); for(let k=0;k<3;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:e.c,r:3}); if(e.hp<=0 && !e.dead) this.kill(e); this.projs.splice(i,1); wh=true; break; } } } else { if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} }
+                        if(wh){for(let j=0;j<3;j++)this.parts.push({x:b.x,y:b.y,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:10,c:b.c,r:2}); this.projs.splice(i,1);continue;}
+                        if(b.friend){ for(let e of this.ents){ if(Dist(b,e)<b.r+e.r){ e.hp-=b.dmg; USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); for(let k=0;k<5;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:20,c:e.c,r:4}); if(e.hp<=0 && !e.dead) this.kill(e); this.projs.splice(i,1); wh=true; break; } } } else { if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} }
                     }
                     this.ents.forEach(e=>{if(e.hitCD)e.hitCD--}); for(let i=this.ents.length-1;i>=0;i--)if(this.ents[i].dead)this.ents.splice(i,1);
                     for(let i=this.items.length-1;i>=0;i--){const l=this.items[i];if(Dist(l,this.player)<30){if(l.type==='cube'){this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;ui.notif("POWER UP!","#22c55e");}else{if(l.t==='hp')this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);else this.player.xp+=30;}this.items.splice(i,1);}}
+                    for(let i=this.parts.length-1;i>=0;i--){const p=this.parts[i]; p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)this.parts.splice(i,1);}
                     ui.hud(); ui.drawMinimap();
                 }
                 const map=ARENAS[this.conf.arena]; ctx.fillStyle=map.color; ctx.fillRect(0,0,CFG.w,CFG.h);
                 ctx.save(); if(this.state!=='MENU'){
                     const sx=(Math.random()-0.5)*this.shake, sy=(Math.random()-0.5)*this.shake; ctx.translate(-this.cam.x+sx, -this.cam.y+sy);
-                    ctx.strokeStyle=map.grid; ctx.lineWidth=2; const tx=Math.floor(this.cam.x/100)*100, ty=Math.floor(this.cam.y/100)*100; ctx.beginPath(); for(let x=tx;x<tx+CFG.w+100;x+=100){ctx.moveTo(x,0);ctx.lineTo(x,this.world);} for(let y=ty;y<ty+CFG.h+100;y+=100){ctx.moveTo(0,y);ctx.lineTo(this.world,y);} ctx.stroke();
+                    
+                    // Grid Floor
+                    ctx.strokeStyle=map.grid; ctx.lineWidth=2; const tx=Math.floor(this.cam.x/100)*100, ty=Math.floor(this.cam.y/100)*100; ctx.beginPath(); 
+                    for(let x=tx;x<tx+CFG.w+100;x+=100){ctx.moveTo(x,0);ctx.lineTo(x,this.world);} for(let y=ty;y<ty+CFG.h+100;y+=100){ctx.moveTo(0,y);ctx.lineTo(this.world,y);} ctx.stroke();
+                    
+                    // World Border
                     ctx.strokeStyle='#ef4444'; ctx.lineWidth=5; ctx.strokeRect(0,0,this.world,this.world);
-                    this.items.forEach(l=>{if(l.type==='cube'){ctx.fillStyle='#22c55e';ctx.fillRect(l.x-10,l.y-10,20,20);ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(l.x-10,l.y-10,20,20);}else{ctx.fillStyle=l.t==='hp'?'#22c55e':'#a855f7';ctx.beginPath();ctx.arc(l.x,l.y,8,0,Math.PI*2);ctx.fill();}});
+                    
+                    this.items.forEach(l=>{if(l.type==='cube'){ctx.fillStyle='#22c55e';ctx.fillRect(l.x-10,l.y-10,20,20);ctx.shadowColor='#22c55e';ctx.shadowBlur=10;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(l.x-10,l.y-10,20,20);ctx.shadowBlur=0;}else{ctx.fillStyle=l.t==='hp'?'#22c55e':'#a855f7';ctx.beginPath();ctx.arc(l.x,l.y,8,0,Math.PI*2);ctx.fill();}});
+                    
                     const renderList = [...this.map, ...this.ents, this.player, ...this.projs, ...this.parts]; renderList.sort((a,b) => a.y - b.y);
                     renderList.forEach(o => { if(o instanceof Wall) o.draw(ctx, map.wall); else if(o.draw) o.draw(ctx); else { ctx.fillStyle=o.c;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill(); } });
-                    this.texts.forEach((t,i)=>{t.y-=1;t.life--;ctx.globalAlpha=t.life/30;ctx.fillStyle='#fff';ctx.font="bold 16px Orbitron";ctx.fillText(t.t,t.x,t.y);ctx.globalAlpha=1;if(t.life<=0)this.texts.splice(i,1);});
+                    
+                    // Projectiles Glow
+                    this.projs.forEach(p => { ctx.shadowColor=p.c; ctx.shadowBlur=10; ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0; });
+                    
+                    this.texts.forEach((t,i)=>{t.y+=t.vy;t.life--;ctx.globalAlpha=t.life/40;ctx.fillStyle=t.c;ctx.font="bold 20px Orbitron";ctx.fillText(t.t,t.x,t.y);ctx.globalAlpha=1;if(t.life<=0)this.texts.splice(i,1);});
                 } ctx.restore();
             },
             kill(e){ e.dead=true; this.score+=(e.isBoss||e.isBot?500:100); this.player.xp+=(e.isBoss?300:20); this.player.super=Math.min(100,this.player.super+(e.isBoss?30:10)); this.player.hp=Math.min(this.player.maxHp,this.player.hp+(this.player.lifesteal||0)); if(Math.random()<0.3)this.items.push({x:e.x,y:e.y,t:Math.random()>0.5?'hp':'xp'}); USER.stats.kills++; ui.feed("Toi",e.isBot?"Rival":e.type,true); if(this.player.xp>=this.player.xpMax){this.player.xp=0;this.player.xpMax*=1.2;this.player.lvl++;this.player.hp=this.player.maxHp;this.state='LEVELUP';ui.levelUp();} }
