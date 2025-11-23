@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.3.0 - mAI</title>
+    <title>mBattle v0.3.3 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -12,20 +12,20 @@
         canvas { display: block; }
 
         /* --- UI & GLASS --- */
-        .glass-panel { background: rgba(8, 12, 24, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.8); border-radius: 24px; }
-        .glass-nav { background: rgba(5, 8, 16, 0.98); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
+        .glass-panel { background: rgba(13, 18, 30, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
+        .glass-nav { background: rgba(8, 12, 24, 0.95); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
         
         .glass-btn { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.15); transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
         .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
-        .glass-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2) inset; }
+        .glass-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.25) inset; }
         
         .locked { opacity: 0.5; filter: grayscale(1); pointer-events: none; }
         .font-tech { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        .currency-badge { background: rgba(0,0,0,0.8); padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); font-family: 'Orbitron'; font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+        .currency-badge { background: rgba(0,0,0,0.8); padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); font-family: 'Orbitron'; font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
         /* --- NAV ICONS --- */
-        .nav-item { color: #64748b; transition: all 0.2s; }
-        .nav-item.active { color: #3b82f6; transform: translateY(-2px); text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+        .nav-item { color: #64748b; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .nav-item.active { color: #60a5fa; transform: translateY(-4px) scale(1.05); text-shadow: 0 0 15px rgba(59, 130, 246, 0.6); }
         .nav-item.active .icon { transform: scale(1.1); }
 
         /* --- VFX --- */
@@ -44,19 +44,69 @@
         .kill-msg.red { border-color: #ef4444; }
         @keyframes slideIn { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
         .menu-anim { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
-        .safe-pb { padding-bottom: max(85px, env(safe-area-inset-bottom) + 85px); }
+        .safe-pb { padding-bottom: max(90px, env(safe-area-inset-bottom) + 90px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         
         /* --- PROGRESS BAR --- */
-        .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; }
-        .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; }
+        .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
+        .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; border-radius: 10px; }
         
-        /* --- BATTLE PASS --- */
-        .pass-track { display: flex; gap: 16px; overflow-x: auto; padding: 20px 0; scroll-behavior: smooth; }
-        .pass-step { min-width: 100px; height: 140px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; flex-col; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.2s; }
-        .pass-step.claimed { opacity: 0.5; filter: grayscale(1); border-color: #22c55e; }
-        .pass-step.active { background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.2); transform: scale(1.05); z-index: 10; }
-        .pass-line { position: absolute; top: 50%; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); z-index: 0; pointer-events: none; }
+        /* --- BATTLE PASS ULTRA LIQUID --- */
+        .pass-track-container { overflow-x: auto; padding: 30px 10px; scroll-behavior: smooth; position: relative; }
+        .pass-track { display: flex; gap: 30px; align-items: center; padding-left: 20px; padding-right: 20px; }
+        .pass-connector { position: absolute; top: 50%; left: 40px; right: 40px; height: 6px; background: rgba(255,255,255,0.08); z-index: 0; pointer-events: none; border-radius: 3px; }
+        
+        .pass-step { 
+            min-width: 130px; height: 170px; 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 24px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: relative; z-index: 10; 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .pass-step.claimed { 
+            background: rgba(255,255,255,0.02); 
+            border-color: rgba(255,255,255,0.05); 
+            opacity: 0.6; 
+            transform: scale(0.95);
+        }
+        .pass-step.claimed .icon { filter: grayscale(1); opacity: 0.5; }
+        .pass-step.claimed::after { content: '✓'; position: absolute; top: -8px; right: -8px; background: #10b981; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; border: 3px solid #020617; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
+
+        .pass-step.active { 
+            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(96, 165, 250, 0.6); 
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); 
+            transform: scale(1.08) translateY(-5px); 
+        }
+        
+        .pass-step.gift {
+            background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(250, 204, 21, 0.6);
+            box-shadow: 0 15px 40px rgba(234, 179, 8, 0.25);
+        }
+        
+        .pass-step.active .glow { position: absolute; inset: 0; border-radius: 24px; animation: pulse-border 2s infinite; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) inset; pointer-events: none; }
+        .pass-step.gift .glow { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3) inset; animation: pulse-gold 2s infinite; }
+        
+        .pass-step.locked { opacity: 0.4; filter: grayscale(0.8); transform: scale(0.95); }
+        
+        .pass-step .tier-badge { 
+            position: absolute; top: -10px; 
+            background: #0f172a; border: 1px solid rgba(255,255,255,0.15); 
+            padding: 4px 12px; border-radius: 20px; 
+            font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 1px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .pass-step.active .tier-badge { color: #60a5fa; border-color: #3b82f6; }
+        .pass-step.gift .tier-badge { color: #facc15; border-color: #eab308; background: #422006; }
+
+        @keyframes pulse-border { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(59, 130, 246, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } }
+        @keyframes pulse-gold { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(234, 179, 8, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } }
     </style>
 </head>
 <body>
@@ -126,7 +176,7 @@
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
                     <div>
                         <div class="font-tech font-bold leading-none text-lg">mBATTLE</div>
-                        <div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.0</div>
+                        <div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.3</div>
                     </div>
                 </div>
                 <div class="flex gap-3">
@@ -180,7 +230,7 @@
                     </button>
                 </div>
 
-                <!-- TAB: PASS -->
+                <!-- TAB: PASS (REDESIGN V3) -->
                 <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-3xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
@@ -196,7 +246,13 @@
                         <div class="h-3 bg-black/50 rounded-full overflow-hidden"><div id="pass-bar" class="h-full bg-yellow-500 w-0 transition-all duration-300"></div></div>
                         <div class="text-[10px] text-gray-400 mt-2 italic">Gagne des parties ou fais +200 score pour l'XP.</div>
                     </div>
-                    <div class="pass-track scrollbar-hide" id="pass-track"></div>
+                    
+                    <!-- NEW PASS TRACK V3 -->
+                    <div class="pass-track-container hide-scrollbar">
+                        <div class="pass-track" id="pass-track">
+                            <!-- JS Generated -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- TAB: HEROES -->
@@ -237,7 +293,7 @@
             </div>
 
             <!-- BOTTOM NAVIGATION -->
-            <div class="w-full glass-nav h-[80px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
+            <div class="w-full glass-nav h-[90px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
                 <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
                 <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
                 <button onclick="ui.showTab('pass')" id="nav-pass" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🎫</span><span class="text-[9px] font-bold">PASS</span></button>
@@ -264,7 +320,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.3.0 - PASS & SHOP UPDATE */
+        /* mBATTLE TITAN v0.3.3 - BUG FIX CORE UI */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal" },
@@ -291,14 +347,15 @@
             load() { 
                 const d = localStorage.getItem('mBattle_Data_v6'); 
                 if(d) { 
-                    const l = JSON.parse(d); 
-                    USER = { ...USER, ...l }; 
-                    // Migrations
-                    if(!USER.pass) USER.pass = { tier: 1, xp: 0, claimed: [] };
-                    if(!USER.shop) USER.shop = { lastRefresh: 0, items: [] };
-                    if(!USER.stats.games) USER.stats.games = 0;
+                    try {
+                        const l = JSON.parse(d); 
+                        USER = { ...USER, ...l }; 
+                        if(!USER.pass) USER.pass = { tier: 1, xp: 0, claimed: [] };
+                        if(!USER.shop) USER.shop = { lastRefresh: 0, items: [] };
+                        if(!USER.stats) USER.stats = { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 };
+                    } catch(e) { console.log("Resetting corrupt data"); }
                 }
-                ui.refreshShop(); // Check if needs refresh
+                ui.refreshShop();
             } 
         };
         const Rnd = (min,max) => Math.random()*(max-min)+min;
@@ -311,6 +368,34 @@
         const setText = (id, txt) => { const e=el(id); if(e) e.innerText=txt; };
 
         const ui = {
+            // --- CORE UI RESTORED ---
+            hud() {
+                if(!game.player) return; const p = game.player;
+                setStyle('hud-hp-bar', 'width', (p.hp/p.maxHp*100)+'%');
+                setText('hud-score', game.score); setText('hud-sub', game.conf.mode==='duel'?'1 VS 1':'VAGUE '+game.wave);
+                for(let i=1; i<=3; i++) setStyle('ammo-'+i, 'opacity', i <= Math.floor(p.ammo) ? 1 : 0.3);
+                setStyle('ulti-fill', 'height', p.super+'%');
+                const ub=el('btn-ulti'); if(ub) { if(p.super>=100){ub.disabled=false;ub.classList.add('animate-pulse');}else{ub.disabled=true;ub.classList.remove('animate-pulse');} }
+                setStyle('dash-cd', 'height', Math.max(0,p.dashT/60*100)+'%');
+                setText('gadget-count', p.gadgetCharges);
+                const gb=el('btn-gadget'); if(gb) { gb.disabled = p.gadgetCharges<=0; if(p.gadgetCharges<=0)gb.classList.add('opacity-50');else gb.classList.remove('opacity-50'); }
+                const boss=game.ents.find(e=>e.isBoss||e.isBot); const bui=el('boss-ui');
+                if(boss && bui){ bui.classList.remove('hidden'); setText('boss-name', boss.isBot?"RIVAL":"BOSS"); setStyle('boss-bar', 'width', (boss.hp/boss.maxHp*100)+'%'); setText('boss-pct', Math.ceil(boss.hp/boss.maxHp*100)+'%'); } else if(bui) bui.classList.add('hidden');
+                if(game.gasRadius) { const op = Math.max(0, Math.min(0.5, 1 - (game.gasRadius/(game.world/1.5)))); setStyle('gas-overlay', 'opacity', op); }
+            },
+            notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
+            flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
+            feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
+            levelUp() { const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ const b=document.createElement('button'); b.className='glass-panel p-4 text-left flex items-center gap-4 active:scale-95 transition bg-blue-900/40 border border-blue-500/30'; b.innerHTML=`<div class="text-3xl">${p.icon}</div><div><div class="font-bold text-yellow-400 text-lg">${p.name}</div><div class="text-xs text-gray-300">${p.desc}</div></div>`; b.onclick=()=>{p.fn(game.player); s.classList.add('hidden'); game.state='PLAYING';}; c.appendChild(b); }); },
+            drawMinimap() {
+                const cvs = document.getElementById('minimap'); if(!cvs) return; const ctx = cvs.getContext('2d'); ctx.clearRect(0, 0, 140, 140); const scale = 140 / game.world;
+                if (game.player) { ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.arc(game.player.x * scale, game.player.y * scale, 3, 0, Math.PI * 2); ctx.fill(); }
+                (game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : '#f87171'; const r = (e.isBoss || e.isBot) ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
+                (game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.5)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
+                if(game.gasRadius) { ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(70, 70, game.gasRadius*scale, 0, Math.PI * 2); ctx.stroke(); }
+            },
+            // --------------------
+
             showTab(id) { 
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
                 document.getElementById('tab-' + id).classList.remove('hidden'); 
@@ -326,7 +411,6 @@
                 if(Date.now() > USER.shop.lastRefresh + 86400000) {
                     USER.shop.lastRefresh = Date.now();
                     USER.shop.items = [];
-                    // Generate 2 offers
                     const types = ['coins', 'gems', 'box'];
                     for(let i=0; i<2; i++) {
                         const t = types[Math.floor(Math.random()*types.length)];
@@ -344,14 +428,12 @@
                     if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } 
                     else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); }
                 }
-                // Timer
                 const left = (USER.shop.lastRefresh + 86400000) - now;
                 const hrs = Math.floor(left / 3600000);
                 const mins = Math.floor((left % 3600000) / 60000);
                 setText('shop-timer', `${hrs}h ${mins}m`);
 
                 const c = el('shop-offers'); c.innerHTML = '';
-                // Standard Box
                 c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5">
                         <div class="text-5xl mb-2">📦</div>
                         <div class="font-bold text-lg">Caisse Mystère</div>
@@ -359,7 +441,6 @@
                         <button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button>
                     </div>`;
                 
-                // Dynamic Offers
                 USER.shop.items.forEach((item, idx) => {
                     let icon = item.type==='coins' ? '🪙' : (item.type==='gems' ? '💎' : '📦');
                     let name = item.type==='coins' ? 'Pack de Pièces' : (item.type==='gems' ? 'Sac de Gemmes' : 'Mega Caisse');
@@ -378,22 +459,42 @@
                 setText('pass-xp-txt', `${USER.pass.xp}/100 XP`);
                 setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
                 
-                const tr = el('pass-track'); tr.innerHTML = '<div class="pass-line"></div>';
+                const tr = el('pass-track'); tr.innerHTML = '<div class="pass-connector"></div>';
                 for(let i=1; i<=50; i++) {
                     let rwd = (i%10===0) ? '📦' : ((i%2===0) ? '🪙' : '💎');
                     let val = (i%10===0) ? 1 : ((i%2===0) ? 50 : 5);
                     let claimed = USER.pass.claimed.includes(i);
-                    let locked = USER.pass.tier < i;
-                    let stateClass = claimed ? 'claimed' : (locked ? 'locked' : 'active cursor-pointer');
-                    let fn = (!claimed && !locked) ? `onclick="ui.claimPass(${i})"` : '';
+                    let unlocked = USER.pass.tier >= i;
+                    
+                    // Tier 1 is GIFT (Offert)
+                    let isGift = (i === 1);
+                    
+                    let stateClass = claimed ? 'claimed' : (unlocked ? (isGift ? 'gift cursor-pointer' : 'active cursor-pointer') : 'locked');
+                    let glow = unlocked && !claimed ? '<div class="glow"></div>' : '';
+                    
+                    let btnText = claimed ? 'REÇU' : (unlocked ? 'RÉCUPÉRER' : 'BLOQUÉ');
+                    if(isGift && !claimed) btnText = "CADEAU !";
+                    
+                    let btnColor = claimed ? 'text-gray-500' : (unlocked ? (isGift ? 'text-yellow-300 font-black animate-pulse' : 'text-blue-400 font-black animate-pulse') : 'text-gray-600');
+                    
+                    let badge = isGift ? "CADEAU" : `PALIER ${i}`;
+                    
+                    let fn = (unlocked && !claimed) ? `onclick="ui.claimPass(${i})"` : '';
                     
                     tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>
-                        <div class="font-bold text-xs mb-2 text-gray-400">#${i}</div>
-                        <div class="text-4xl mb-2">${rwd}</div>
-                        <div class="text-[10px] font-bold">${val}</div>
-                        ${claimed ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-xl text-green-400 font-bold">OK</div>' : ''}
+                        ${glow}
+                        <div class="tier-badge">${badge}</div>
+                        <div class="text-4xl mb-2 icon transition-transform duration-300 group-hover:scale-110">${rwd}</div>
+                        <div class="text-[10px] font-bold mb-2">+${val}</div>
+                        <div class="text-[8px] uppercase tracking-widest ${btnColor}">${btnText}</div>
                     </div>`;
                 }
+                
+                setTimeout(() => {
+                    // Scroll to first active or gift
+                    const target = document.querySelector('.pass-step.active') || document.querySelector('.pass-step.gift');
+                    if(target) target.scrollIntoView({behavior: "smooth", inline: "center"});
+                }, 100);
             },
             renderLists() {
                 const sl = el('list-starters'); sl.innerHTML = ''; 
@@ -442,50 +543,51 @@
                 setText('stat-games', USER.stats.games); setText('stat-wins', USER.stats.wins); 
                 setText('stat-dmg', Math.floor(USER.stats.dmg/1000)+"k"); 
             },
-            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); this.notif("+200 🪙", "#eab308"); this.renderLists(); this.updateMenu(); this.renderShop(); },
+            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); ui.notif(`DÉBLOQUÉ!`, "#22c55e"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
+            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); ui.notif(`NIVEAU UP!`, "#3b82f6"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
+            claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); ui.notif("+200 🪙", "#eab308"); ui.renderLists(); ui.updateMenu(); ui.renderShop(); },
             buy(t, cost, curr) { 
                 let ok = false;
-                if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; }
+                if(curr === 'free') ok = true;
+                else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; }
                 else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; }
                 
                 if(ok) {
                     if(t==='box'){ 
                         const r=Math.random(); 
-                        if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");}
-                        else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} 
+                        if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;ui.notif(`+${c} 🪙`,"#eab308");}
+                        else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;ui.notif(`+${g} 💎`,"#a855f7");} 
                     } 
-                    else if(t==='coins') { USER.coins += 300; this.notif("+300 🪙","#eab308"); }
-                    else if(t==='gems') { USER.gems += 30; this.notif("+30 💎","#a855f7"); }
-                    Storage.save(); this.updateMenu(); this.renderShop();
-                } else this.notif("PAS ASSEZ!", "#ef4444");
+                    else if(t==='coins') { USER.coins += 300; ui.notif("+300 🪙","#eab308"); }
+                    else if(t==='gems') { USER.gems += 30; ui.notif("+30 💎","#a855f7"); }
+                    Storage.save(); ui.updateMenu(); ui.renderShop();
+                } else ui.notif("PAS ASSEZ!", "#ef4444");
             },
             buySpecial(idx) {
                 const item = USER.shop.items[idx];
                 if(!item) return;
                 if(item.curr === 'coins' && USER.coins >= item.cost) {
                     USER.coins -= item.cost;
-                    if(item.type==='gems') { USER.gems += item.val; this.notif(`+${item.val} 💎`, "#a855f7"); }
-                    if(item.type==='box') { this.buy('box', 0, 'free'); } 
+                    if(item.type==='gems') { USER.gems += item.val; ui.notif(`+${item.val} 💎`, "#a855f7"); }
+                    if(item.type==='box') { ui.buy('box', 0, 'free'); } 
                     USER.shop.items.splice(idx, 1); // Remove after buy
-                    Storage.save(); this.updateMenu(); this.renderShop();
+                    Storage.save(); ui.updateMenu(); ui.renderShop();
                 } else if(item.curr === 'gems' && USER.gems >= item.cost) {
                     USER.gems -= item.cost;
-                    if(item.type==='coins') { USER.coins += item.val; this.notif(`+${item.val} 🪙`, "#eab308"); }
+                    if(item.type==='coins') { USER.coins += item.val; ui.notif(`+${item.val} 🪙`, "#eab308"); }
                     USER.shop.items.splice(idx, 1);
-                    Storage.save(); this.updateMenu(); this.renderShop();
-                } else this.notif("PAS ASSEZ!", "#ef4444");
+                    Storage.save(); ui.updateMenu(); ui.renderShop();
+                } else ui.notif("PAS ASSEZ!", "#ef4444");
             },
             claimPass(tier) {
                 if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) {
                     USER.pass.claimed.push(tier);
                     let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5);
                     let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems');
-                    if(type==='box') this.buy('box', 0, 'free');
-                    else if(type==='coins') { USER.coins+=val; this.notif(`+${val} 🪙`,"#eab308"); }
-                    else { USER.gems+=val; this.notif(`+${val} 💎`,"#a855f7"); }
-                    Storage.save(); this.renderPass(); this.updateMenu();
+                    if(type==='box') ui.buy('box', 0, 'free');
+                    else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); }
+                    else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); }
+                    Storage.save(); ui.renderPass(); ui.updateMenu();
                 }
             }
         };
