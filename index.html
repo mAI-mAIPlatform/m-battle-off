@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.3.6 - mAI</title>
+    <title>mBattle v0.4.0 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -12,7 +12,7 @@
         canvas { display: block; }
 
         /* --- UI & GLASS --- */
-        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
+        .glass-panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
         .glass-nav { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
         
         .glass-btn { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.15); transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -51,60 +51,23 @@
         .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; border-radius: 10px; }
         
-        /* --- BATTLE PASS TRACK --- */
+        /* --- BATTLE PASS --- */
         .pass-track-container { overflow-x: auto; padding: 30px 10px; scroll-behavior: smooth; position: relative; }
         .pass-track { display: flex; gap: 30px; align-items: center; padding-left: 20px; padding-right: 20px; }
         .pass-connector { position: absolute; top: 50%; left: 40px; right: 40px; height: 6px; background: rgba(255,255,255,0.08); z-index: 0; pointer-events: none; border-radius: 3px; }
-        
-        .pass-step { 
-            min-width: 130px; height: 170px; 
-            background: rgba(30, 41, 59, 0.6); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 24px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; z-index: 10; 
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
-        
-        .pass-step.claimed { 
-            background: rgba(255,255,255,0.02); 
-            border-color: rgba(255,255,255,0.05); 
-            opacity: 0.6; 
-            transform: scale(0.95);
-        }
+        .pass-step { min-width: 130px; height: 170px; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 10; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .pass-step.claimed { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); opacity: 0.6; transform: scale(0.95); }
         .pass-step.claimed .icon { filter: grayscale(1); opacity: 0.5; }
         .pass-step.claimed::after { content: '✓'; position: absolute; top: -8px; right: -8px; background: #10b981; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; border: 3px solid #020617; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
-
-        .pass-step.active { 
-            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9));
-            border: 1px solid rgba(96, 165, 250, 0.6); 
-            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); 
-            transform: scale(1.08) translateY(-5px); 
-        }
-        
-        .pass-step.gift {
-            background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(30, 41, 59, 0.9));
-            border: 1px solid rgba(250, 204, 21, 0.6);
-            box-shadow: 0 15px 40px rgba(234, 179, 8, 0.25);
-        }
-        
+        .pass-step.active { background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9)); border: 1px solid rgba(96, 165, 250, 0.6); box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); transform: scale(1.08) translateY(-5px); }
+        .pass-step.gift { background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(30, 41, 59, 0.9)); border: 1px solid rgba(250, 204, 21, 0.6); box-shadow: 0 15px 40px rgba(234, 179, 8, 0.25); }
         .pass-step.active .glow { position: absolute; inset: 0; border-radius: 24px; animation: pulse-border 2s infinite; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) inset; pointer-events: none; }
         .pass-step.gift .glow { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3) inset; animation: pulse-gold 2s infinite; }
-        
         .pass-step.locked { opacity: 0.4; filter: grayscale(0.8); transform: scale(0.95); }
-        
-        .pass-step .tier-badge { 
-            position: absolute; top: -10px; 
-            background: #0f172a; border: 1px solid rgba(255,255,255,0.15); 
-            padding: 4px 12px; border-radius: 20px; 
-            font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 1px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
+        .pass-step .tier-badge { position: absolute; top: -10px; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 1px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .pass-step.active .tier-badge { color: #60a5fa; border-color: #3b82f6; }
         .pass-step.gift .tier-badge { color: #facc15; border-color: #eab308; background: #422006; }
-
+        
         @keyframes pulse-border { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(59, 130, 246, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } }
         @keyframes pulse-gold { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(234, 179, 8, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } }
     </style>
@@ -116,7 +79,7 @@
     <div id="flash-layer"></div>
 
     <div id="ui-layer" class="absolute inset-0 pointer-events-none overflow-hidden">
-        
+        <!-- HUD -->
         <div id="hud" class="hidden w-full h-full relative">
             <div class="absolute top-4 left-4 flex gap-4 pointer-events-auto">
                 <div class="glass-panel p-2 flex items-center gap-3 pr-4 scale-90 origin-top-left md:scale-100">
@@ -137,24 +100,19 @@
                     </div>
                 </div>
             </div>
-            
             <div class="absolute top-6 left-1/2 -translate-x-1/2 text-center pointer-events-auto">
                 <div id="hud-score" class="font-tech text-5xl font-bold text-white leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">0</div>
                 <div class="text-[10px] font-bold text-blue-400 bg-black/50 px-2 rounded mt-1" id="hud-sub">VAGUE 1</div>
             </div>
-
             <div class="absolute top-4 right-4 flex flex-col gap-4 pointer-events-auto items-end">
                 <button onclick="game.togglePause()" class="glass-panel w-10 h-10 flex items-center justify-center hover:bg-white/10 text-lg transition active:scale-90">⏸</button>
             </div>
-
             <div id="boss-ui" class="hidden absolute top-24 left-1/2 -translate-x-1/2 w-3/4 max-w-lg pointer-events-auto transition-all duration-500">
                 <div class="flex justify-between text-[10px] text-red-400 font-bold mb-1 uppercase tracking-widest"><span id="boss-name">BOSS</span><span id="boss-pct">100%</span></div>
                 <div class="h-4 bg-red-950/80 border border-red-500/50 rounded-full overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.4)]"><div id="boss-bar" class="h-full bg-gradient-to-r from-red-600 to-red-500 w-full transition-all duration-200"></div></div>
             </div>
-
             <div id="kill-feed" class="absolute top-32 left-4 flex flex-col gap-2 w-48 pointer-events-none"></div>
             <div id="notif-area" class="absolute top-48 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-2 w-full z-30"></div>
-            
             <div id="mobile-controls" class="hidden absolute inset-0 z-40">
                 <div id="stick-left-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
                 <div id="stick-right-zone" class="joystick-zone"><div class="stick-base"><div class="stick-knob"></div></div></div>
@@ -164,18 +122,18 @@
             </div>
         </div>
 
+        <!-- MENU -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.3.6</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.4.0</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
                     <div class="currency-badge"><span class="text-purple-400">💎</span> <span id="top-gems">0</span></div>
                 </div>
             </div>
-
             <div class="flex-1 overflow-y-auto safe-pb p-5 hide-scrollbar relative">
                 <div id="tab-play" class="tab-content flex flex-col items-center justify-center min-h-[70vh] gap-6 animate-fadeIn">
                     <div class="w-full max-w-md glass-panel p-5 border-l-4 border-yellow-500 bg-yellow-900/10 relative overflow-hidden">
@@ -200,7 +158,6 @@
                         <span class="text-3xl font-black italic tracking-tighter">JOUER</span><span class="text-2xl animate-pulse">🚀</span>
                     </button>
                 </div>
-
                 <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-3xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30">
@@ -212,22 +169,53 @@
                     </div>
                     <div class="pass-track-container hide-scrollbar"><div class="pass-track" id="pass-track"></div></div>
                 </div>
-
                 <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div></div>
                 <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2><div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div><h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div></div>
                 <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2><div class="glass-panel p-5 mb-6 flex items-center justify-between bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30"><div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau Quotidien</div><div class="text-xs text-gray-400">Refresh: <span id="shop-timer">--:--</span></div></div></div><button onclick="ui.claimDaily()" id="btn-daily" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95">RÉCLAMER</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div></div>
                 <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> DOSSIER</h2><div class="grid grid-cols-2 gap-4"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires Duel</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div></div>
+                <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
+                    <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
+                        <div class="relative group cursor-pointer" onclick="ui.openAvatarSelector()">
+                            <div class="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 flex items-center justify-center text-4xl shadow-lg overflow-hidden hover:border-blue-500 transition" id="profile-avatar">👤</div>
+                            <div class="absolute bottom-0 right-0 bg-blue-600 border border-white text-[10px] p-1 rounded-full text-white shadow-sm">✏️</div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-xs text-gray-400 font-bold uppercase mb-1">Pseudonyme</div>
+                            <input type="text" id="profile-name" class="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white font-bold w-full mb-2 focus:outline-none focus:border-blue-500 transition" onchange="USER.name = this.value; Storage.save();" value="Player">
+                            <div class="flex justify-between items-center">
+                                <div class="text-xs text-blue-400 font-tech tracking-widest" id="profile-tag">#TAG</div>
+                                <div class="bg-black border border-gray-600 text-[10px] px-2 rounded text-yellow-400 font-bold" id="profile-lvl">LVL 1</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="glass-panel p-6">
+                            <div class="font-bold text-lg mb-2 flex items-center gap-2">💾 Sauvegarde</div>
+                            <div class="text-xs text-gray-400 mb-4">Copie ce code pour transférer ton compte.</div>
+                            <button onclick="ui.exportSave()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition text-sm">COPIER MA SAUVEGARDE 📋</button>
+                        </div>
+                        <div class="glass-panel p-6">
+                            <div class="font-bold text-lg mb-2 flex items-center gap-2">📥 Importer</div>
+                            <div class="text-xs text-gray-400 mb-4">Colle un code de sauvegarde ici.</div>
+                            <button onclick="ui.importSave()" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 rounded-xl transition text-sm">IMPORTER SAUVEGARDE 🔄</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
             <div class="w-full glass-nav h-[90px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
                 <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
                 <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
                 <button onclick="ui.showTab('pass')" id="nav-pass" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🎫</span><span class="text-[9px] font-bold">PASS</span></button>
                 <button onclick="ui.showTab('shop')" id="nav-shop" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🛒</span><span class="text-[9px] font-bold">SHOP</span></button>
                 <button onclick="ui.showTab('infos')" id="nav-infos" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">ℹ️</span><span class="text-[9px] font-bold">STATS</span></button>
+                <button onclick="ui.showTab('profile')" id="nav-profile" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">👤</span><span class="text-[9px] font-bold">PROFIL</span></button>
             </div>
         </div>
 
+        <div id="avatar-selector" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
+            <div class="glass-panel p-6 max-w-sm w-full mx-4" onclick="event.stopPropagation()"><h3 class="text-xl font-black mb-4 text-center">CHOISIS TON AVATAR</h3><div class="grid grid-cols-4 gap-4 mb-4" id="avatar-grid"></div><button onclick="document.getElementById('avatar-selector').classList.add('hidden')" class="w-full bg-gray-700 py-3 rounded-xl font-bold">ANNULER</button></div>
+        </div>
         <div id="levelup-screen" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn">
             <div class="w-full max-w-sm p-6 text-center"><h2 class="text-5xl font-tech text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 font-black mb-4 animate-bounce">LEVEL UP!</h2><div id="perk-container" class="grid gap-3"></div></div>
         </div>
@@ -245,7 +233,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.3.6 - SMART SAVE */
+        /* mBATTLE TITAN v0.4.0 - PRIME STABILITY */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal" },
@@ -260,12 +248,14 @@
         const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' } };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
+        const ICONS = ["👤","🤖","👽","🦁","🦄","💀","⚔️","💎","👑","🎮","🚀","🔥","❄️","⚡","🌟","🐱"];
 
-        /* --- STORAGE & MIGRATION SYSTEM --- */
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v7';
-        const PREVIOUS_KEYS = ['mBattle_Data_v6', 'mBattle_Data_v5']; 
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v9';
+        const PREVIOUS_KEYS = ['mBattle_Data_v8', 'mBattle_Data_v7', 'mBattle_Data_v6', 'mBattle_Data_v5']; 
 
         let USER = { 
+            name: "Joueur", avatar: "👤",
+            tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier'], levels: { soldier: 1 }, selected: 'soldier', 
             stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 }, lastDaily: 0,
             pass: { tier: 1, xp: 0, claimed: [] },
@@ -273,20 +263,18 @@
         };
 
         const Storage = {
-            save() {
-                localStorage.setItem(CURRENT_VERSION_KEY, JSON.stringify(USER));
-            },
+            save() { localStorage.setItem(CURRENT_VERSION_KEY, JSON.stringify(USER)); },
             load() {
-                // Try loading current version first
                 let d = localStorage.getItem(CURRENT_VERSION_KEY);
                 
-                // If not found, try migration from older versions
+                // ULTRA ROBUST MIGRATION
                 if (!d) {
                     for (let key of PREVIOUS_KEYS) {
-                        d = localStorage.getItem(key);
-                        if (d) {
-                            console.log(`Migrating data from ${key} to ${CURRENT_VERSION_KEY}`);
-                            break; 
+                        const oldData = localStorage.getItem(key);
+                        if (oldData) {
+                            d = oldData;
+                            console.log(`Recuperation depuis ${key}`);
+                            break;
                         }
                     }
                 }
@@ -294,22 +282,20 @@
                 if (d) {
                     try {
                         const saved = JSON.parse(d);
-                        // Smart Merge: Preserve user progress while adding new fields
                         USER = { 
                             ...USER, 
                             ...saved, 
-                            // Deep merge critical objects
                             stats: { ...USER.stats, ...(saved.stats||{}) }, 
-                            pass: { ...USER.pass, ...(saved.pass||{}) },
-                            shop: { ...USER.shop, ...(saved.shop||{}) },
-                            levels: { ...USER.levels, ...(saved.levels||{}) }
+                            pass: { ...USER.pass, ...(saved.pass||{}) }, 
+                            shop: { ...USER.shop, ...(saved.shop||{}) }, 
+                            levels: { ...USER.levels, ...(saved.levels||{}) } 
                         };
+                        if(!USER.name) USER.name = "Joueur";
+                        if(!USER.avatar) USER.avatar = "👤";
+                        if(!USER.tag) USER.tag = "#" + Math.random().toString(36).substr(2, 6).toUpperCase();
                         
-                        // Save immediately to new key
                         this.save();
-                    } catch (e) {
-                        console.log("Data corruption detected during load/migration");
-                    }
+                    } catch (e) { console.log("Corrupt data reset"); }
                 }
                 ui.refreshShop();
             }
@@ -317,8 +303,19 @@
 
         const Rnd = (min,max) => Math.random()*(max-min)+min;
         const Dist = (e1,e2) => Math.hypot(e1.x-e2.x, e1.y-e2.y);
-        const ColRect = (c, r) => c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h;
-        function resolveCollision(e1, e2) { const dx=e1.x-e2.x, dy=e1.y-e2.y, dist=Math.hypot(dx,dy), minDist=e1.r+e2.r; if(dist<minDist && dist>0){ const o=minDist-dist, px=(dx/dist)*o*0.5, py=(dy/dist)*o*0.5; e1.x+=px; e1.y+=py; e2.x-=px; e2.y-=py; } }
+        
+        /* PHYSICS CORE FIXED & GLOBAL */
+        function ColRect(c, r) { return c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h; }
+        function resolveCollision(e1, e2) { 
+            let dx=e1.x-e2.x, dy=e1.y-e2.y;
+            let dist=Math.hypot(dx,dy);
+            const minDist=e1.r+e2.r; 
+            if(dist < minDist) {
+                if(dist <= 0.01) { dx=1; dy=0; dist=1; } 
+                const o=minDist-dist, px=(dx/dist)*o*0.5, py=(dy/dist)*o*0.5; 
+                e1.x+=px; e1.y+=py; e2.x-=px; e2.y-=py; 
+            } 
+        }
 
         const el = (id) => document.getElementById(id);
         const setStyle = (id, prop, val) => { const e=el(id); if(e) e.style[prop]=val; };
@@ -360,6 +357,7 @@
                 if(id === 'infos') this.updateStats();
                 if(id === 'pass') this.renderPass();
                 if(id === 'shop') this.renderShop();
+                if(id === 'profile') this.renderProfile();
             },
             refreshShop() {
                 if(Date.now() > USER.shop.lastRefresh + 86400000) {
@@ -408,6 +406,27 @@
                 const ml = el('list-modes'); ml.innerHTML = ''; Object.keys(MODES).forEach(k => { const m = MODES[k], active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : 'bg-white/5 border-white/5'; ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; });
                 const al = el('list-arenas'); al.innerHTML = ''; Object.keys(ARENAS).forEach(k => { const a = ARENAS[k], active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : 'bg-white/5 border-white/5 text-gray-400'; al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
             },
+            renderProfile() {
+                el('profile-name').value = USER.name;
+                setText('profile-tag', USER.tag);
+                setText('profile-avatar', USER.avatar);
+                let totalLvl = Object.values(USER.levels).reduce((a,b)=>a+b, 0);
+                setText('profile-lvl', "LVL " + totalLvl);
+            },
+            openAvatarSelector() {
+                const grid = el('avatar-grid');
+                grid.innerHTML = '';
+                ICONS.forEach(icon => {
+                    grid.innerHTML += `<button onclick="ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`;
+                });
+                el('avatar-selector').classList.remove('hidden');
+            },
+            selectAvatar(icon) {
+                USER.avatar = icon;
+                Storage.save();
+                el('avatar-selector').classList.add('hidden');
+                this.renderProfile();
+            },
             updateMenu() {
                 const s = STARTERS[USER.selected], m = MODES[game.conf.mode], a = ARENAS[game.conf.arena];
                 setText('top-coins', USER.coins); setText('top-gems', USER.gems); setText('menu-trophies', USER.trophies);
@@ -437,6 +456,39 @@
                     if(type==='box') ui.buy('box', 0, 'free'); else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); } else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); }
                     Storage.save(); ui.renderPass(); ui.updateMenu();
                 }
+            },
+            exportSave() {
+                // IMPROVED IOS EXPORT COMPATIBILITY
+                const json = JSON.stringify(USER);
+                // Safe Base64 encoding for unicode (emojis)
+                const data = btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); }));
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(data).then(() => { ui.notif("COPIÉ !", "#22c55e"); }).catch(err => { fallbackCopy(data); });
+                } else { fallbackCopy(data); }
+                
+                function fallbackCopy(text) {
+                    const el = document.createElement('textarea'); el.value = text; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); ui.notif("CODE COPIÉ !", "#22c55e");
+                }
+            },
+            importSave() {
+                // Try window.prompt which is most reliable cross-browser
+                let code = "";
+                try {
+                    code = window.prompt("Colle ton code de sauvegarde ici :");
+                } catch (e) {
+                    console.error(e);
+                    // Fallback if window.prompt blocked (rare in main thread but possible)
+                }
+
+                if(code) {
+                    try {
+                        const json = decodeURIComponent(atob(code).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join(''));
+                        const data = JSON.parse(json);
+                        if(data.coins !== undefined) { USER = data; Storage.save(); location.reload(); } 
+                        else { ui.notif("CODE INVALIDE", "#ef4444"); }
+                    } catch(e) { ui.notif("ERREUR", "#ef4444"); }
+                }
             }
         };
 
@@ -446,20 +498,14 @@
             window.addEventListener('mousemove',e=>{this.m.x=e.clientX;this.m.y=e.clientY;});
             window.addEventListener('mousedown',()=>this.m.d=1);
             window.addEventListener('mouseup',()=>this.m.d=0);
-            
             const z=el('mobile-controls');
             const h=(e, isEnd)=>{
                 if(e.target.tagName !== 'BUTTON') e.preventDefault(); 
                 let lf=0,rf=0;
                 for(let i=0;i<e.touches.length;i++){
                     const t=e.touches[i],x=t.clientX,y=t.clientY;
-                    if(x<CFG.w/2){ 
-                        if(!this.jL.a && !isEnd){this.jL.a=1;this.jL.i=t.identifier;this.jL.ox=x;this.jL.oy=y;const l=el('stick-left-zone');if(l){l.style.left=(x-70)+'px';l.style.top=(y-70)+'px';l.classList.add('active');}}
-                        if(this.jL.i===t.identifier){lf=1;const dx=x-this.jL.ox,dy=y-this.jL.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jL.x=Math.cos(a)*d/50;this.jL.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-left-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jL.x*40}px,${this.jL.y*40}px)`;}}
-                    }else{
-                        if(!this.jR.a && !isEnd){this.jR.a=1;this.jR.i=t.identifier;this.jR.ox=x;this.jR.oy=y;const r=el('stick-right-zone');if(r){r.style.left=(x-70)+'px';r.style.top=(y-70)+'px';r.classList.add('active');}}
-                        if(this.jR.i===t.identifier){rf=1;const dx=x-this.jR.ox,dy=y-this.jR.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jR.x=Math.cos(a)*d/50;this.jR.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-right-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jR.x*40}px,${this.jR.y*40}px)`;}}
-                    }
+                    if(x<CFG.w/2){ if(!this.jL.a && !isEnd){this.jL.a=1;this.jL.i=t.identifier;this.jL.ox=x;this.jL.oy=y;const l=el('stick-left-zone');if(l){l.style.left=(x-70)+'px';l.style.top=(y-70)+'px';l.classList.add('active');}} if(this.jL.i===t.identifier){lf=1;const dx=x-this.jL.ox,dy=y-this.jL.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jL.x=Math.cos(a)*d/50;this.jL.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-left-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jL.x*40}px,${this.jL.y*40}px)`;}} }
+                    else{ if(!this.jR.a && !isEnd){this.jR.a=1;this.jR.i=t.identifier;this.jR.ox=x;this.jR.oy=y;const r=el('stick-right-zone');if(r){r.style.left=(x-70)+'px';r.style.top=(y-70)+'px';r.classList.add('active');}} if(this.jR.i===t.identifier){rf=1;const dx=x-this.jR.ox,dy=y-this.jR.oy,d=Math.min(50,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jR.x=Math.cos(a)*d/50;this.jR.y=Math.sin(a)*d/50;const k=document.querySelector('#stick-right-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jR.x*40}px,${this.jR.y*40}px)`;}} }
                 }
                 if(!lf){this.jL.a=0;this.jL.x=0;this.jL.y=0;const l=el('stick-left-zone');if(l)l.classList.remove('active');}
                 if(!rf){this.jR.a=0;this.jR.x=0;this.jR.y=0;const r=el('stick-right-zone');if(r)r.classList.remove('active');}
@@ -471,38 +517,46 @@
 
         class Entity{constructor(x,y,r,c){this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false;}
             draw(ctx){
-                // 3D Body Effect
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                // Shadow
+                ctx.save(); ctx.translate(this.x, this.y);
+                
+                // STEALTH MECHANIC VISUAL
+                let isHidden = false;
+                // STEALTH CHECK: If player in bush (type 1), Visual transparency
+                if (game.map) {
+                    for(let w of game.map) { if(w.type === 1 && ColRect(this, w)) { isHidden = true; break; } }
+                }
+                
+                // Show eye icon if stealth (only for player)
+                if(isHidden && this === game.player) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.font = "20px Arial";
+                    ctx.fillText("👁️", -10, -this.r - 10);
+                    // Strike through
+                     ctx.beginPath();
+                     ctx.moveTo(-10, -this.r - 5);
+                     ctx.lineTo(10, -this.r - 25);
+                     ctx.strokeStyle = 'red';
+                     ctx.lineWidth = 2;
+                     ctx.stroke();
+                }
+
+                if(isHidden) ctx.globalAlpha = 0.5;
+
                 ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15;
-                // Body
                 ctx.beginPath(); ctx.arc(0, 0, this.r, 0, Math.PI*2); ctx.fillStyle = this.c; ctx.fill();
-                // Inner Glow/Detail
                 ctx.shadowBlur = 0;
                 ctx.beginPath(); ctx.arc(-5, -5, this.r*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill();
+                
+                ctx.globalAlpha = 1;
                 ctx.restore();
             }
         }
         class Wall{constructor(x,y,w,h,t){this.x=x;this.y=y;this.w=w;this.h=h;this.type=t;}
             draw(ctx,c){
-                if(this.type===1){ctx.fillStyle='rgba(34,197,94,0.2)';ctx.strokeStyle='#15803d';ctx.lineWidth=2;ctx.strokeRect(this.x,this.y,this.w,this.h);ctx.fillRect(this.x,this.y,this.w,this.h);return;}
-                
-                // 3D Wall Extrusion
-                const h = 20; // height of wall
-                // Side face (darker)
-                ctx.fillStyle = '#0f172a'; 
-                ctx.fillRect(this.x, this.y + this.h, this.w, h); 
-                
-                // Top Face
-                ctx.fillStyle = c; 
-                ctx.shadowColor = 'black'; ctx.shadowBlur = 10;
-                ctx.fillRect(this.x, this.y, this.w, this.h);
-                ctx.shadowBlur = 0;
-                
-                // Inner Highlight
-                ctx.fillStyle = 'rgba(255,255,255,0.05)';
-                ctx.fillRect(this.x, this.y, this.w, 5);
+                if(this.type===1){ctx.fillStyle='rgba(34,197,94,0.9)';ctx.strokeStyle='#15803d';ctx.lineWidth=4;ctx.strokeRect(this.x,this.y,this.w,this.h);ctx.fillRect(this.x,this.y,this.w,this.h);return;}
+                const h = 20; ctx.fillStyle = '#0f172a'; ctx.fillRect(this.x, this.y + this.h, this.w, h); 
+                ctx.fillStyle = c; ctx.shadowColor = 'black'; ctx.shadowBlur = 10; ctx.fillRect(this.x, this.y, this.w, this.h); ctx.shadowBlur = 0;
+                ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.fillRect(this.x, this.y, this.w, 5);
             }
             collide(e){return e.x+e.r>this.x&&e.x-e.r<this.x+this.w&&e.y+e.r>this.y&&e.y-e.r<this.y+this.h;}
         }
@@ -531,15 +585,11 @@
             ulti(){ if(this.super<100)return; this.super=0; game.shake=20; ui.notif("ULTIMATE!","#facc15"); for(let i=0;i<36;i++){ const a=(Math.PI*2/36)*i; game.projs.push({x:this.x,y:this.y,vx:Math.cos(a)*15,vy:Math.sin(a)*15,dmg:50,life:80,r:8,c:'#facc15',friend:true}); } }
             useGadget() { if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); const t=this.stats.gadget; if(t==="heal")this.hp=Math.min(this.maxHp,this.hp+1000); if(t==="shield"){this.maxHp+=1000;this.hp+=1000;} if(t==="teleport"){this.x+=Math.cos(this.angle)*300;this.y+=Math.sin(this.angle)*300;} }
             draw(ctx){ 
-                // Player Shadow/Glow
                 ctx.save();
                 ctx.shadowColor = this.c; ctx.shadowBlur = 20;
                 super.draw(ctx);
-                // Weapon
                 ctx.translate(this.x,this.y); ctx.rotate(this.angle); 
                 ctx.fillStyle='#1e293b'; ctx.fillRect(10,-6,28,12); 
-                
-                // RELOAD BAR
                 if(this.reloadT > 0) {
                     ctx.rotate(-this.angle);
                     ctx.fillStyle = 'white';
@@ -554,13 +604,34 @@
             update(){
                 if(this.cd>0)this.cd--;
                 const p=game.player, d=Dist(this,p); this.angle=Math.atan2(p.y-this.y,p.x-this.x);
-                if(d<500) this.mode='CHASE'; else this.mode='WANDER';
+                
+                // STEALTH CHECK: If player in bush (type 1), Bot can't see
+                let playerHidden = false;
+                for(let w of game.map) { if(w.type === 1 && ColRect(game.player, w)) { playerHidden = true; break; } }
+                
+                // AI Logic: If hidden, act dumb
+                if(d < 500 && !playerHidden) this.mode = 'CHASE';
+                else this.mode = 'WANDER';
+                
                 let tx,ty;
                 if(this.mode==='CHASE'){ tx=p.x; ty=p.y; if(d<200){tx=this.x-(p.x-this.x); ty=this.y-(p.y-this.y);} }
-                else { if(!this.target || Dist(this,this.target)<50 || Math.random()<0.01) this.target={x:Rnd(100,game.world-100), y:Rnd(100,game.world-100)}; tx=this.target.x; ty=this.target.y; }
+                else { 
+                    // Wander logic
+                    if(!this.target || Dist(this,this.target)<50 || Math.random()<0.01) {
+                        this.target={x:Rnd(100,game.world-100), y:Rnd(100,game.world-100)}; 
+                    }
+                    tx=this.target.x; ty=this.target.y; 
+                }
+                
                 const a=Math.atan2(ty-this.y, tx-this.x);
                 this.move(Math.cos(a)*this.stats.spd, Math.sin(a)*this.stats.spd);
-                if(d<500 && Math.random()<0.05)this.shoot(); if(Math.random()<0.01)this.dash(); this.super+=0.1; if(this.super>=100)this.ulti(); if(game.frame%60===0 && this.hp<this.maxHp)this.hp++;
+                
+                // Only shoot if chasing
+                if(this.mode === 'CHASE' && Math.random()<0.05) this.shoot(); 
+                
+                if(Math.random()<0.01) this.dash(); 
+                this.super+=0.1; if(this.super>=100)this.ulti(); 
+                if(game.frame%60===0 && this.hp<this.maxHp)this.hp++;
                 if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) this.hp -= 10;
             }
             shoot(){ if(this.cd>0)return; this.cd=20; game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15,vy:Math.sin(this.angle)*15,dmg:10,life:60,r:6,c:this.c,friend:false}); }
@@ -574,15 +645,25 @@
                 this.hp=hp*m; this.maxHp=this.hp; this.spd=s*0.85;
             }
             update(){
-                const p=game.player, a=Math.atan2(p.y-this.y,p.x-this.x), nx=this.x+Math.cos(a)*this.spd, ny=this.y+Math.sin(a)*this.spd; let cx=false, cy=false;
-                for(let w of game.map){if(w.type===1)continue; if(w.collide({x:nx,y:this.y,r:this.r}))cx=true;if(w.collide({x:this.x,y:ny,r:this.r}))cy=true;} if(!cx)this.x=nx;if(!cy)this.y=ny;
+                // Basic enemies always chase for now, but could also respect stealth
+                const p=game.player;
+                
+                let playerHidden = false;
+                for(let w of game.map) { if(w.type === 1 && ColRect(game.player, w)) { playerHidden = true; break; } }
+
+                if(playerHidden && Dist(this, p) > 150) {
+                   this.x += (Math.random()-0.5); this.y += (Math.random()-0.5);
+                } else {
+                    const a=Math.atan2(p.y-this.y,p.x-this.x), nx=this.x+Math.cos(a)*this.spd, ny=this.y+Math.sin(a)*this.spd; let cx=false, cy=false;
+                    for(let w of game.map){if(w.type===1)continue; if(w.collide({x:nx,y:this.y,r:this.r}))cx=true;if(w.collide({x:this.x,y:ny,r:this.r}))cy=true;} if(!cx)this.x=nx;if(!cy)this.y=ny;
+                }
+
                 if(Math.hypot(this.x-p.x,this.y-p.y)<this.r+p.r){p.hp-=1;ui.flash();if(p.hp<=0)game.over("Tué par "+this.type);}
                 if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) this.hp -= 5;
             }
             draw(ctx){ 
                 if(this.isBoss){ctx.beginPath();ctx.arc(this.x,this.y,this.r+5,0,Math.PI*2);ctx.strokeStyle='#ef4444';ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);} 
                 super.draw(ctx); 
-                // Health Bar Above
                 const pct=this.hp/this.maxHp; 
                 ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(this.x-20,this.y-this.r-15,40,6);
                 ctx.fillStyle=this.isBoss?'#ef4444':'#22c55e';ctx.fillRect(this.x-19,this.y-this.r-14,38*pct,4); 
