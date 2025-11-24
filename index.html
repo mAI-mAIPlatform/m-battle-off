@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.5.1 - mAI</title>
+    <title>mBattle v0.5.2 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -19,7 +19,6 @@
         .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
         .glass-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.25) inset; }
         
-        /* GOLDEN SEASON STYLE */
         .season-gold { border-color: #fbbf24 !important; background: linear-gradient(145deg, rgba(251, 191, 36, 0.1), rgba(0,0,0,0.6)) !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.2) !important; animation: pulse-gold-border 3s infinite; }
         .season-gold .icon-box { background: rgba(251, 191, 36, 0.2) !important; border: 1px solid rgba(251, 191, 36, 0.4); }
 
@@ -34,7 +33,7 @@
 
         /* --- VFX --- */
         #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle, transparent 50%, #000 120%); z-index: 5; }
-        /* NO GAS OVERLAY */
+        #gas-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 30%, rgba(34, 197, 94, 0.4) 80%); z-index: 4; transition: opacity 0.5s; }
         #flash-layer { position: absolute; inset: 0; pointer-events: none; background: #ef4444; opacity: 0; transition: opacity 0.1s; z-index: 6; mix-blend-mode: overlay; }
 
         /* --- CONTROLS --- */
@@ -57,32 +56,15 @@
         .rank-progress-bg { background: rgba(255,255,255,0.1); border-radius: 10px; height: 8px; width: 100%; overflow: hidden; margin-top: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .rank-progress-fill { height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b); width: 0%; transition: width 0.5s ease-out; border-radius: 10px; }
         
-        /* --- BATTLE PASS TRACK --- */
+        /* --- BATTLE PASS --- */
         .pass-track-container { overflow-x: auto; padding: 30px 10px; scroll-behavior: smooth; position: relative; }
         .pass-track { display: flex; gap: 30px; align-items: center; padding-left: 20px; padding-right: 20px; }
         .pass-connector { position: absolute; top: 50%; left: 40px; right: 40px; height: 6px; background: rgba(255,255,255,0.08); z-index: 0; pointer-events: none; border-radius: 3px; }
-        
-        .pass-step { 
-            min-width: 130px; height: 170px; 
-            background: rgba(30, 41, 59, 0.6); 
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 24px; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            position: relative; z-index: 10; 
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
+        .pass-step { min-width: 130px; height: 170px; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 10; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
         .pass-step.claimed { background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); opacity: 0.6; transform: scale(0.95); }
         .pass-step.claimed .icon { filter: grayscale(1); opacity: 0.5; }
         .pass-step.claimed::after { content: '✓'; position: absolute; top: -8px; right: -8px; background: #10b981; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; border: 3px solid #020617; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
-
-        .pass-step.active { 
-            background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9));
-            border: 1px solid rgba(96, 165, 250, 0.6); 
-            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); 
-            transform: scale(1.08) translateY(-5px); 
-        }
+        .pass-step.active { background: linear-gradient(145deg, rgba(59, 130, 246, 0.15), rgba(30, 41, 59, 0.9)); border: 1px solid rgba(96, 165, 250, 0.6); box-shadow: 0 15px 40px rgba(37, 99, 235, 0.25); transform: scale(1.08) translateY(-5px); }
         .pass-step.gift { background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(30, 41, 59, 0.9)); border: 1px solid rgba(250, 204, 21, 0.6); box-shadow: 0 15px 40px rgba(234, 179, 8, 0.25); }
         .pass-step.active .glow { position: absolute; inset: 0; border-radius: 24px; animation: pulse-border 2s infinite; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3) inset; pointer-events: none; }
         .pass-step.gift .glow { box-shadow: 0 0 20px rgba(234, 179, 8, 0.3) inset; animation: pulse-gold 2s infinite; }
@@ -90,6 +72,12 @@
         .pass-step .tier-badge { position: absolute; top: -10px; background: #0f172a; border: 1px solid rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 1px; box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
         .pass-step.active .tier-badge { color: #60a5fa; border-color: #3b82f6; }
         .pass-step.gift .tier-badge { color: #facc15; border-color: #eab308; background: #422006; }
+        
+        /* STAT BARS IN MODAL */
+        .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .stat-label { width: 60px; font-size: 10px; font-weight: bold; color: #94a3b8; text-transform: uppercase; }
+        .stat-track { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+        .stat-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
 
         @keyframes pulse-border { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(59, 130, 246, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2) inset; } }
         @keyframes pulse-gold { 0% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } 50% { opacity: 1; box-shadow: 0 0 25px rgba(234, 179, 8, 0.5) inset; } 100% { opacity: 0.5; box-shadow: 0 0 10px rgba(234, 179, 8, 0.2) inset; } }
@@ -98,13 +86,13 @@
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
+    <div id="gas-overlay"></div>
     <div id="vignette"></div>
     <div id="flash-layer"></div>
 
     <div id="ui-layer" class="absolute inset-0 pointer-events-none overflow-hidden">
         
         <div id="hud" class="hidden w-full h-full relative">
-            <!-- Top Left HUD -->
             <div class="absolute top-4 left-4 flex flex-col gap-4 pointer-events-auto">
                 <div class="glass-panel p-2 flex items-center gap-3 pr-4 scale-90 origin-top-left md:scale-100">
                     <div class="relative">
@@ -126,19 +114,16 @@
                 <div class="glass-panel p-1 border-white/20 bg-black/50"><canvas id="minimap" width="100" height="100" class="rounded-lg bg-black/80 opacity-90"></canvas></div>
             </div>
             
-            <!-- Top Center HUD -->
             <div class="absolute top-6 left-1/2 -translate-x-1/2 text-center pointer-events-auto">
                 <div id="hud-score" class="font-tech text-5xl font-bold text-white leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">0</div>
                 <div class="text-[10px] font-bold text-blue-400 bg-black/50 px-2 rounded mt-1" id="hud-sub">VAGUE 1</div>
                 <div id="hud-timer" class="text-xl font-black text-yellow-400 drop-shadow-lg mt-1 hidden">03:00</div>
             </div>
 
-            <!-- Pause Button -->
             <div class="absolute top-4 right-4 flex flex-col gap-4 pointer-events-auto items-end">
                 <button onclick="game.togglePause()" class="glass-panel w-10 h-10 flex items-center justify-center hover:bg-white/10 text-lg transition active:scale-90">⏸</button>
             </div>
 
-            <!-- Boss Health -->
             <div id="boss-ui" class="hidden absolute top-24 left-1/2 -translate-x-1/2 w-3/4 max-w-lg pointer-events-auto transition-all duration-500">
                 <div class="flex justify-between text-[10px] text-red-400 font-bold mb-1 uppercase tracking-widest"><span id="boss-name">BOSS</span><span id="boss-pct">100%</span></div>
                 <div class="h-4 bg-red-950/80 border border-red-500/50 rounded-full overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.4)]"><div id="boss-bar" class="h-full bg-gradient-to-r from-red-600 to-red-500 w-full transition-all duration-200"></div></div>
@@ -150,18 +135,16 @@
             <div id="mobile-controls" class="hidden absolute inset-0 z-40">
                 <div id="stick-left-zone" class="joystick-zone"><div id="stick-left-base" class="stick-base"><div class="stick-knob"></div></div></div>
                 <div id="stick-right-zone" class="joystick-zone"><div id="stick-right-base" class="stick-base"><div class="stick-knob"></div></div></div>
-                <button id="btn-gadget" class="action-btn bottom-36 right-10 w-14 h-14 bg-green-900/90 border-2 border-green-500" ontouchstart="event.stopPropagation(); game.player?.useGadget()" onmousedown="game.player?.useGadget()"><span class="font-tech font-bold text-[10px] z-10">GADGET</span><div class="absolute -top-1 -right-1 bg-black border border-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center" id="gadget-count">3</div></button>
-                <button id="btn-dash" class="action-btn bottom-8 right-36 w-16 h-16 glass-panel border border-white/40 bg-blue-900/30" ontouchstart="event.stopPropagation(); game.player?.dash()" onmousedown="game.player?.dash()"><span class="text-2xl">⚡</span><div id="dash-cd" class="absolute inset-0 bg-black/70 origin-bottom h-0 transition-all duration-75 rounded-full"></div></button>
-                <button id="btn-ulti" class="action-btn bottom-8 right-8 w-24 h-24 bg-gray-900 border-4 border-gray-600" ontouchstart="event.stopPropagation(); game.player?.useUlti()" onmousedown="game.player?.useUlti()" disabled><span class="font-tech font-black text-xs z-10 tracking-wider">ULTI</span><div id="ulti-fill" class="absolute bottom-0 w-full bg-gradient-to-t from-yellow-500 to-yellow-300 opacity-90 h-0 transition-all"></div></button>
+                <button id="btn-gadget" class="action-btn bottom-36 right-12 w-16 h-16 bg-green-900/90 border-2 border-green-500 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg" ontouchstart="event.stopPropagation(); game.player?.useGadget()" onmousedown="game.player?.useGadget()"><span class="font-tech font-bold text-[10px] z-10">GADGET</span><div class="absolute -top-1 -right-1 bg-black border border-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center" id="gadget-count">3</div></button>
+                <button id="btn-dash" class="action-btn bottom-12 right-12 w-20 h-20 rounded-full glass-panel border border-white/40 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg bg-blue-900/30" ontouchstart="event.stopPropagation(); game.player?.dash()" onmousedown="game.player?.dash()"><span class="text-3xl">⚡</span><div id="dash-cd" class="absolute inset-0 bg-black/70 origin-bottom h-0 transition-all duration-75 rounded-full"></div></button>
             </div>
         </div>
 
-        <!-- MENU -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.1</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.2</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -207,7 +190,15 @@
                 <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div></div>
                 <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2><div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div><h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div></div>
                 <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2><div class="glass-panel p-5 mb-6 flex items-center justify-between bg-gradient-to-r from-yellow-900/20 to-transparent border-yellow-500/30"><div class="flex items-center gap-4"><div class="text-4xl animate-bounce">🎁</div><div><div class="font-bold text-yellow-400">Cadeau Quotidien</div><div class="text-xs text-gray-400">Refresh: <span id="shop-timer">--:--</span></div></div></div><button onclick="ui.claimDaily()" id="btn-daily" class="bg-yellow-600 px-6 py-2 rounded-xl text-xs font-bold shadow-lg active:scale-95">RÉCLAMER</button></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div></div>
-                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2><div class="grid grid-cols-2 gap-4 mb-8"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div><h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3><div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.5.1 (TITAN GOLD)</h3><ul><li>🔱 Mode Duel : Bot agressif immédiat !</li><li>📜 Lore : Histoires étendues pour tous.</li><li>✨ Design : Saison 1 en Or.</li><li>🚫 Gaz : Supprimé de tous les modes.</li></ul></div></div></div>
+                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2>
+                    <!-- PC CONTROLS -->
+                    <div class="glass-panel p-6 mb-6 hidden md:block">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3>
+                        <table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr></table>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-8"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div><h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3><div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.5.2 (HERO DATA)</h3><ul><li>📊 Fiches Héros : Stats & Détails complets.</li><li>📱 UI : Meilleure lisibilité mobile.</li><li>✨ Gadgets : Descriptions claires.</li></ul></div></div>
+                </div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
                     <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
@@ -248,16 +239,39 @@
             </div>
         </div>
 
+        <!-- HERO DETAILS MODAL -->
+        <div id="hero-details-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
+            <div class="glass-panel p-6 max-w-md w-full mx-4 relative border-2 border-blue-500/30" onclick="event.stopPropagation()" id="hero-card-inner">
+                <button onclick="document.getElementById('hero-details-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl z-10">×</button>
+                
+                <div class="flex flex-col items-center mb-6">
+                    <div class="w-24 h-24 rounded-2xl bg-black/50 border-2 border-white/20 flex items-center justify-center text-6xl shadow-[0_0_30px_rgba(59,130,246,0.3)] mb-3" id="hd-icon"></div>
+                    <h2 class="text-3xl font-black uppercase font-tech tracking-wider" id="hd-name"></h2>
+                    <div class="text-blue-400 font-bold text-sm" id="hd-lvl"></div>
+                </div>
+
+                <div class="space-y-4 mb-6">
+                    <!-- Stats -->
+                    <div class="stat-row"><div class="stat-label">SANTÉ</div><div class="stat-track"><div id="hd-bar-hp" class="stat-fill bg-green-500"></div></div></div>
+                    <div class="stat-row"><div class="stat-label">DÉGÂTS</div><div class="stat-track"><div id="hd-bar-dmg" class="stat-fill bg-red-500"></div></div></div>
+                    <div class="stat-row"><div class="stat-label">VITESSE</div><div class="stat-track"><div id="hd-bar-spd" class="stat-fill bg-yellow-400"></div></div></div>
+                </div>
+
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10 mb-4">
+                    <div class="text-[10px] text-gray-400 uppercase font-bold mb-1">GADGET</div>
+                    <div class="text-sm font-bold text-white flex items-center gap-2"><span id="hd-gadget-icon">⚡</span> <span id="hd-gadget-name"></span></div>
+                </div>
+
+                <p class="text-xs text-gray-400 italic text-center mb-6 leading-relaxed" id="hd-desc"></p>
+
+                <div id="hd-actions" class="grid gap-2">
+                    <!-- Generated Buttons -->
+                </div>
+            </div>
+        </div>
+
         <div id="avatar-selector" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
             <div class="glass-panel p-6 max-w-sm w-full mx-4" onclick="event.stopPropagation()"><h3 class="text-xl font-black mb-4 text-center">CHOISIS TON AVATAR</h3><div class="grid grid-cols-4 gap-4 mb-4" id="avatar-grid"></div><button onclick="document.getElementById('avatar-selector').classList.add('hidden')" class="w-full bg-gray-700 py-3 rounded-xl font-bold">ANNULER</button></div>
-        </div>
-        <div id="lore-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[65] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
-            <div class="glass-panel p-8 max-w-lg w-full mx-6 relative" onclick="event.stopPropagation()">
-                <button onclick="document.getElementById('lore-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">×</button>
-                <div class="text-center mb-6"><div class="text-6xl mb-4" id="lore-icon"></div><h2 class="text-3xl font-black text-blue-400 mb-1" id="lore-title"></h2><div class="text-[10px] text-gray-500 uppercase tracking-[0.3em]">DOSSIER SECRET</div></div>
-                <div class="bg-black/40 p-6 rounded-xl border border-white/10 min-h-[100px] flex items-center justify-center"><p id="lore-text" class="text-gray-300 italic text-center leading-relaxed whitespace-pre-line"></p></div>
-                <button onclick="document.getElementById('lore-modal').classList.add('hidden')" class="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">FERMER</button>
-            </div>
         </div>
         <div id="levelup-screen" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn">
             <div class="w-full max-w-sm p-6 text-center"><h2 class="text-5xl font-tech text-transparent bg-clip-text bg-gradient-to-b from-yellow-300 to-yellow-600 font-black mb-4 animate-bounce">LEVEL UP!</h2><div id="perk-container" class="grid gap-3"></div></div>
@@ -276,50 +290,33 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.5.1 - TITAN GOLD & LORE */
+        /* mBATTLE TITAN v0.5.2 - HERO DATA */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
-            soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Un vétéran des guerres galactiques, respecté pour sa précision chirurgicale.\nIl ne rate jamais sa cible, peu importe la distance ou les conditions.\nToujours fidèle au poste, il est prêt à tout sacrifier pour la victoire de son escouade." },
-            titan:   { name: "Titan",   icon: "🦾", hp: 600, dmg: 40, spd: 3.0, rate: 50, ammo:2, reload:70, price: 0, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "SAISON 1 GRATUIT. Colosse de métal.", gadget: "shield", lore: "Le gardien légendaire de la Saison 1, une merveille d'ingénierie ancienne offerte à tous.\nForgé dans le magma des volcans profonds, son armure est réputée impénétrable.\nIl avance lentement mais sûrement, écrasant tout sur son passage." },
-            tank:    { name: "Heavy",   icon: "🛡️", hp: 320, dmg: 14, spd: 3.5, rate: 35, ammo:3, reload:55, price: 500, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une véritable forteresse mobile, conçue pour encaisser les pires assauts.\nLent et massif, il est le bouclier vivant qui protège son équipe.\nC'est le mur infranchissable sur lequel l'ennemi vient se briser inlassablement." },
-            sniper:  { name: "Sniper",  icon: "🦅", hp: 80,  dmg: 120, spd: 5, rate: 65, ammo:3, reload:80, price: 800, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Dégâts max.", gadget: "knockback", lore: "L'œil de faucon, capable de repérer une mouche à des kilomètres.\nUne seule balle suffit, un seul tir, un mort. La patience est son arme ultime.\nNe clignez pas des yeux, ou ce sera la dernière chose que vous ferez." },
-            assassin:{ name: "Assassin",icon: "🗡️", hp: 90,  dmg: 18, spd: 7.5, rate: 8, ammo:4, reload:30,  price: 1200, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Rapide comme l'éclair, il se déplace plus vite que son ombre.\nMaître des arts obscurs, il frappe et disparaît avant même qu'on ne le remarque.\nLa peur est son alliée, et la surprise son attaque fatale." },
-            pyro:    { name: "Pyro",    icon: "🔥", hp: 160, dmg: 7, spd: 5, rate: 4, ammo:50, reload:10, price: 1500, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Un pyromane fou qui adore l'odeur du napalm au petit matin.\nIl croit en la purification par la flamme et ne laisse que des cendres derrière lui.\nLe chaos incarné, il transforme le champ de bataille en un brasier infernal." },
-            ronin:   { name: "Ronin",   icon: "👹", hp: 180, dmg: 60, spd: 6.5, rate: 25, ammo:3, reload:40, price: 3000, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Un samouraï cybernétique errant, cherchant la rédemption par le fil de son sabre.\nL'honneur est son seul code, et il ne recule devant aucun duel.\nSa lame, forgée dans un acier rare, ne tremble jamais au moment de frapper." },
-            cyber:   { name: "Cyber",   icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "La fusion parfaite et terrifiante entre l'homme et la machine.\nConsidéré comme l'avenir de la guerre, il possède une précision laser mortelle.\nZéro émotion, 100% efficacité. Il exécute ses ordres sans faillir." }
+            soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Un soldat polyvalent avec une bonne cadence de tir.", gadget: "heal", lore: "Vétéran des guerres galactiques." },
+            tank:    { name: "Heavy",   icon: "🛡️", hp: 320, dmg: 14, spd: 3.5, rate: 35, ammo:3, reload:55, price: 500, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV avec un fusil à pompe.", gadget: "shield", lore: "Forteresse mobile impénétrable." },
+            sniper:  { name: "Sniper",  icon: "🦅", hp: 80,  dmg: 120, spd: 5, rate: 65, ammo:3, reload:80, price: 800, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite longue distance.", gadget: "knockback", lore: "Ne rate jamais sa cible." },
+            assassin:{ name: "Assassin",icon: "🗡️", hp: 90,  dmg: 18, spd: 7.5, rate: 8, ammo:4, reload:30,  price: 1200, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide et mortel au corps à corps.", gadget: "speed", lore: "Une ombre dans la nuit." },
+            pyro:    { name: "Pyro",    icon: "🔥", hp: 160, dmg: 7, spd: 5, rate: 4, ammo:50, reload:10, price: 1500, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Brûle tout sur son passage.", gadget: "dash", lore: "Adore l'odeur du napalm." },
+            ronin:   { name: "Ronin",   icon: "👹", hp: 180, dmg: 60, spd: 6.5, rate: 25, ammo:3, reload:40, price: 3000, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Samouraï cybernétique.", gadget: "heal", lore: "Cherche la rédemption par le sabre." },
+            cyber:   { name: "Cyber",   icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Tire des lasers précis.", gadget: "teleport", lore: "Fusion homme-machine parfaite." },
+            titan:   { name: "Titan",   icon: "🦾", hp: 600, dmg: 40, spd: 3.0, rate: 50, ammo:2, reload:70, price: 0, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "Colosse de métal indestructible.", gadget: "shield", lore: "Gardien légendaire de la Saison 1." },
+            volt:    { name: "Volt",    icon: "⚡", hp: 110, dmg: 18, spd: 6.0, rate: 10, ammo: 4, reload: 30, price: 2000, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique rapide.", gadget: "speed", lore: "Surchargé d'énergie statique." },
+            goliath: { name: "Goliath", icon: "🗿", hp: 450, dmg: 12, spd: 3.0, rate: 40, ammo: 2, reload: 60, price: 4000, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Un géant de pierre éveillé." }
         };
-        
-        const MODES = { 
-            survival: { name: "Survie", icon: "🧟", desc: "Résiste aux vagues infinies de robots.", ranked: false }, 
-            ranked: { name: "Classé", icon: "🏆", desc: "Gagne des trophées contre des élites.", ranked: true }, 
-            duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel à mort contre un Bot intelligent.", ranked: false, boss: true }, 
-            heist: { name: "Braquage", icon: "💎", desc: "Infiltre la base et explose le coffre.", ranked: false, boss: true }, 
-            boss_rush: { name: "Boss Rush", icon: "👹", desc: "Affronte une série de Boss redoutables.", ranked: false, boss: true },
-            titan_raid: { name: "Raid Titan", icon: "🌋", desc: "L'ultime défi de la Saison 1.", ranked: false, boss: true, special: true }
-        };
-        const ARENAS = { 
-            tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
-            sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, 
-            ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' }, 
-            jungle: { name: "Jungle", color: '#064e3b', grid: 'rgba(34,197,94,0.2)', wall: '#052e16' }, 
-            magma: { name: "Magma", color: '#450a0a', grid: 'rgba(239,68,68,0.2)', wall: '#280505' },
-            titan_forge: { name: "La Forge", color: '#2a0a0a', grid: 'rgba(250,204,21,0.2)', wall: '#4a0404', special: true }
-        };
-        
+        const MODES = { survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true }, heist: { name: "Braquage", icon: "💎", desc: "Détruis le coffre!", ranked: false, boss: true }, boss_rush: { name: "Boss Rush", icon: "👹", desc: "Combat de Boss.", ranked: false, boss: true }, titan_raid: { name: "Raid Titan", icon: "🌋", desc: "L'ultime défi.", ranked: false, boss: true, special: true } };
+        const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' }, jungle: { name: "Jungle", color: '#064e3b', grid: 'rgba(34,197,94,0.2)', wall: '#052e16' }, magma: { name: "Magma", color: '#450a0a', grid: 'rgba(239,68,68,0.2)', wall: '#280505' }, titan_forge: { name: "La Forge", color: '#2a0a0a', grid: 'rgba(250,204,21,0.2)', wall: '#4a0404', special: true } };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
         const ICONS = ["👤","🤖","👽","🦁","🦄","💀","⚔️","💎","👑","🎮","🚀","🔥","❄️","⚡","🌟","🐱"];
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v13';
-        const PREVIOUS_KEYS = ['mBattle_Data_v12', 'mBattle_Data_v11', 'mBattle_Data_v10', 'mBattle_Data_v9']; 
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v15';
+        const PREVIOUS_KEYS = ['mBattle_Data_v14', 'mBattle_Data_v13', 'mBattle_Data_v12']; 
 
         let USER = { 
-            name: "Joueur", avatar: "👤",
-            tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'titan'], levels: { soldier: 1, titan: 1 }, selected: 'soldier', 
-            stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 }, lastDaily: 0,
-            pass: { tier: 1, xp: 0, claimed: [] },
-            shop: { lastRefresh: 0, items: [] }
+            stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 }, lastDaily: 0, pass: { tier: 1, xp: 0, claimed: [] }, shop: { lastRefresh: 0, items: [] }
         };
 
         const Storage = {
@@ -336,25 +333,18 @@
         const Dist = (e1,e2) => Math.hypot(e1.x-e2.x, e1.y-e2.y);
         function ColRect(c, r) { return c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h; }
         function resolveCollision(e1, e2) { 
-            let dx=e1.x-e2.x, dy=e1.y-e2.y;
-            let dist=Math.hypot(dx,dy);
-            const minDist=e1.r+e2.r; 
+            let dx=e1.x-e2.x, dy=e1.y-e2.y; let dist=Math.hypot(dx,dy); const minDist=e1.r+e2.r; 
             if(dist < minDist) {
                 if(dist <= 0.01) { dx=1; dy=0; dist=1; } 
-                const o=minDist-dist;
-                
-                const m1 = e1.type==='chest' ? Infinity : 1;
-                const m2 = e2.type==='chest' ? Infinity : 1;
-                
-                let r1, r2;
-                if(m1 === Infinity && m2 === Infinity) { r1=0; r2=0; }
-                else if(m1 === Infinity) { r1=0; r2=1; } 
-                else if(m2 === Infinity) { r1=1; r2=0; } 
-                else { r1=0.5; r2=0.5; } 
-                
-                const px=(dx/dist)*o, py=(dy/dist)*o; 
+                const o=minDist-dist, px=(dx/dist)*o*0.5, py=(dy/dist)*o*0.5; 
+                const m1 = e1.type==='chest' ? Infinity : 1; const m2 = e2.type==='chest' ? Infinity : 1;
+                let r1, r2; if(m1===Infinity && m2===Infinity){r1=0;r2=0;} else if(m1===Infinity){r1=0;r2=1;} else if(m2===Infinity){r1=1;r2=0;} else {r1=0.5;r2=0.5;}
                 e1.x+=px*r1; e1.y+=py*r1; e2.x-=px*r2; e2.y-=py*r2; 
             } 
+        }
+        const getGadgetName = (g) => {
+            const map = { 'heal': 'Soin d\'urgence (+1000 HP)', 'shield': 'Bouclier (+1000 Max HP)', 'teleport': 'Téléportation (Blink)', 'dash': 'Dash Enflammé', 'speed': 'Turbo Boost', 'knockback': 'Onde de Choc' };
+            return map[g] || g.toUpperCase();
         }
 
         const el = (id) => document.getElementById(id);
@@ -366,35 +356,16 @@
                 if(!game.player) return; const p = game.player;
                 setStyle('hud-hp-bar', 'width', (p.hp/p.maxHp*100)+'%');
                 setText('hud-score', game.score); setText('hud-sub', MODES[game.conf.mode].name.toUpperCase());
-                
                 if(game.conf.mode === 'heist' || game.conf.mode === 'boss_rush' || game.conf.mode === 'titan_raid') {
-                    const min = Math.floor(game.timeLeft / 3600);
-                    const sec = Math.floor((game.timeLeft % 3600) / 60);
-                    const ms = (min < 10 ? "0"+min : min) + ":" + (sec < 10 ? "0"+sec : sec);
-                    const te = el('hud-timer');
-                    if(te) { te.innerText = ms; te.classList.remove('hidden'); }
-                } else {
-                    const te = el('hud-timer'); if(te) te.classList.add('hidden');
-                }
-                
+                    const min = Math.floor(game.timeLeft / 3600); const sec = Math.floor((game.timeLeft % 3600) / 60);
+                    const te = el('hud-timer'); if(te) { te.innerText = (min < 10 ? "0"+min : min) + ":" + (sec < 10 ? "0"+sec : sec); te.classList.remove('hidden'); }
+                } else { const te = el('hud-timer'); if(te) te.classList.add('hidden'); }
                 for(let i=1; i<=3; i++) setStyle('ammo-'+i, 'opacity', i <= Math.floor(p.ammo) ? 1 : 0.3);
-                setStyle('ulti-fill', 'height', p.super+'%');
-                const ub=el('btn-ulti'); if(ub) { if(p.super>=100){ub.disabled=false;ub.classList.add('animate-pulse');}else{ub.disabled=true;ub.classList.remove('animate-pulse');} }
                 setStyle('dash-cd', 'height', Math.max(0,p.dashT/60*100)+'%');
                 setText('gadget-count', p.gadgetCharges);
                 const gb=el('btn-gadget'); if(gb) { gb.disabled = p.gadgetCharges<=0; if(p.gadgetCharges<=0)gb.classList.add('opacity-50');else gb.classList.remove('opacity-50'); }
                 const boss=game.ents.find(e=>e.isBoss||e.isBot); const bui=el('boss-ui');
-                if(boss && bui){ 
-                    bui.classList.remove('hidden'); 
-                    let label = boss.isBot ? "RIVAL" : "BOSS";
-                    if(game.conf.mode === 'heist') label = "COFFRE";
-                    if(game.conf.mode === 'titan_raid') label = "TITAN";
-                    setText('boss-name', label); 
-                    setStyle('boss-bar', 'width', (boss.hp/boss.maxHp*100)+'%'); 
-                    setText('boss-pct', Math.ceil(boss.hp/boss.maxHp*100)+'%'); 
-                } else if(bui) bui.classList.add('hidden');
-                
-                // GAS DISABLED
+                if(boss && bui){ bui.classList.remove('hidden'); setText('boss-name', boss.isBot?"RIVAL":(game.conf.mode==='heist'?"COFFRE":"BOSS")); setStyle('boss-bar', 'width', (boss.hp/boss.maxHp*100)+'%'); setText('boss-pct', Math.ceil(boss.hp/boss.maxHp*100)+'%'); } else if(bui) bui.classList.add('hidden');
                 setStyle('gas-overlay', 'opacity', 0);
             },
             notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
@@ -407,161 +378,96 @@
                 (game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : '#f87171'; const r = (e.isBoss || e.isBot) ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
                 (game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.8)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
             },
-            showTab(id) { 
-                document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
-                document.getElementById('tab-' + id).classList.remove('hidden'); 
-                document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active', 'selected')); 
-                const btn = document.getElementById('nav-' + id); 
-                if(btn) btn.classList.add('active', 'selected'); 
-                if(id === 'starters' || id === 'modes') this.renderLists(); 
-                if(id === 'infos') this.updateStats();
-                if(id === 'pass') this.renderPass();
-                if(id === 'shop') this.renderShop();
-                if(id === 'profile') this.renderProfile();
-            },
-            refreshShop() {
-                if(Date.now() > USER.shop.lastRefresh + 86400000) {
-                    USER.shop.lastRefresh = Date.now();
-                    USER.shop.items = [];
-                    const types = ['coins', 'gems', 'box'];
-                    for(let i=0; i<2; i++) {
-                        const t = types[Math.floor(Math.random()*types.length)];
-                        if(t === 'coins') USER.shop.items.push({ type: 'coins', cost: 20, val: 300, curr: 'gems' });
-                        if(t === 'gems') USER.shop.items.push({ type: 'gems', cost: 500, val: 30, curr: 'coins' });
-                        if(t === 'box') USER.shop.items.push({ type: 'box', cost: 80, val: 1, curr: 'coins' });
-                    }
-                    Storage.save();
-                }
-            },
-            renderShop() {
-                const now = Date.now(); const btn = el('btn-daily');
-                if(btn) { if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); } }
-                const left = (USER.shop.lastRefresh + 86400000) - now; const hrs = Math.floor(left / 3600000); const mins = Math.floor((left % 3600000) / 60000);
-                setText('shop-timer', `${hrs}h ${mins}m`);
-                const c = el('shop-offers'); c.innerHTML = `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5"><div class="text-5xl mb-2">📦</div><div class="font-bold text-lg">Caisse Mystère</div><div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div><button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button></div>`;
-                USER.shop.items.forEach((item, idx) => {
-                    let icon = item.type==='coins' ? '🪙' : (item.type==='gems' ? '💎' : '📦'); let name = item.type==='coins' ? 'Pack de Pièces' : (item.type==='gems' ? 'Sac de Gemmes' : 'Mega Caisse'); let curIcon = item.curr==='coins' ? '🪙' : '💎'; let color = item.type==='gems' ? 'bg-purple-600/90' : 'bg-yellow-600/90';
-                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5 border border-white/10"><div class="text-5xl mb-2">${icon}</div><div class="font-bold text-lg">${name}</div><div class="text-xs text-gray-400 mb-4">+${item.val} ${icon}</div><button onclick="ui.buySpecial(${idx})" class="w-full ${color} py-3 rounded-xl font-bold text-sm">ACHETER (${item.cost} ${curIcon})</button></div>`;
-                });
-            },
-            renderPass() {
-                setText('pass-lvl', USER.pass.tier); setText('pass-xp-txt', `${USER.pass.xp}/100 XP`); setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
-                const tr = el('pass-track'); tr.innerHTML = '<div class="pass-connector"></div>';
-                for(let i=1; i<=50; i++) {
-                    let rwd = (i%10===0) ? '📦' : ((i%2===0) ? '🪙' : '💎'); let val = (i%10===0) ? 1 : ((i%2===0) ? 50 : 5);
-                    let claimed = USER.pass.claimed.includes(i); let unlocked = USER.pass.tier >= i;
-                    let isGift = (i === 1);
-                    let stateClass = claimed ? 'claimed' : (unlocked ? (isGift ? 'gift cursor-pointer' : 'active cursor-pointer') : 'locked');
-                    let glow = unlocked && !claimed ? '<div class="glow"></div>' : '';
-                    let btnText = claimed ? 'REÇU' : (unlocked ? 'RÉCUPÉRER' : 'BLOQUÉ'); if(isGift && !claimed) btnText = "CADEAU !";
-                    let btnColor = claimed ? 'text-gray-500' : (unlocked ? (isGift ? 'text-yellow-300 font-black animate-pulse' : 'text-blue-400 font-black animate-pulse') : 'text-gray-600');
-                    let badge = isGift ? "CADEAU" : `PALIER ${i}`;
-                    let fn = (unlocked && !claimed) ? `onclick="ui.claimPass(${i})"` : '';
-                    tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>${glow}<div class="tier-badge">${badge}</div><div class="text-4xl mb-2 icon transition-transform duration-300 group-hover:scale-110">${rwd}</div><div class="text-[10px] font-bold mb-2">+${val}</div><div class="text-[8px] uppercase tracking-widest ${btnColor}">${btnText}</div></div>`;
-                }
-                setTimeout(() => { const target = document.querySelector('.pass-step.active') || document.querySelector('.pass-step.gift'); if(target) target.scrollIntoView({behavior: "smooth", inline: "center"}); }, 100);
-            },
+            showTab(id) { document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); document.getElementById('tab-' + id).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active', 'selected')); const btn = document.getElementById('nav-' + id); if(btn) btn.classList.add('active', 'selected'); if(id === 'starters' || id === 'modes') this.renderLists(); if(id === 'infos') this.updateStats(); if(id === 'pass') this.renderPass(); if(id === 'shop') this.renderShop(); if(id === 'profile') this.renderProfile(); },
+            refreshShop() { if(Date.now() > USER.shop.lastRefresh + 86400000) { USER.shop.lastRefresh = Date.now(); USER.shop.items = []; for(let i=0; i<2; i++) { const t = ['coins','gems','box'][Math.floor(Math.random()*3)]; if(t==='coins') USER.shop.items.push({type:'coins',cost:20,val:300,curr:'gems'}); if(t==='gems') USER.shop.items.push({type:'gems',cost:500,val:30,curr:'coins'}); if(t==='box') USER.shop.items.push({type:'box',cost:80,val:1,curr:'coins'}); } Storage.save(); } },
+            renderShop() { const now = Date.now(); const btn = el('btn-daily'); if(btn) { if(now - USER.lastDaily > 86400000) { btn.disabled = false; btn.innerText = "RÉCLAMER"; btn.classList.remove('opacity-50'); } else { btn.disabled = true; btn.innerText = "DÉJÀ REÇU"; btn.classList.add('opacity-50'); } } const left = (USER.shop.lastRefresh + 86400000) - now; const hrs = Math.floor(left / 3600000); const mins = Math.floor((left % 3600000) / 60000); setText('shop-timer', `${hrs}h ${mins}m`); const c = el('shop-offers'); c.innerHTML = `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5"><div class="text-5xl mb-2">📦</div><div class="font-bold text-lg">Caisse Mystère</div><div class="text-xs text-gray-400 mb-4">Contient Or ou Gemmes</div><button onclick="ui.buy('box', 100, 'coins')" class="w-full bg-green-600/90 py-3 rounded-xl font-bold text-sm">OUVRIR (100 🪙)</button></div>`; USER.shop.items.forEach((item, idx) => { let icon = item.type==='coins'?'🪙':(item.type==='gems'?'💎':'📦'); let name = item.type==='coins'?'Pack de Pièces':(item.type==='gems'?'Sac de Gemmes':'Mega Caisse'); let curIcon = item.curr==='coins'?'🪙':'💎'; let color = item.type==='gems'?'bg-purple-600/90':'bg-yellow-600/90'; c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition bg-white/5 border border-white/10"><div class="text-5xl mb-2">${icon}</div><div class="font-bold text-lg">${name}</div><div class="text-xs text-gray-400 mb-4">+${item.val} ${icon}</div><button onclick="ui.buySpecial(${idx})" class="w-full ${color} py-3 rounded-xl font-bold text-sm">ACHETER (${item.cost} ${curIcon})</button></div>`; }); },
+            renderPass() { setText('pass-lvl', USER.pass.tier); setText('pass-xp-txt', `${USER.pass.xp}/100 XP`); setStyle('pass-bar', 'width', `${USER.pass.xp}%`); const tr = el('pass-track'); tr.innerHTML = '<div class="pass-connector"></div>'; for(let i=1; i<=50; i++) { let rwd = (i%10===0)?'📦':((i%2===0)?'🪙':'💎'); let val = (i%10===0)?1:((i%2===0)?50:5); let claimed = USER.pass.claimed.includes(i); let unlocked = USER.pass.tier >= i; let isGift = (i===1); let stateClass = claimed ? 'claimed' : (unlocked ? (isGift?'gift cursor-pointer':'active cursor-pointer') : 'locked'); let glow = unlocked && !claimed ? '<div class="glow"></div>' : ''; let btnText = claimed ? 'REÇU' : (unlocked ? 'RÉCUPÉRER' : 'BLOQUÉ'); if(isGift && !claimed) btnText = "CADEAU !"; let btnColor = claimed ? 'text-gray-500' : (unlocked ? (isGift ? 'text-yellow-300 font-black animate-pulse' : 'text-blue-400 font-black animate-pulse') : 'text-gray-600'); let badge = isGift ? "CADEAU" : `PALIER ${i}`; let fn = (unlocked && !claimed) ? `onclick="ui.claimPass(${i})"` : ''; tr.innerHTML += `<div class="pass-step ${stateClass} shrink-0" ${fn}>${glow}<div class="tier-badge">${badge}</div><div class="text-4xl mb-2 icon transition-transform duration-300 group-hover:scale-110">${rwd}</div><div class="text-[10px] font-bold mb-2">+${val}</div><div class="text-[8px] uppercase tracking-widest ${btnColor}">${btnText}</div></div>`; } setTimeout(() => { const target = document.querySelector('.pass-step.active') || document.querySelector('.pass-step.gift'); if(target) target.scrollIntoView({behavior: "smooth", inline: "center"}); }, 100); },
             renderLists() {
                 const sl = el('list-starters'); sl.innerHTML = ''; 
-                const sortedKeys = Object.keys(STARTERS).sort((a,b) => STARTERS[a].price - STARTERS[b].price);
-                sortedKeys.forEach(k => { 
+                Object.keys(STARTERS).forEach(k => { 
                     const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5'; 
-                    const btn = unlocked ? `<button onclick="event.stopPropagation(); ui.upgrade('${k}')" class="mt-2 w-full bg-green-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">AMÉLIORER (${lvl*150}🪙)</button>` : `<button onclick="event.stopPropagation(); ui.unlock('${k}')" class="mt-2 w-full bg-yellow-600/90 text-white text-[10px] py-2 rounded-lg font-bold shadow-md">ACHETER (${s.price}🪙)</button>`; 
-                    sl.innerHTML += `<div onclick="${unlocked ? `game.setStarter('${k}')` : ''}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center"><div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div><div class="font-black text-sm uppercase tracking-wider">${s.name}</div><div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div><div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div><button onclick="event.stopPropagation(); ui.generateLore('${s.name}')" class="mb-1 w-full bg-purple-600/50 hover:bg-purple-600 text-white text-[9px] py-1 rounded border border-purple-400/30 mt-1">✨ BIO</button>${btn}</div>`; 
+                    // OPEN DETAILS ON CLICK
+                    sl.innerHTML += `<div onclick="ui.openHeroDetails('${k}')" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
+                        <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
+                        <div class="font-black text-sm uppercase tracking-wider">${s.name}</div>
+                        <div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div>
+                        <div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>
+                    </div>`; 
                 });
-                const ml = el('list-modes'); ml.innerHTML = ''; Object.keys(MODES).forEach(k => { 
-                    const m = MODES[k]; 
-                    const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5';
-                    const active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; 
-                    ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400 leading-tight">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; 
-                });
-                const al = el('list-arenas'); al.innerHTML = ''; Object.keys(ARENAS).forEach(k => { 
-                    const a = ARENAS[k];
-                    const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400';
-                    const active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; 
-                    al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; 
-                });
+                const ml = el('list-modes'); ml.innerHTML = ''; Object.keys(MODES).forEach(k => { const m = MODES[k]; const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; const active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; }); const al = el('list-arenas'); al.innerHTML = ''; Object.keys(ARENAS).forEach(k => { const a = ARENAS[k]; const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; const active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
             },
-            renderProfile() {
-                el('profile-name').value = USER.name;
-                setText('profile-tag', USER.tag);
-                setText('profile-avatar', USER.avatar);
-                let totalLvl = Object.values(USER.levels).reduce((a,b)=>a+b, 0);
-                setText('profile-lvl', "LVL " + totalLvl);
+            openHeroDetails(k) {
+                const s = STARTERS[k];
+                const unlocked = USER.unlocked.includes(k);
+                const lvl = USER.levels[k] || 1;
+                
+                setText('hd-icon', s.icon);
+                setText('hd-name', s.name);
+                setText('hd-lvl', "NIVEAU " + lvl);
+                setText('hd-desc', s.lore || s.desc);
+                setText('hd-gadget-name', getGadgetName(s.gadget));
+                
+                // Animate bars
+                setTimeout(() => {
+                    setStyle('hd-bar-hp', 'width', (s.hp/600*100) + '%');
+                    setStyle('hd-bar-dmg', 'width', (s.dmg/150*100) + '%');
+                    setStyle('hd-bar-spd', 'width', (s.spd/10*100) + '%');
+                }, 50);
+
+                const actions = el('hd-actions');
+                if(unlocked) {
+                    const upgradeCost = lvl * 150;
+                    actions.innerHTML = `
+                        <button onclick="game.setStarter('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">SÉLECTIONNER</button>
+                        <button onclick="ui.upgrade('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-green-600/80 hover:bg-green-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">AMÉLIORER <span class="bg-black/20 px-2 rounded text-xs">${upgradeCost} 🪙</span></button>
+                    `;
+                } else {
+                    actions.innerHTML = `
+                        <button onclick="ui.unlock('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">DÉBLOQUER <span class="bg-black/20 px-2 rounded text-xs">${s.price} 🪙</span></button>
+                    `;
+                }
+
+                el('hero-details-modal').classList.remove('hidden');
             },
-            openAvatarSelector() {
-                const grid = el('avatar-grid');
-                grid.innerHTML = '';
-                ICONS.forEach(icon => {
-                    grid.innerHTML += `<button onclick="ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`;
-                });
-                el('avatar-selector').classList.remove('hidden');
-            },
-            selectAvatar(icon) {
-                USER.avatar = icon;
-                Storage.save();
-                el('avatar-selector').classList.add('hidden');
-                this.renderProfile();
-            },
-            updateMenu() {
-                const s = STARTERS[USER.selected], m = MODES[game.conf.mode], a = ARENAS[game.conf.arena];
-                setText('top-coins', USER.coins); setText('top-gems', USER.gems); setText('menu-trophies', USER.trophies);
-                let rIdx = 0; for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) rIdx = i; }
-                const currRank = RANKS[rIdx], nextRank = RANKS[rIdx+1];
-                const re = el('menu-rank'); if(re) { re.innerText = currRank.n; re.style.backgroundImage = `linear-gradient(to right, #fff, ${currRank.c})`; }
-                if(nextRank) { const diff = nextRank.t - USER.trophies, range = nextRank.t - currRank.t, done = USER.trophies - currRank.t, pct = Math.min(100, Math.max(0, (done / range) * 100)); setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`); setText('rank-progress-pct', Math.floor(pct) + '%'); setStyle('rank-progress-fill', 'width', pct + '%'); } else { setText('rank-progress-text', "RANG MAXIMUM !"); setText('rank-progress-pct', "100%"); setStyle('rank-progress-fill', 'width', '100%'); }
-                setText('play-starter', s.name); setText('play-icon', s.icon); setText('play-lvl', "Niveau "+(USER.levels[USER.selected]||1)); setText('play-mode', m.name); setText('play-mode-icon', m.icon); setText('play-arena', a.name);
-            },
+            renderProfile() { el('profile-name').value = USER.name; setText('profile-tag', USER.tag); setText('profile-avatar', USER.avatar); let totalLvl = Object.values(USER.levels).reduce((a,b)=>a+b, 0); setText('profile-lvl', "LVL " + totalLvl); },
+            openAvatarSelector() { const grid = el('avatar-grid'); grid.innerHTML = ''; ICONS.forEach(icon => { grid.innerHTML += `<button onclick="ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`; }); el('avatar-selector').classList.remove('hidden'); },
+            selectAvatar(icon) { USER.avatar = icon; Storage.save(); el('avatar-selector').classList.add('hidden'); this.renderProfile(); },
+            updateMenu() { const s = STARTERS[USER.selected], m = MODES[game.conf.mode], a = ARENAS[game.conf.arena]; setText('top-coins', USER.coins); setText('top-gems', USER.gems); setText('menu-trophies', USER.trophies); let rIdx = 0; for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) rIdx = i; } const currRank = RANKS[rIdx], nextRank = RANKS[rIdx+1]; const re = el('menu-rank'); if(re) { re.innerText = currRank.n; re.style.backgroundImage = `linear-gradient(to right, #fff, ${currRank.c})`; } if(nextRank) { const diff = nextRank.t - USER.trophies, range = nextRank.t - currRank.t, done = USER.trophies - currRank.t, pct = Math.min(100, Math.max(0, (done / range) * 100)); setText('rank-progress-text', `Encore ${diff} 🏆 avant ${nextRank.n}`); setText('rank-progress-pct', Math.floor(pct) + '%'); setStyle('rank-progress-fill', 'width', pct + '%'); } else { setText('rank-progress-text', "RANG MAXIMUM !"); setText('rank-progress-pct', "100%"); setStyle('rank-progress-fill', 'width', '100%'); } setText('play-starter', s.name); setText('play-icon', s.icon); setText('play-lvl', "Niveau "+(USER.levels[USER.selected]||1)); setText('play-mode', m.name); setText('play-mode-icon', m.icon); setText('play-arena', a.name); },
             updateStats() { setText('stat-kills', USER.stats.kills); setText('stat-wave', USER.stats.maxWave); setText('stat-games', USER.stats.games); setText('stat-wins', USER.stats.wins); setText('stat-dmg', Math.floor(USER.stats.dmg/1000)+"k"); },
             unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); ui.notif(`DÉBLOQUÉ!`, "#22c55e"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
             upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); ui.notif(`NIVEAU UP!`, "#3b82f6"); ui.renderLists(); ui.updateMenu(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
             claimDaily() { USER.coins += 200; USER.lastDaily = Date.now(); Storage.save(); ui.notif("+200 🪙", "#eab308"); ui.renderLists(); ui.updateMenu(); ui.renderShop(); },
-            buy(t, cost, curr) { 
-                let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; }
-                if(ok) { if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;ui.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;ui.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; ui.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; ui.notif("+30 💎","#a855f7"); } Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444");
-            },
-            buySpecial(idx) {
-                const item = USER.shop.items[idx]; if(!item) return;
-                if(item.curr === 'coins' && USER.coins >= item.cost) { USER.coins -= item.cost; if(item.type==='gems') { USER.gems += item.val; ui.notif(`+${item.val} 💎`, "#a855f7"); } if(item.type==='box') { ui.buy('box', 0, 'free'); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } 
-                else if(item.curr === 'gems' && USER.gems >= item.cost) { USER.gems -= item.cost; if(item.type==='coins') { USER.coins += item.val; ui.notif(`+${item.val} 🪙`, "#eab308"); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444");
-            },
-            claimPass(tier) {
-                if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) {
-                    USER.pass.claimed.push(tier);
-                    let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5); let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems');
-                    if(type==='box') ui.buy('box', 0, 'free'); else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); } else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); }
-                    Storage.save(); ui.renderPass(); ui.updateMenu();
-                }
-            },
-            exportSave() {
-                const json = JSON.stringify(USER);
-                const data = btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); }));
-                if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(data).then(() => { ui.notif("COPIÉ !", "#22c55e"); }).catch(err => { fallbackCopy(data); }); } else { fallbackCopy(data); }
-                function fallbackCopy(text) { const el = document.createElement('textarea'); el.value = text; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); ui.notif("CODE COPIÉ !", "#22c55e"); }
-            },
-            importSave() {
-                let code = ""; try { code = window.prompt("Colle ton code de sauvegarde ici :"); } catch (e) { console.error(e); }
-                if(code) { try { const json = decodeURIComponent(atob(code).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); const data = JSON.parse(json); if(data.coins !== undefined) { USER = data; Storage.save(); location.reload(); } else { ui.notif("CODE INVALIDE", "#ef4444"); } } catch(e) { ui.notif("ERREUR", "#ef4444"); } }
-            },
-            generateLore(heroName) {
-                const modal = el('lore-modal'); const title = el('lore-title'); const text = el('lore-text'); const icon = el('lore-icon');
-                modal.classList.remove('hidden');
-                title.innerText = heroName;
-                const heroKey = Object.keys(STARTERS).find(k => STARTERS[k].name === heroName);
-                icon.innerText = STARTERS[heroKey].icon;
-                text.innerText = STARTERS[heroKey].lore;
-            },
-            confetti() { const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff', '#ff00ff']; for(let i=0; i<50; i++) { const div = document.createElement('div'); div.className = 'confetti'; div.style.left = Math.random() * 100 + 'vw'; div.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; div.style.animationDuration = (Math.random() * 2 + 2) + 's'; document.body.appendChild(div); setTimeout(() => div.remove(), 4000); } }
+            buy(t, cost, curr) { let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; } if(ok) { if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;ui.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;ui.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; ui.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; ui.notif("+30 💎","#a855f7"); } Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
+            buySpecial(idx) { const item = USER.shop.items[idx]; if(!item) return; if(item.curr === 'coins' && USER.coins >= item.cost) { USER.coins -= item.cost; if(item.type==='gems') { USER.gems += item.val; ui.notif(`+${item.val} 💎`, "#a855f7"); } if(item.type==='box') { ui.buy('box', 0, 'free'); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } else if(item.curr === 'gems' && USER.gems >= item.cost) { USER.gems -= item.cost; if(item.type==='coins') { USER.coins += item.val; ui.notif(`+${item.val} 🪙`, "#eab308"); } USER.shop.items.splice(idx, 1); Storage.save(); ui.updateMenu(); ui.renderShop(); } else ui.notif("PAS ASSEZ!", "#ef4444"); },
+            claimPass(tier) { if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) { USER.pass.claimed.push(tier); let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5); let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems'); if(type==='box') ui.buy('box', 0, 'free'); else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); } else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); } Storage.save(); ui.renderPass(); ui.updateMenu(); } },
+            exportSave() { const json = JSON.stringify(USER); const data = btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); })); if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(data).then(() => { ui.notif("COPIÉ !", "#22c55e"); }).catch(err => { fallbackCopy(data); }); } else { fallbackCopy(data); } function fallbackCopy(text) { const el = document.createElement('textarea'); el.value = text; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); ui.notif("CODE COPIÉ !", "#22c55e"); } },
+            importSave() { let code = ""; try { code = window.prompt("Colle ton code de sauvegarde ici :"); } catch (e) { console.error(e); } if(code) { try { const json = decodeURIComponent(atob(code).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); const data = JSON.parse(json); if(data.coins !== undefined) { USER = data; Storage.save(); location.reload(); } else { ui.notif("CODE INVALIDE", "#ef4444"); } } catch(e) { ui.notif("ERREUR", "#ef4444"); } } },
+            generateLore(heroName) { const modal = el('lore-modal'); const title = el('lore-title'); const text = el('lore-text'); const icon = el('lore-icon'); modal.classList.remove('hidden'); title.innerText = heroName; const heroKey = Object.keys(STARTERS).find(k => STARTERS[k].name === heroName); icon.innerText = STARTERS[heroKey].icon; text.innerText = STARTERS[heroKey].lore; }
         };
 
         const Input={k:{},jL:{a:0,x:0,y:0,i:null},jR:{a:0,x:0,y:0,i:null},m:{x:0,y:0,d:0},init(){
-            window.addEventListener('keydown',e=>{this.k[e.code]=1;if(e.code==='Space')game.player?.dash();if(e.code==='KeyF')game.player?.useUlti();});
+            window.addEventListener('keydown',e=>{this.k[e.code]=1;if(e.code==='Space')game.player?.dash();if(e.code==='KeyE')game.player?.useGadget();});
             window.addEventListener('keyup',e=>this.k[e.code]=0);
             window.addEventListener('mousemove',e=>{this.m.x=e.clientX;this.m.y=e.clientY;});
             window.addEventListener('mousedown',()=>this.m.d=1);
             window.addEventListener('mouseup',()=>this.m.d=0);
             const z=el('mobile-controls');
-            const h=(e, isEnd)=>{ if(e.target.tagName !== 'BUTTON') e.preventDefault(); let lf=0,rf=0; for(let i=0;i<e.touches.length;i++){ const t=e.touches[i],x=t.clientX,y=t.clientY; if(x<CFG.w/2){ if(!this.jL.a && !isEnd){this.jL.a=1;this.jL.i=t.identifier;this.jL.ox=x;this.jL.oy=y;const l=el('stick-left-zone');if(l){l.style.display='block';l.style.left=x+'px';l.style.top=y+'px';}} if(this.jL.i===t.identifier){lf=1;const dx=x-this.jL.ox,dy=y-this.jL.oy,d=Math.min(60,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jL.x=Math.cos(a)*d/60;this.jL.y=Math.sin(a)*d/60;const k=document.querySelector('#stick-left-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jL.x*60}px,${this.jL.y*60}px)`;}} } else{ if(!this.jR.a && !isEnd){this.jR.a=1;this.jR.i=t.identifier;this.jR.ox=x;this.jR.oy=y;const r=el('stick-right-zone');if(r){r.style.display='block';r.style.left=x+'px';r.style.top=y+'px';}} if(this.jR.i===t.identifier){rf=1;const dx=x-this.jR.ox,dy=y-this.jR.oy,d=Math.min(60,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jR.x=Math.cos(a)*d/60;this.jR.y=Math.sin(a)*d/60;const k=document.querySelector('#stick-right-zone .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jR.x*60}px,${this.jR.y*60}px)`;}} } } if(!lf){this.jL.a=0;this.jL.x=0;this.jL.y=0;const l=el('stick-left-zone');if(l)l.style.display='none';} if(!rf){this.jR.a=0;this.jR.x=0;this.jR.y=0;const r=el('stick-right-zone');if(r)r.style.display='none';} };
+            const h=(e, isEnd)=>{ 
+                if(e.target.tagName !== 'BUTTON') e.preventDefault(); 
+                let lf=0,rf=0; 
+                for(let i=0;i<e.touches.length;i++){ 
+                    const t=e.touches[i],x=t.clientX,y=t.clientY; 
+                    if(x<CFG.w/2){ 
+                        if(!this.jL.a && !isEnd){this.jL.a=1;this.jL.i=t.identifier;this.jL.ox=x;this.jL.oy=y;const l=el('stick-left-base');if(l){l.style.display='block';l.style.left=x+'px';l.style.top=y+'px';}} 
+                        if(this.jL.i===t.identifier){lf=1;const dx=x-this.jL.ox,dy=y-this.jL.oy,d=Math.min(60,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jL.x=Math.cos(a)*d/60;this.jL.y=Math.sin(a)*d/60;const k=document.querySelector('#stick-left-base .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jL.x*60}px,${this.jL.y*60}px)`;}} 
+                    }else{ 
+                        if(!this.jR.a && !isEnd){this.jR.a=1;this.jR.i=t.identifier;this.jR.ox=x;this.jR.oy=y;const r=el('stick-right-base');if(r){r.style.display='block';r.style.left=x+'px';r.style.top=y+'px';}} 
+                        if(this.jR.i===t.identifier){rf=1;const dx=x-this.jR.ox,dy=y-this.jR.oy,d=Math.min(60,Math.hypot(dx,dy));if(d>5){const a=Math.atan2(dy,dx);this.jR.x=Math.cos(a)*d/60;this.jR.y=Math.sin(a)*d/60;const k=document.querySelector('#stick-right-base .stick-knob');if(k)k.style.transform=`translate(-50%,-50%) translate(${this.jR.x*60}px,${this.jR.y*60}px)`;}} 
+                    } 
+                } 
+                if(!lf){this.jL.a=0;this.jL.x=0;this.jL.y=0;const l=el('stick-left-base');if(l)l.style.display='none';} 
+                if(!rf){this.jR.a=0;this.jR.x=0;this.jR.y=0;const r=el('stick-right-base');if(r)r.style.display='none';} 
+            };
             z.addEventListener('touchstart',e=>h(e,false),{passive:false}); z.addEventListener('touchmove',e=>h(e,false),{passive:false}); z.addEventListener('touchend',e=>h(e,true));
         }};
 
@@ -586,19 +492,40 @@
 
         class Player extends Entity{
             constructor(k){
-                const s=STARTERS[k], l=(USER.levels[k]||1)-1; super(game.world/2,game.world/2,20,s.color); this.stats={...s}; this.stats.hp+=s.scale.hp*l; this.stats.dmg+=s.scale.dmg*l; this.hp=this.stats.hp; this.maxHp=this.stats.hp; this.xp=0;this.xpMax=100;this.lvl=1;this.super=0;this.cd=0;this.dashT=0;this.angle=0;this.ammo=3;this.ammoMax=3;this.reloadT=0;this.gadgetCharges=3;this.cubes=0;
+                const s=STARTERS[k], l=(USER.levels[k]||1)-1; super(game.world/2,game.world/2,20,s.color); this.stats={...s}; this.stats.hp+=s.scale.hp*l; this.stats.dmg+=s.scale.dmg*l; this.hp=this.stats.hp; this.maxHp=this.stats.hp; this.xp=0;this.xpMax=100;this.lvl=1;this.super=0;this.cd=0;this.dashT=0;this.angle=0;this.ammo=3;this.ammoMax=3;this.reloadT=0;this.gadgetCharges=3;this.cubes=0; this.activeEffects={};
             }
             update(){
-                let dx=0,dy=0; if(Input.jL.a){dx=Input.jL.x;dy=Input.jL.y;} else {if(Input.k['KeyW'])dy=-1;if(Input.k['KeyS'])dy=1;if(Input.k['KeyA'])dx=-1;if(Input.k['KeyD'])dx=1;} const l=Math.hypot(dx,dy); if(l>0.1){if(l>1){dx/=l;dy/=l;} this.move(dx*this.stats.spd, dy*this.stats.spd);}
+                // GADGET EFFECTS
+                let speedMult = 1;
+                if(this.activeEffects.speed > 0) { speedMult = 1.5; this.activeEffects.speed--; }
+
+                let dx=0,dy=0; if(Input.jL.a){dx=Input.jL.x;dy=Input.jL.y;} else {if(Input.k['KeyW'])dy=-1;if(Input.k['KeyS'])dy=1;if(Input.k['KeyA'])dx=-1;if(Input.k['KeyD'])dx=1;}
+                const l=Math.hypot(dx,dy); if(l>0.1){if(l>1){dx/=l;dy/=l;} this.move(dx*this.stats.spd*speedMult, dy*this.stats.spd*speedMult);}
                 if(Input.jR.a){this.angle=Math.atan2(Input.jR.y,Input.jR.x);if(Math.hypot(Input.jR.x,Input.jR.y)>0.5)this.shoot();} else {const wx=Input.m.x+game.cam.x, wy=Input.m.y+game.cam.y;this.angle=Math.atan2(wy-this.y,wx-this.x);if(Input.m.d)this.shoot();}
                 if(this.cd>0)this.cd--; if(this.dashT>0)this.dashT--; if(this.ammo<this.ammoMax){this.reloadT++;if(this.reloadT>this.stats.reload){this.ammo++;this.reloadT=0;}}
                 if(game.frame%60===0 && this.hp<this.maxHp && this.reloadT>20)this.hp+=this.maxHp*0.12;
+                if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) { this.hp -= 10; ui.flash(); if(this.hp<=0) game.over("Tué par le Gaz"); }
             }
             move(dx,dy){const nx=this.x+dx,ny=this.y+dy;let cx=0,cy=0;for(let w of game.map){if(w.type===1)continue;if(w.collide({x:nx,y:this.y,r:this.r}))cx=1;if(w.collide({x:this.x,y:ny,r:this.r}))cy=1;}if(!cx)this.x=Math.max(this.r,Math.min(game.world-this.r,nx));if(!cy)this.y=Math.max(this.r,Math.min(game.world-this.r,ny));}
             shoot(){ if(this.cd>0 || this.ammo<1)return; this.cd=this.stats.rate; this.ammo--; this.reloadT=-20; game.shake=2; const t=this.stats.type||'normal', cnt=t==='shotgun'?5:(1+(this.stats.multi||0)), spr=t==='shotgun'?0.3:0.05, dmg=this.stats.dmg*(1+this.cubes*0.1); for(let i=0;i<cnt;i++){ const a=this.angle+(Math.random()-0.5)*spr+(i-(cnt-1)/2)*0.1, s=t==='sniper'?25:(t==='flame'?10:(t==='laser'?30:18)), l=t==='flame'?20:60; game.projs.push({x:this.x+Math.cos(this.angle)*25,y:this.y+Math.sin(this.angle)*25,vx:Math.cos(a)*s,vy:Math.sin(a)*s,dmg:dmg,life:l,r:t==='flame'?8:(t==='laser'?4:5),c:this.c,friend:true}); } }
             dash(){ if(this.dashT>0)return; this.dashT=60; game.shake=10; const dx=Math.cos(this.angle)*180,dy=Math.sin(this.angle)*180; this.move(dx,dy); for(let i=0;i<8;i++)game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4}); }
-            ulti(){ if(this.super<100)return; this.super=0; game.shake=20; ui.notif("ULTIMATE!","#facc15"); for(let i=0;i<36;i++){ const a=(Math.PI*2/36)*i; game.projs.push({x:this.x,y:this.y,vx:Math.cos(a)*15,vy:Math.sin(a)*15,dmg:50,life:80,r:8,c:'#facc15',friend:true}); } }
-            useGadget() { if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); const t=this.stats.gadget; if(t==="heal")this.hp=Math.min(this.maxHp,this.hp+1000); if(t==="shield"){this.maxHp+=1000;this.hp+=1000;} if(t==="teleport"){this.x+=Math.cos(this.angle)*300;this.y+=Math.sin(this.angle)*300;} }
+            useGadget() { 
+                if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); 
+                const t=this.stats.gadget; 
+                if(t==="heal") { this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3}); }
+                if(t==="shield") { this.maxHp+=1000; this.hp+=1000; }
+                if(t==="teleport") { this.x+=Math.cos(this.angle)*300; this.y+=Math.sin(this.angle)*300; }
+                if(t==="speed") { this.activeEffects.speed = 180; } // 3s speed
+                if(t==="knockback") {
+                    for(let e of game.ents) {
+                        let d = Dist(this, e);
+                        if(d < 300) {
+                            let a = Math.atan2(e.y-this.y, e.x-this.x);
+                            e.x += Math.cos(a)*200; e.y += Math.sin(a)*200;
+                        }
+                    }
+                }
+            }
             draw(ctx){ ctx.save(); ctx.shadowColor = this.c; ctx.shadowBlur = 20; super.draw(ctx); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.fillStyle='#1e293b'; ctx.fillRect(10,-6,28,12); if(this.reloadT > 0) { ctx.rotate(-this.angle); ctx.fillStyle = 'white'; ctx.fillRect(-15, 30, 30 * (this.reloadT/this.stats.reload), 3); } ctx.restore(); }
         }
 
@@ -608,37 +535,20 @@
                 if(this.cd>0)this.cd--;
                 const p=game.player, d=Dist(this,p); this.angle=Math.atan2(p.y-this.y,p.x-this.x);
                 let playerHidden = false; for(let w of game.map) { if(w.type === 1 && ColRect(game.player, w)) { playerHidden = true; break; } }
-                
-                // DUEL FIX: Infinite range, always chase unless super far hidden
-                if(game.conf.mode === 'duel') {
-                    this.mode = 'CHASE'; 
-                } else {
-                     if(d < 500 && !playerHidden) this.mode = 'CHASE'; else this.mode = 'WANDER';
-                }
-
+                if(game.conf.mode === 'duel') { this.mode = 'CHASE'; } else { if(d < 500 && !playerHidden) this.mode = 'CHASE'; else this.mode = 'WANDER'; }
                 let tx,ty;
-                if(this.mode==='CHASE'){ 
-                    let strafe = Math.sin(game.frame * 0.05) * 100; 
-                    tx = p.x + Math.cos(this.angle + Math.PI/2) * strafe; 
-                    ty = p.y + Math.sin(this.angle + Math.PI/2) * strafe; 
-                } 
+                if(this.mode==='CHASE'){ let strafe = Math.sin(game.frame * 0.05) * 100; tx = p.x + Math.cos(this.angle + Math.PI/2) * strafe; ty = p.y + Math.sin(this.angle + Math.PI/2) * strafe; } 
                 else { 
-                    if(game.conf.mode === 'duel') {
-                         if(!this.target || Dist(this,this.target)<50) this.target={x:game.world/2 + Rnd(-300,300), y:game.world/2 + Rnd(-300,300)};
-                    } else {
-                        let item = game.items.find(i => Dist(this, i) < 300); 
-                        if(item) { this.target = item; } 
-                        else if(!this.target || Dist(this,this.target)<50 || Math.random()<0.02) { this.target={x:Rnd(100,game.world-100), y:Rnd(100,game.world-100)}; } 
-                    }
+                    if(game.conf.mode === 'duel') { if(!this.target || Dist(this,this.target)<50) this.target={x:game.world/2 + Rnd(-300,300), y:game.world/2 + Rnd(-300,300)}; } 
+                    else { let item = game.items.find(i => Dist(this, i) < 300); if(item) { this.target = item; } else if(!this.target || Dist(this,this.target)<50 || Math.random()<0.02) { this.target={x:Rnd(100,game.world-100), y:Rnd(100,game.world-100)}; } }
                     tx=this.target.x; ty=this.target.y; 
                 }
                 const a=Math.atan2(ty-this.y, tx-this.x);
                 this.move(Math.cos(a)*this.stats.spd, Math.sin(a)*this.stats.spd);
-                
                 if(this.mode === 'CHASE' && Math.random()<0.05) this.shoot(); 
                 if(Math.random()<0.01) this.dash(); 
-                this.super+=0.1; if(this.super>=100)this.ulti(); 
                 if(game.frame%60===0 && this.hp<this.maxHp)this.hp++;
+                if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) this.hp -= 10;
             }
             shoot(){ if(this.cd>0)return; this.cd=20; game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15,vy:Math.sin(this.angle)*15,dmg:10,life:60,r:6,c:this.c,friend:false}); }
         }
@@ -690,7 +600,7 @@
             setArena(a){this.conf.arena=a; ui.updateMenu(); ui.showTab('play');},
             start(){
                 el('menu-screen').classList.add('hidden'); el('hud').classList.remove('hidden');
-                this.player=new Player(USER.selected); this.ents=[]; this.projs=[]; this.parts=[]; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0;
+                this.player=new Player(USER.selected); this.ents=[]; this.projs=[]; this.parts=[]; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=this.world;
                 this.timeLeft = 3 * 60 * 60; 
                 this.map=[]; for(let i=0;i<25;i++){const w=Math.random()*150+50,h=Math.random()*150+50,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);if(Math.hypot(x-this.world/2,y-this.world/2)>400)this.map.push(new Wall(x,y,w,h,0));}
                 for(let i=0;i<40;i++){const w=Math.random()*100+100,h=Math.random()*100+100,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);this.map.push(new Wall(x,y,w,h,1));}
