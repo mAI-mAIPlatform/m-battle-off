@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.5.5 - mAI</title>
+    <title>mBattle v0.5.6 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -36,22 +36,20 @@
         #gas-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 30%, rgba(34, 197, 94, 0.4) 80%); z-index: 4; transition: opacity 0.5s; }
         #flash-layer { position: absolute; inset: 0; pointer-events: none; background: #ef4444; opacity: 0; transition: opacity 0.1s; z-index: 6; mix-blend-mode: overlay; }
 
-        /* --- CONTROLS (FIXED) --- */
-        /* Touch zones cover halves of screen but don't move visual elements */
-        .joystick-zone { position: absolute; top: 0; width: 50%; height: 100%; pointer-events: auto; z-index: 40; }
-        #stick-left-zone { left: 0; }
-        #stick-right-zone { right: 0; }
+        /* --- CONTROLS --- */
+        .joystick-zone { position: absolute; width: 140px; height: 140px; pointer-events: auto; z-index: 50; opacity: 0; transition: opacity 0.2s; }
+        .joystick-zone.active { opacity: 1; }
         
-        /* Visual Elements - Fixed Position via CSS */
+        /* FIXED JOYSTICKS - ALWAYS VISIBLE & STATIC */
         .stick-base { 
             width: 130px; height: 130px; 
             border-radius: 50%; 
             background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 70%); 
             border: 2px solid rgba(255,255,255,0.1); 
-            position: absolute; bottom: 50px; /* Fixed bottom */
-            pointer-events: none; /* Important: clicks pass through to zone */
+            position: absolute; bottom: 50px; 
+            pointer-events: auto; 
             display: block !important; 
-            transition: border-color 0.2s, background 0.2s;
+            transition: border-color 0.2s;
         }
         .stick-base.active { border-color: rgba(96, 165, 250, 0.5); background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0,0,0,0.4) 70%); }
         
@@ -65,7 +63,7 @@
             position: absolute; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
             box-shadow: 0 0 20px rgba(255,255,255,0.3); 
-            transition: transform 0.05s linear; /* Ultra fast response */
+            /* Removed transition for instant feedback */
         }
         
         .action-btn { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 60; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.1s; }
@@ -184,7 +182,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.5</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.6</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -241,7 +239,7 @@
                     <div class="text-xs text-right text-gray-400 mb-4">Nouveaux items dans: <span id="shop-timer" class="text-yellow-400 font-mono">--:--</span></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div>
                 </div>
-                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2><div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr></table></div><div class="grid grid-cols-2 gap-4 mb-8"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div><h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3><div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.5.5 (STABLE ANCHOR)</h3><ul><li>🕹️ Joysticks Ancrés : Fixés en bas de l'écran.</li><li>🎯 Visée : Plus précise et sans tremblement.</li><li>🚀 Perfs : Optimisé pour 120fps.</li></ul></div></div></div>
+                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2><div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr></table></div><div class="grid grid-cols-2 gap-4 mb-8"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div><h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3><div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.5.6 (PRECISION CONTROL)</h3><ul><li>🕹️ Joysticks Fixes : Plus de mouvements intempestifs.</li><li>📍 Précision : Le bouton suit le doigt dans la base.</li><li>🔧 Fixes : Correction de la zone morte.</li></ul></div></div></div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
                     <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
@@ -315,7 +313,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.5.5 - FIXED CONTROLS */
+        /* mBATTLE TITAN v0.5.6 - PRECISION CONTROLS */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques. Précis et mortel." },
@@ -413,6 +411,7 @@
                 const sl = el('list-starters'); sl.innerHTML = ''; 
                 Object.keys(STARTERS).forEach(k => { 
                     const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5'; 
+                    // OPEN DETAILS ON CLICK
                     sl.innerHTML += `<div onclick="ui.openHeroDetails('${k}')" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
                         <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
                         <div class="font-black text-sm uppercase tracking-wider">${s.name}</div>
@@ -570,6 +569,7 @@
                 this.move(Math.cos(a)*this.stats.spd, Math.sin(a)*this.stats.spd);
                 if(this.mode === 'CHASE' && Math.random()<0.05) this.shoot(); 
                 if(Math.random()<0.01) this.dash(); 
+                this.super+=0.1; if(this.super>=100)this.ulti(); 
                 if(game.frame%60===0 && this.hp<this.maxHp)this.hp++;
                 if(game.gasRadius && Dist(this, {x:game.world/2, y:game.world/2}) > game.gasRadius) this.hp -= 10;
             }
