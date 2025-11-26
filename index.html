@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.5.6 - mAI</title>
+    <title>mBattle v0.5.8 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -63,7 +63,7 @@
             position: absolute; top: 50%; left: 50%; 
             transform: translate(-50%, -50%); 
             box-shadow: 0 0 20px rgba(255,255,255,0.3); 
-            /* Removed transition for instant feedback */
+            transition: transform 0.05s linear;
         }
         
         .action-btn { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 60; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.1s; }
@@ -106,11 +106,16 @@
         @keyframes rise { 0% { bottom: -10px; transform: translateX(0); opacity: 0; } 50% { opacity: 1; } 100% { bottom: 100%; transform: translateX(-20px); opacity: 0; } }
         @keyframes spin-slow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        /* STAT BARS IN MODAL */
+        /* STAT BARS */
         .stat-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
         .stat-label { width: 60px; font-size: 10px; font-weight: bold; color: #94a3b8; text-transform: uppercase; }
         .stat-track { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
         .stat-fill { height: 100%; border-radius: 4px; width: 0; transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+        
+        /* PATCH NOTES */
+        .patch-note ul { list-style-type: none; padding: 0; margin-top: 10px; }
+        .patch-note li { margin-bottom: 5px; padding-left: 15px; position: relative; }
+        .patch-note li::before { content: '•'; color: #3b82f6; position: absolute; left: 0; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -121,9 +126,8 @@
     <div id="season-particles" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
 
     <div id="ui-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-10">
-        
+        <!-- HUD -->
         <div id="hud" class="hidden w-full h-full relative">
-            <!-- Top Left HUD -->
             <div class="absolute top-4 left-4 flex flex-col gap-4 pointer-events-auto">
                 <div class="glass-panel p-2 flex items-center gap-3 pr-4 scale-90 origin-top-left md:scale-100">
                     <div class="relative">
@@ -144,45 +148,34 @@
                 </div>
                 <div class="glass-panel p-1 border-white/20 bg-black/50"><canvas id="minimap" width="100" height="100" class="rounded-lg bg-black/80 opacity-90"></canvas></div>
             </div>
-            
-            <!-- Top Center HUD -->
             <div class="absolute top-6 left-1/2 -translate-x-1/2 text-center pointer-events-auto">
                 <div id="hud-score" class="font-tech text-5xl font-bold text-white leading-none drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">0</div>
                 <div class="text-[10px] font-bold text-blue-400 bg-black/50 px-2 rounded mt-1" id="hud-sub">VAGUE 1</div>
                 <div id="hud-timer" class="text-xl font-black text-yellow-400 drop-shadow-lg mt-1 hidden">03:00</div>
             </div>
-
-            <!-- Pause Button -->
             <div class="absolute top-4 right-4 flex flex-col gap-4 pointer-events-auto items-end">
                 <button onclick="game.togglePause()" class="glass-panel w-10 h-10 flex items-center justify-center hover:bg-white/10 text-lg transition active:scale-90">⏸</button>
             </div>
-
-            <!-- Boss Health -->
             <div id="boss-ui" class="hidden absolute top-24 left-1/2 -translate-x-1/2 w-3/4 max-w-lg pointer-events-auto transition-all duration-500">
                 <div class="flex justify-between text-[10px] text-red-400 font-bold mb-1 uppercase tracking-widest"><span id="boss-name">BOSS</span><span id="boss-pct">100%</span></div>
                 <div class="h-4 bg-red-950/80 border border-red-500/50 rounded-full overflow-hidden shadow-[0_0_20px_rgba(220,38,38,0.4)]"><div id="boss-bar" class="h-full bg-gradient-to-r from-red-600 to-red-500 w-full transition-all duration-200"></div></div>
             </div>
-
             <div id="kill-feed" class="absolute top-32 left-4 flex flex-col gap-2 w-48 pointer-events-none"></div>
             <div id="notif-area" class="absolute top-48 left-1/2 -translate-x-1/2 pointer-events-none flex flex-col items-center gap-2 w-full z-30"></div>
-            
             <div id="mobile-controls" class="hidden absolute inset-0 z-40">
-                <!-- Fixed Joysticks (Visual Only) -->
                 <div id="stick-left-base" class="stick-base" style="left: 40px; bottom: 40px;"><div class="stick-knob"></div></div>
                 <div id="stick-right-base" class="stick-base" style="right: 40px; bottom: 40px;"><div class="stick-knob"></div></div>
-                
-                <!-- Action Buttons -->
                 <button id="btn-gadget" class="action-btn bottom-36 right-12 w-16 h-16 bg-green-900/90 border-2 border-green-500 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg" ontouchstart="event.stopPropagation(); game.player?.useGadget()" onmousedown="game.player?.useGadget()"><span class="font-tech font-bold text-[10px] z-10">GADGET</span><div class="absolute -top-1 -right-1 bg-black border border-white text-[9px] w-5 h-5 rounded-full flex items-center justify-center" id="gadget-count">3</div></button>
                 <button id="btn-dash" class="action-btn bottom-12 right-36 w-20 h-20 rounded-full glass-panel border border-white/40 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg bg-blue-900/30" ontouchstart="event.stopPropagation(); game.player?.dash()" onmousedown="game.player?.dash()"><span class="text-3xl">⚡</span><div id="dash-cd" class="absolute inset-0 bg-black/70 origin-bottom h-0 transition-all duration-75 rounded-full"></div></button>
             </div>
         </div>
 
-        <!-- MENU SCREEN -->
+        <!-- MENU -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.6</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.5.8</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -234,12 +227,72 @@
 
                 <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div></div>
                 <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2><div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div><h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div></div>
-                <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2>
-                    <div class="text-xs text-right text-gray-400 mb-4">Nouveaux items dans: <span id="shop-timer" class="text-yellow-400 font-mono">--:--</span></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div>
+                <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> BOUTIQUE (24H)</h2><div class="text-xs text-right text-gray-400 mb-4">Refresh: <span id="shop-timer" class="text-yellow-400 font-mono">--:--</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div></div>
+                
+                <!-- UPDATED INFOS TAB WITH PATCH NOTES -->
+                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2>
+                    <div class="glass-panel p-6 mb-6 hidden md:block">
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3>
+                        <table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr></table>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div>
+                        <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div>
+                        <div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div>
+                    </div>
+
+                    <!-- ARCHIVED PATCH NOTES -->
+                    <h3 class="text-xl font-bold mb-4 text-blue-400">HISTORIQUE DES VERSIONS</h3>
+                    <div class="glass-panel p-6 text-sm text-gray-300 h-64 overflow-y-auto scrollbar-hide space-y-6">
+                        <div class="patch-note">
+                            <h3 class="font-bold text-yellow-400 mb-2">v0.5.8 (LEGACY & FIRST)</h3>
+                            <ul>
+                                <li>🔱 Events à la une : Raid Titan et La Forge en priorité.</li>
+                                <li>📜 Archives : Historique complet des patchs ajouté.</li>
+                            </ul>
+                        </div>
+                         <div class="patch-note">
+                            <h3 class="font-bold text-gray-400 mb-2">v0.5.7 (ULTIMATE FX)</h3>
+                            <ul>
+                                <li>✨ Particules V2 : Effets visuels next-gen.</li>
+                                <li>💥 Impacts : Projectiles lumineux et traces au sol.</li>
+                            </ul>
+                        </div>
+                        <div class="patch-note">
+                            <h3 class="font-bold text-gray-400 mb-2">v0.5.6 (PRECISION)</h3>
+                            <ul>
+                                <li>🕹️ Joysticks fixes : Contrôles ancrés et précis.</li>
+                                <li>📱 Mobile : Optimisation tactile iPhone.</li>
+                            </ul>
+                        </div>
+                        <div class="patch-note">
+                            <h3 class="font-bold text-gray-400 mb-2">v0.5.5 (STABLE ANCHOR)</h3>
+                            <ul>
+                                <li>⚓ Stabilité : Fix définitif des contrôles mobiles.</li>
+                                <li>🎯 Visée : Zéro tremblement.</li>
+                            </ul>
+                        </div>
+                         <div class="patch-note">
+                            <h3 class="font-bold text-gray-400 mb-2">v0.5.4 (SHOP DELUXE)</h3>
+                            <ul>
+                                <li>🛍️ Boutique V2 : 4 slots avec offres quotidiennes.</li>
+                                <li>🎁 Cadeau : Un item gratuit chaque jour.</li>
+                            </ul>
+                        </div>
+                         <div class="patch-note">
+                            <h3 class="font-bold text-gray-400 mb-2">v0.5.1 (TITAN GOLD)</h3>
+                            <ul>
+                                <li>🔱 Saison 1 : Thème doré et contenu exclusif.</li>
+                                <li>🤖 Duel : IA agressive et intelligente.</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2><div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr></table></div><div class="grid grid-cols-2 gap-4 mb-8"><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🎮</div><div class="text-[10px] text-gray-500 uppercase font-bold">Parties</div><div class="text-2xl font-bold" id="stat-games">0</div></div><div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div><div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div></div><h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3><div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.5.6 (PRECISION CONTROL)</h3><ul><li>🕹️ Joysticks Fixes : Plus de mouvements intempestifs.</li><li>📍 Précision : Le bouton suit le doigt dans la base.</li><li>🔧 Fixes : Correction de la zone morte.</li></ul></div></div></div>
+
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
                     <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
@@ -270,7 +323,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="w-full glass-nav h-[90px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
                 <button onclick="ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
                 <button onclick="ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
@@ -281,18 +333,10 @@
             </div>
         </div>
 
-        <!-- HERO DETAILS MODAL -->
+        <!-- MODALS -->
         <div id="hero-details-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
-            <div class="glass-panel p-6 max-w-md w-full mx-4 relative border-2 border-blue-500/30" onclick="event.stopPropagation()" id="hero-card-inner">
-                <button onclick="document.getElementById('hero-details-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl z-10">×</button>
-                <div class="flex flex-col items-center mb-6"><div class="w-24 h-24 rounded-2xl bg-black/50 border-2 border-white/20 flex items-center justify-center text-6xl shadow-[0_0_30px_rgba(59,130,246,0.3)] mb-3" id="hd-icon"></div><h2 class="text-3xl font-black uppercase font-tech tracking-wider" id="hd-name"></h2><div class="text-blue-400 font-bold text-sm" id="hd-lvl"></div></div>
-                <div class="space-y-4 mb-6"><div class="stat-row"><div class="stat-label">SANTÉ</div><div class="stat-track"><div id="hd-bar-hp" class="stat-fill bg-green-500"></div></div></div><div class="stat-row"><div class="stat-label">DÉGÂTS</div><div class="stat-track"><div id="hd-bar-dmg" class="stat-fill bg-red-500"></div></div></div><div class="stat-row"><div class="stat-label">VITESSE</div><div class="stat-track"><div id="hd-bar-spd" class="stat-fill bg-yellow-400"></div></div></div></div>
-                <div class="bg-white/5 p-4 rounded-xl border border-white/10 mb-4"><div class="text-[10px] text-gray-400 uppercase font-bold mb-1">GADGET</div><div class="text-sm font-bold text-white flex items-center gap-2"><span id="hd-gadget-icon">⚡</span> <span id="hd-gadget-name"></span></div></div>
-                <p class="text-xs text-gray-400 italic text-center mb-6 leading-relaxed" id="hd-desc"></p>
-                <div id="hd-actions" class="grid gap-2"></div>
-            </div>
+            <div class="glass-panel p-6 max-w-md w-full mx-4 relative border-2 border-blue-500/30" onclick="event.stopPropagation()" id="hero-card-inner"><button onclick="document.getElementById('hero-details-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl z-10">×</button><div class="flex flex-col items-center mb-6"><div class="w-24 h-24 rounded-2xl bg-black/50 border-2 border-white/20 flex items-center justify-center text-6xl shadow-[0_0_30px_rgba(59,130,246,0.3)] mb-3" id="hd-icon"></div><h2 class="text-3xl font-black uppercase font-tech tracking-wider" id="hd-name"></h2><div class="text-blue-400 font-bold text-sm" id="hd-lvl"></div></div><div class="space-y-4 mb-6"><div class="stat-row"><div class="stat-label">SANTÉ</div><div class="stat-track"><div id="hd-bar-hp" class="stat-fill bg-green-500"></div></div></div><div class="stat-row"><div class="stat-label">DÉGÂTS</div><div class="stat-track"><div id="hd-bar-dmg" class="stat-fill bg-red-500"></div></div></div><div class="stat-row"><div class="stat-label">VITESSE</div><div class="stat-track"><div id="hd-bar-spd" class="stat-fill bg-yellow-400"></div></div></div></div><div class="bg-white/5 p-4 rounded-xl border border-white/10 mb-4"><div class="text-[10px] text-gray-400 uppercase font-bold mb-1">GADGET</div><div class="text-sm font-bold text-white flex items-center gap-2"><span id="hd-gadget-icon">⚡</span> <span id="hd-gadget-name"></span></div></div><p class="text-xs text-gray-400 italic text-center mb-6 leading-relaxed whitespace-pre-line" id="hd-desc"></p><div id="hd-actions" class="grid gap-2"></div></div>
         </div>
-
         <div id="avatar-selector" class="hidden absolute inset-0 bg-black/90 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
             <div class="glass-panel p-6 max-w-sm w-full mx-4" onclick="event.stopPropagation()"><h3 class="text-xl font-black mb-4 text-center">CHOISIS TON AVATAR</h3><div class="grid grid-cols-4 gap-4 mb-4" id="avatar-grid"></div><button onclick="document.getElementById('avatar-selector').classList.add('hidden')" class="w-full bg-gray-700 py-3 rounded-xl font-bold">ANNULER</button></div>
         </div>
@@ -313,7 +357,7 @@
     </div>
 
     <script>
-        /* mBATTLE TITAN v0.5.6 - PRECISION CONTROLS */
+        /* mBATTLE TITAN v0.5.8 - LEGACY & FIRST */
         const CFG = { w: 0, h: 0, world: 2500 };
         const STARTERS = {
             soldier: { name: "Soldier", icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques. Précis et mortel." },
@@ -322,21 +366,38 @@
             assassin:{ name: "Assassin",icon: "🗡️", hp: 90,  dmg: 18, spd: 7.5, rate: 8, ammo:4, reload:30,  price: 1200, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Une ombre dans la nuit." },
             pyro:    { name: "Pyro",    icon: "🔥", hp: 160, dmg: 7, spd: 5, rate: 4, ammo:50, reload:10, price: 1500, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Adore l'odeur du napalm." },
             ronin:   { name: "Ronin",   icon: "👹", hp: 180, dmg: 60, spd: 6.5, rate: 25, ammo:3, reload:40, price: 3000, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Cherche la rédemption par le sabre." },
-            cyber:   { name: "Cyber",   icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "Fusion homme-machine parfaite." },
+            cyber:   { name: "Cyber",   icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Tire des lasers précis.", gadget: "teleport", lore: "Fusion homme-machine parfaite." },
             titan:   { name: "Titan",   icon: "🦾", hp: 600, dmg: 40, spd: 3.0, rate: 50, ammo:2, reload:70, price: 0, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "SAISON 1 GRATUIT. Colosse.", gadget: "shield", lore: "Gardien légendaire de la Saison 1." },
-            volt:    { name: "Volt",    icon: "⚡", hp: 110, dmg: 18, spd: 6.0, rate: 10, ammo: 4, reload: 30, price: 2000, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique.", gadget: "speed", lore: "Surchargé d'énergie statique." },
+            volt:    { name: "Volt",    icon: "⚡", hp: 110, dmg: 18, spd: 6.0, rate: 10, ammo: 4, reload: 30, price: 2000, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique rapide.", gadget: "speed", lore: "Surchargé d'énergie statique." },
             goliath: { name: "Goliath", icon: "🗿", hp: 450, dmg: 12, spd: 3.0, rate: 40, ammo: 2, reload: 60, price: 4000, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Un géant de pierre éveillé." },
             magma:   { name: "Magma",   icon: "🌋", hp: 380, dmg: 60, spd: 3.2, rate: 45, ammo: 2, reload: 55, price: 5000, scale:{hp:25, dmg:4}, color: '#7f1d1d', type: 'flame', desc: "SAISON 1. Tire de la lave.", gadget: "dash", lore: "Né dans le coeur d'un volcan actif." },
             pulse:   { name: "Pulse",   icon: "💠", hp: 100, dmg: 25, spd: 5.8, rate: 12, ammo: 4, reload: 25, price: 3000, scale:{hp:8, dmg:3}, color: '#22d3ee', desc: "Ondes d'énergie.", gadget: "knockback", lore: "Technicien sonique d'élite." }
         };
-        const MODES = { survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true }, heist: { name: "Braquage", icon: "💎", desc: "Détruis le coffre!", ranked: false, boss: true }, boss_rush: { name: "Boss Rush", icon: "👹", desc: "Combat de Boss.", ranked: false, boss: true }, titan_raid: { name: "Raid Titan", icon: "🌋", desc: "L'ultime défi.", ranked: false, boss: true, special: true } };
-        const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' }, jungle: { name: "Jungle", color: '#064e3b', grid: 'rgba(34,197,94,0.2)', wall: '#052e16' }, magma: { name: "Magma", color: '#450a0a', grid: 'rgba(239,68,68,0.2)', wall: '#280505' }, titan_forge: { name: "La Forge", color: '#2a0a0a', grid: 'rgba(250,204,21,0.2)', wall: '#4a0404', special: true } };
+        // ORDERED KEYS FOR MODES AND ARENAS TO PUT SPECIALS FIRST
+        const MODES_ORDER = ['titan_raid', 'heist', 'boss_rush', 'ranked', 'survival', 'duel'];
+        const MODES = { 
+            titan_raid: { name: "Raid Titan", icon: "🌋", desc: "L'ultime défi.", ranked: false, boss: true, special: true },
+            survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, 
+            ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, 
+            duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true }, 
+            heist: { name: "Braquage", icon: "💎", desc: "Détruis le coffre!", ranked: false, boss: true }, 
+            boss_rush: { name: "Boss Rush", icon: "👹", desc: "Combat de Boss.", ranked: false, boss: true }
+        };
+        const ARENAS_ORDER = ['titan_forge', 'tokyo', 'sand', 'ice', 'jungle', 'magma'];
+        const ARENAS = { 
+            titan_forge: { name: "La Forge", color: '#2a0a0a', grid: 'rgba(250,204,21,0.2)', wall: '#4a0404', special: true },
+            tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
+            sand: { name: "Sandstorm",  color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, 
+            ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' }, 
+            jungle: { name: "Jungle", color: '#064e3b', grid: 'rgba(34,197,94,0.2)', wall: '#052e16' }, 
+            magma: { name: "Magma", color: '#450a0a', grid: 'rgba(239,68,68,0.2)', wall: '#280505' }
+        };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
         const ICONS = ["👤","🤖","👽","🦁","🦄","💀","⚔️","💎","👑","🎮","🚀","🔥","❄️","⚡","🌟","🐱"];
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v16';
-        const PREVIOUS_KEYS = ['mBattle_Data_v15', 'mBattle_Data_v14', 'mBattle_Data_v13', 'mBattle_Data_v12']; 
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v18';
+        const PREVIOUS_KEYS = ['mBattle_Data_v17', 'mBattle_Data_v16', 'mBattle_Data_v15']; 
 
         let USER = { 
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
@@ -354,23 +415,17 @@
             }
         };
 
+        // PARTICLES
+        class Particle { constructor(x, y, color, type) { this.x=x; this.y=y; this.color=color; this.type=type; this.vx=(Math.random()-0.5)*(type==='spark'?10:4); this.vy=(Math.random()-0.5)*(type==='spark'?10:4); this.life=1.0; this.decay=Math.random()*0.03+0.02; this.size = type==='smoke'?Rnd(4,8):Rnd(2,4); } update() { this.x+=this.vx; this.y+=this.vy; this.life-=this.decay; if(this.type==='smoke')this.size*=1.05; } draw(ctx) { ctx.globalAlpha=this.life; ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(this.x,this.y,this.size,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; } }
+
         const Rnd = (min,max) => Math.random()*(max-min)+min;
         const Dist = (e1,e2) => Math.hypot(e1.x-e2.x, e1.y-e2.y);
         function ColRect(c, r) { return c.x+c.r > r.x && c.x-c.r < r.x+r.w && c.y+c.r > r.y && c.y-c.r < r.y+r.h; }
         function resolveCollision(e1, e2) { 
             let dx=e1.x-e2.x, dy=e1.y-e2.y; let dist=Math.hypot(dx,dy); const minDist=e1.r+e2.r; 
-            if(dist < minDist) {
-                if(dist <= 0.01) { dx=1; dy=0; dist=1; } 
-                const o=minDist-dist, px=(dx/dist)*o*0.5, py=(dy/dist)*o*0.5; 
-                const m1 = e1.type==='chest' ? Infinity : 1; const m2 = e2.type==='chest' ? Infinity : 1;
-                let r1, r2; if(m1===Infinity && m2===Infinity){r1=0;r2=0;} else if(m1===Infinity){r1=0;r2=1;} else if(m2===Infinity){r1=1;r2=0;} else {r1=0.5;r2=0.5;}
-                e1.x+=px*r1; e1.y+=py*r1; e2.x-=px*r2; e2.y-=py*r2; 
-            } 
+            if(dist < minDist) { if(dist <= 0.01) { dx=1; dy=0; dist=1; } const o=minDist-dist, px=(dx/dist)*o*0.5, py=(dy/dist)*o*0.5; const m1 = e1.type==='chest' ? Infinity : 1; const m2 = e2.type==='chest' ? Infinity : 1; let r1, r2; if(m1===Infinity && m2===Infinity){r1=0;r2=0;} else if(m1===Infinity){r1=0;r2=1;} else if(m2===Infinity){r1=1;r2=0;} else {r1=0.5;r2=0.5;} e1.x+=px*r1; e1.y+=py*r1; e2.x-=px*r2; e2.y-=py*r2; } 
         }
-        const getGadgetName = (g) => {
-            const map = { 'heal': 'Soin d\'urgence (+1000 HP)', 'shield': 'Bouclier (+1000 Max HP)', 'teleport': 'Téléportation (Blink)', 'dash': 'Dash Enflammé', 'speed': 'Turbo Boost', 'knockback': 'Onde de Choc' };
-            return map[g] || g.toUpperCase();
-        }
+        const getGadgetName = (g) => { const map = { 'heal': 'Soin (+1000)', 'shield': 'Bouclier (+1000)', 'teleport': 'TP', 'dash': 'Dash Feu', 'speed': 'Turbo', 'knockback': 'Choc' }; return map[g] || g.toUpperCase(); }
 
         const el = (id) => document.getElementById(id);
         const setStyle = (id, prop, val) => { const e=el(id); if(e) e.style[prop]=val; };
@@ -411,7 +466,6 @@
                 const sl = el('list-starters'); sl.innerHTML = ''; 
                 Object.keys(STARTERS).forEach(k => { 
                     const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5'; 
-                    // OPEN DETAILS ON CLICK
                     sl.innerHTML += `<div onclick="ui.openHeroDetails('${k}')" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
                         <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
                         <div class="font-black text-sm uppercase tracking-wider">${s.name}</div>
@@ -419,12 +473,11 @@
                         <div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>
                     </div>`; 
                 });
-                const ml = el('list-modes'); ml.innerHTML = ''; Object.keys(MODES).forEach(k => { const m = MODES[k]; const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; const active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; }); const al = el('list-arenas'); al.innerHTML = ''; Object.keys(ARENAS).forEach(k => { const a = ARENAS[k]; const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; const active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
+                const ml = el('list-modes'); ml.innerHTML = ''; MODES_ORDER.forEach(k => { const m = MODES[k]; const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; const active = game.conf.mode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; ml.innerHTML += `<div onclick="game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; }); 
+                const al = el('list-arenas'); al.innerHTML = ''; ARENAS_ORDER.forEach(k => { const a = ARENAS[k]; const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; const active = game.conf.arena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; al.innerHTML += `<div onclick="game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
             },
             openHeroDetails(k) {
-                const s = STARTERS[k];
-                const unlocked = USER.unlocked.includes(k);
-                const lvl = USER.levels[k] || 1;
+                const s = STARTERS[k]; const unlocked = USER.unlocked.includes(k); const lvl = USER.levels[k] || 1;
                 setText('hd-icon', s.icon); setText('hd-name', s.name); setText('hd-lvl', "NIVEAU " + lvl); setText('hd-desc', s.lore || s.desc); setText('hd-gadget-name', getGadgetName(s.gadget));
                 setTimeout(() => { setStyle('hd-bar-hp', 'width', (s.hp/600*100) + '%'); setStyle('hd-bar-dmg', 'width', (s.dmg/150*100) + '%'); setStyle('hd-bar-spd', 'width', (s.spd/10*100) + '%'); }, 50);
                 const actions = el('hd-actions');
@@ -448,7 +501,7 @@
             claimPass(tier) { if(USER.pass.tier >= tier && !USER.pass.claimed.includes(tier)) { USER.pass.claimed.push(tier); let val = (tier%10===0) ? 1 : ((tier%2===0) ? 50 : 5); let type = (tier%10===0) ? 'box' : ((tier%2===0) ? 'coins' : 'gems'); if(type==='box') ui.buy('box', 0, 'free'); else if(type==='coins') { USER.coins+=val; ui.notif(`+${val} 🪙`,"#eab308"); } else { USER.gems+=val; ui.notif(`+${val} 💎`,"#a855f7"); } Storage.save(); ui.renderPass(); ui.updateMenu(); } },
             exportSave() { const json = JSON.stringify(USER); const data = btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, function(match, p1) { return String.fromCharCode('0x' + p1); })); if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(data).then(() => { ui.notif("COPIÉ !", "#22c55e"); }).catch(err => { fallbackCopy(data); }); } else { fallbackCopy(data); } function fallbackCopy(text) { const el = document.createElement('textarea'); el.value = text; el.setAttribute('readonly', ''); el.style.position = 'absolute'; el.style.left = '-9999px'; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); ui.notif("CODE COPIÉ !", "#22c55e"); } },
             importSave() { let code = ""; try { code = window.prompt("Colle ton code de sauvegarde ici :"); } catch (e) { console.error(e); } if(code) { try { const json = decodeURIComponent(atob(code).split('').map(function(c) { return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2); }).join('')); const data = JSON.parse(json); if(data.coins !== undefined) { USER = data; Storage.save(); location.reload(); } else { ui.notif("CODE INVALIDE", "#ef4444"); } } catch(e) { ui.notif("ERREUR", "#ef4444"); } } },
-            generateLore(heroName) { const modal = el('lore-modal'); const title = el('lore-title'); const text = el('lore-text'); const icon = el('lore-icon'); modal.classList.remove('hidden'); title.innerText = heroName; const heroKey = Object.keys(STARTERS).find(k => STARTERS[k].name === heroName); icon.innerText = STARTERS[heroKey].icon; text.innerText = STARTERS[heroKey].lore; }
+            generateLore(heroName) { const modal = el('hero-details-modal'); const s=Object.values(STARTERS).find(h=>h.name===heroName); if(s) { const k=Object.keys(STARTERS).find(key=>STARTERS[key].name===heroName); ui.openHeroDetails(k); } }
         };
 
         const Input={k:{},jL:{a:0,x:0,y:0,i:null},jR:{a:0,x:0,y:0,i:null},m:{x:0,y:0,d:0},init(){
@@ -530,23 +583,14 @@
             }
             move(dx,dy){const nx=this.x+dx,ny=this.y+dy;let cx=0,cy=0;for(let w of game.map){if(w.type===1)continue;if(w.collide({x:nx,y:this.y,r:this.r}))cx=1;if(w.collide({x:this.x,y:ny,r:this.r}))cy=1;}if(!cx)this.x=Math.max(this.r,Math.min(game.world-this.r,nx));if(!cy)this.y=Math.max(this.r,Math.min(game.world-this.r,ny));}
             shoot(){ if(this.cd>0 || this.ammo<1)return; this.cd=this.stats.rate; this.ammo--; this.reloadT=-20; game.shake=2; const t=this.stats.type||'normal', cnt=t==='shotgun'?5:(1+(this.stats.multi||0)), spr=t==='shotgun'?0.3:0.05, dmg=this.stats.dmg*(1+this.cubes*0.1); for(let i=0;i<cnt;i++){ const a=this.angle+(Math.random()-0.5)*spr+(i-(cnt-1)/2)*0.1, s=t==='sniper'?25:(t==='flame'?10:(t==='laser'?30:18)), l=t==='flame'?20:60; game.projs.push({x:this.x+Math.cos(this.angle)*25,y:this.y+Math.sin(this.angle)*25,vx:Math.cos(a)*s,vy:Math.sin(a)*s,dmg:dmg,life:l,r:t==='flame'?8:(t==='laser'?4:5),c:this.c,friend:true}); } }
-            dash(){ if(this.dashT>0)return; this.dashT=60; game.shake=10; const dx=Math.cos(this.angle)*180,dy=Math.sin(this.angle)*180; this.move(dx,dy); for(let i=0;i<8;i++)game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4}); }
+            dash(){ if(this.dashT>0)return; this.dashT=60; game.shake=10; const dx=Math.cos(this.angle)*180,dy=Math.sin(this.angle)*180; this.move(dx,dy); for(let i=0;i<8;i++)game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4, type:'smoke'}); }
             useGadget() { 
-                if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); 
-                const t=this.stats.gadget; 
-                if(t==="heal") { this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3}); }
+                if(this.gadgetCharges <= 0) return; this.gadgetCharges--; ui.notif("GADGET!", "#22c55e"); const t=this.stats.gadget; 
+                if(t==="heal") { this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3, type:'spark'}); }
                 if(t==="shield") { this.maxHp+=1000; this.hp+=1000; }
-                if(t==="teleport") { this.x+=Math.cos(this.angle)*300; this.y+=Math.sin(this.angle)*300; }
-                if(t==="speed") { this.activeEffects.speed = 180; } // 3s speed
-                if(t==="knockback") {
-                    for(let e of game.ents) {
-                        let d = Dist(this, e);
-                        if(d < 300) {
-                            let a = Math.atan2(e.y-this.y, e.x-this.x);
-                            e.x += Math.cos(a)*200; e.y += Math.sin(a)*200;
-                        }
-                    }
-                }
+                if(t==="teleport") { this.x+=Math.cos(this.angle)*300; this.y+=Math.sin(this.angle)*300; for(let i=0;i<10;i++)game.parts.push({x:this.x,y:this.y,vx:Rnd(-5,5),vy:Rnd(-5,5),life:20,c:'#06b6d4',r:4, type:'spark'});}
+                if(t==="speed") { this.activeEffects.speed = 180; }
+                if(t==="knockback") { for(let e of game.ents) { let d = Dist(this, e); if(d < 300) { let a = Math.atan2(e.y-this.y, e.x-this.x); e.x += Math.cos(a)*200; e.y += Math.sin(a)*200; } } }
             }
             draw(ctx){ ctx.save(); ctx.shadowColor = this.c; ctx.shadowBlur = 20; super.draw(ctx); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.fillStyle='#1e293b'; ctx.fillRect(10,-6,28,12); if(this.reloadT > 0) { ctx.rotate(-this.angle); ctx.fillStyle = 'white'; ctx.fillRect(-15, 30, 30 * (this.reloadT/this.stats.reload), 3); } ctx.restore(); }
         }
@@ -623,7 +667,7 @@
             setArena(a){this.conf.arena=a; ui.updateMenu(); ui.showTab('play');},
             start(){
                 el('menu-screen').classList.add('hidden'); el('hud').classList.remove('hidden');
-                this.player=new Player(USER.selected); this.ents=[]; this.projs=[]; this.parts=[]; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0;
+                this.player=new Player(USER.selected); this.ents=[]; this.projs=[]; this.parts=[]; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=this.world;
                 this.timeLeft = 3 * 60 * 60; 
                 this.map=[]; for(let i=0;i<25;i++){const w=Math.random()*150+50,h=Math.random()*150+50,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);if(Math.hypot(x-this.world/2,y-this.world/2)>400)this.map.push(new Wall(x,y,w,h,0));}
                 for(let i=0;i<40;i++){const w=Math.random()*100+100,h=Math.random()*100+100,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);this.map.push(new Wall(x,y,w,h,1));}
@@ -639,6 +683,14 @@
                     ui.notif("DÉTRUIS LE COFFRE !", "#facc15");
                 } else if(this.conf.mode==='boss_rush') { this.ents.push(new Enemy('boss', 3)); ui.notif("BOSS RUSH !", "#ef4444"); } 
                 else if(this.conf.mode==='titan_raid') { this.ents.push(new Enemy('boss', 5)); ui.notif("RAID TITAN !", "#ef4444"); } 
+                
+                // NEW MODES INIT
+                else if(this.conf.mode === 'zone') {
+                    ui.notif("CAPTURE LA ZONE !", "#3b82f6");
+                } else if(this.conf.mode === 'bounty') {
+                    ui.notif("CHASSE AUX ÉTOILES !", "#fbbf24");
+                    // Spawn initial stars maybe?
+                }
                 else { ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); }
                 setText('hud-icon', STARTERS[USER.selected].icon); this.state='PLAYING';
             },
@@ -669,7 +721,24 @@
                             if(this.ents.length<max && this.frame%60===0){let t='basic'; if(this.wave>2&&Math.random()>0.7)t='fast'; if(this.wave>4&&Math.random()>0.8)t='tank'; this.ents.push(new Enemy(t,1+(this.conf.mode==='ranked'?0.2:0.1)*this.wave));}
                             if(this.frame%1800===0){this.wave++;if(this.wave%5===0){this.ents.push(new Enemy('boss',1+this.wave*0.2));ui.notif("BOSS !!!","#ef4444");}else ui.notif("VAGUE "+this.wave,"#fff");}
                         }
-                    } else if(this.ents.length===0) this.over("VICTOIRE");
+                    } else if(this.ents.length===0 && this.conf.mode !== 'zone' && this.conf.mode !== 'bounty') this.over("VICTOIRE");
+                    
+                    // ZONE LOGIC
+                    if(this.conf.mode === 'zone') {
+                        if(Dist(this.player, {x:game.world/2, y:game.world/2}) < 150) {
+                            this.score += 1;
+                            if(this.frame % 60 === 0) ui.notif("+1 POINT", "#3b82f6");
+                            // Win condition? Maybe timed or score limit
+                            if(this.score >= 500) this.over("VICTOIRE");
+                        }
+                        // Spawns
+                         if(this.frame%120===0 && this.ents.length < 10){ this.ents.push(new Enemy('basic',1)); }
+                    }
+                    // BOUNTY LOGIC
+                    if(this.conf.mode === 'bounty') {
+                        if(this.frame%120===0 && this.ents.length < 8){ this.ents.push(new Enemy('fast',1)); }
+                    }
+
 
                     this.player.update(); this.ents.forEach(e=>e.update());
                     this.ents.forEach(e => resolveCollision(this.player, e)); for(let i=0; i<this.ents.length; i++) for(let j=i+1; j<this.ents.length; j++) resolveCollision(this.ents[i], this.ents[j]);
@@ -681,18 +750,37 @@
                         const b=this.projs[i];
                         if(b.melee){
                             b.x=game.player.x+Math.cos(game.player.angle)*40; b.y=game.player.y+Math.sin(game.player.angle)*40; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
-                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; if(b.friend) USER.stats.dmg+=b.dmg; for(let k=0;k<3;k++)game.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:'#fff',r:3}); this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); if(e.hp<=0 && !e.dead) this.kill(e); }
+                            for(let e of this.ents) if(Dist(b,e)<b.r+e.r && !e.hitCD){ e.hitCD=20; e.hp-=b.dmg; if(b.friend) USER.stats.dmg+=b.dmg; for(let k=0;k<3;k++)game.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:'#fff',r:3, type:'spark'}); this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); if(e.hp<=0 && !e.dead) this.kill(e); }
                             continue;
                         }
                         b.x+=b.vx; b.y+=b.vy; b.life--; if(b.life<=0){this.projs.splice(i,1);continue;}
-                        let wh=false; for(let k=this.map.length-1; k>=0; k--) { const w=this.map[k]; if(w.type!==1 && ColRect(b, w)) { if(w.type===0) wh=true; if(w.type===3 && b.friend) { this.map.splice(k,1); this.items.push({x:w.x+30, y:w.y+30, type:'cube'}); for(let j=0;j<5;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-5,5), vy:Rnd(-5,5), life:20, c:'#d97706', r:5}); wh=true; } } }
-                        if(wh){for(let j=0;j<3;j++)this.parts.push({x:b.x,y:b.y,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:10,c:b.c,r:2}); this.projs.splice(i,1);continue;}
-                        if(b.friend){ for(let e of this.ents){ if(Dist(b,e)<b.r+e.r){ e.hp-=b.dmg; USER.stats.dmg+=b.dmg; this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); for(let k=0;k<5;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:20,c:e.c,r:4}); if(e.hp<=0 && !e.dead) this.kill(e); this.projs.splice(i,1); wh=true; break; } } } else { if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} }
+                        let wh=false; for(let k=this.map.length-1; k>=0; k--) { const w=this.map[k]; if(w.type!==1 && ColRect(b, w)) { if(w.type===0) wh=true; if(w.type===3 && b.friend) { this.map.splice(k,1); this.items.push({x:w.x+30, y:w.y+30, type:'cube'}); for(let j=0;j<5;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-5,5), vy:Rnd(-5,5), life:20, c:'#d97706', r:5, type:'spark'}); wh=true; } } }
+                        if(wh){for(let j=0;j<3;j++)this.parts.push({x:b.x,y:b.y,vx:(Math.random()-0.5)*3,vy:(Math.random()-0.5)*3,life:10,c:b.c,r:2, type:'spark'}); this.projs.splice(i,1);continue;}
+                        if(b.friend){ 
+                            for(let e of this.ents){ 
+                                if(Dist(b,e)<b.r+e.r){ 
+                                    e.hp-=b.dmg; USER.stats.dmg+=b.dmg; 
+                                    this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); 
+                                    for(let k=0;k<5;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:20,c:e.c,r:4, type:'spark'}); 
+                                    if(e.hp<=0 && !e.dead) this.kill(e); 
+                                    this.projs.splice(i,1); wh=true; break; 
+                                } 
+                            } 
+                        } else { 
+                            if(Dist(b,this.player)<b.r+this.player.r){this.player.hp-=b.dmg;ui.flash();if(this.player.hp<=0)this.over("Tué par Tir Ennemi");this.projs.splice(i,1);} 
+                        }
                     }
                     this.ents.forEach(e=>{if(e.hitCD)e.hitCD--}); for(let i=this.ents.length-1;i>=0;i--)if(this.ents[i].dead)this.ents.splice(i,1);
                     for(let i=this.items.length-1;i>=0;i--){const l=this.items[i];if(Dist(l,this.player)<30){if(l.type==='cube'){this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;ui.notif("POWER UP!","#22c55e");}else{if(l.t==='hp')this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);else this.player.xp+=30;}this.items.splice(i,1);}}
-                    for(let i=this.parts.length-1;i>=0;i--){const p=this.parts[i]; p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)this.parts.splice(i,1);}
+                    for(let i=this.parts.length-1;i>=0;i--){const p=this.parts[i]; p.update(); if(p.life<=0)this.parts.splice(i,1);}
                     ui.hud(); ui.drawMinimap();
+                    
+                    // Draw Muzzle Flash if recently shot
+                    if(this.player.reloadT > this.player.stats.reload - 5) {
+                        ctx.save(); ctx.translate(this.player.x, this.player.y); ctx.rotate(this.player.angle);
+                        ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(35, 0, Rnd(5,10), 0, Math.PI*2); ctx.fill();
+                        ctx.restore();
+                    }
                 }
                 const map=ARENAS[this.conf.arena]; ctx.fillStyle=map.color; ctx.fillRect(0,0,CFG.w,CFG.h);
                 ctx.save(); if(this.state!=='MENU'){
@@ -702,6 +790,13 @@
                     ctx.strokeStyle=map.grid; ctx.lineWidth=2; const tx=Math.floor(this.cam.x/100)*100, ty=Math.floor(this.cam.y/100)*100; ctx.beginPath(); 
                     for(let x=tx;x<tx+CFG.w+100;x+=100){ctx.moveTo(x,0);ctx.lineTo(x,this.world);} for(let y=ty;y<ty+CFG.h+100;y+=100){ctx.moveTo(0,y);ctx.lineTo(this.world,y);} ctx.stroke();
                     
+                    // ZONE RENDER
+                    if(this.conf.mode === 'zone') {
+                         ctx.beginPath(); ctx.arc(this.world/2, this.world/2, 150, 0, Math.PI*2); 
+                         ctx.fillStyle = 'rgba(59, 130, 246, 0.2)'; ctx.fill();
+                         ctx.strokeStyle = '#3b82f6'; ctx.lineWidth = 5; ctx.stroke();
+                    }
+
                     // HEIST ARROW
                     if(this.conf.mode === 'heist') {
                         const chest = this.ents.find(e => e.type === 'chest');
@@ -717,7 +812,12 @@
                     this.items.forEach(l=>{if(l.type==='cube'){ctx.fillStyle='#22c55e';ctx.fillRect(l.x-10,l.y-10,20,20);ctx.shadowColor='#22c55e';ctx.shadowBlur=10;ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.strokeRect(l.x-10,l.y-10,20,20);ctx.shadowBlur=0;}else{ctx.fillStyle=l.t==='hp'?'#22c55e':'#a855f7';ctx.beginPath();ctx.arc(l.x,l.y,8,0,Math.PI*2);ctx.fill();}});
                     
                     const renderList = [...this.map, ...this.ents, this.player, ...this.projs, ...this.parts]; renderList.sort((a,b) => a.y - b.y);
-                    renderList.forEach(o => { if(o instanceof Wall) o.draw(ctx, map.wall); else if(o.draw) o.draw(ctx); else { ctx.fillStyle=o.c;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill(); } });
+                    renderList.forEach(o => { 
+                        if(o instanceof Wall) o.draw(ctx, map.wall); 
+                        else if(o instanceof Particle) o.draw(ctx);
+                        else if(o.draw) o.draw(ctx); 
+                        else { ctx.fillStyle=o.c;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill(); } 
+                    });
                     
                     // Projectiles Glow
                     this.projs.forEach(p => { ctx.shadowColor=p.c; ctx.shadowBlur=10; ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0; });
