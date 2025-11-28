@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.8.7 - mAI</title>
+    <title>mBattle v0.9.6 - mAI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -47,6 +47,13 @@
         .menu-anim { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
         .safe-pb { padding-bottom: max(90px, env(safe-area-inset-bottom) + 90px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
+        @media (min-width: 768px) {
+            .pass-track-container::-webkit-scrollbar { display: block; height: 8px; background: rgba(0,0,0,0.3); border-radius: 4px; }
+            .pass-track-container::-webkit-scrollbar-thumb { background: rgba(59, 130, 246, 0.5); border-radius: 4px; }
+            .pass-track-container::-webkit-scrollbar-thumb:hover { background: rgba(59, 130, 246, 0.8); }
+            .pass-track-container { scrollbar-width: thin; scrollbar-color: rgba(59, 130, 246, 0.5) rgba(0,0,0,0.3); }
+        }
+        
         /* --- PASS --- */
         .pass-track-container { overflow-x: auto; padding: 30px 20px; scroll-behavior: smooth; position: relative; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%; }
         .pass-wrapper { display: inline-block; min-width: 100%; position: relative; }
@@ -70,6 +77,16 @@
         
         /* Profile Avatar Image */
         .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        .border-gold-glow { border-color: #fbbf24 !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.6) !important; }
+        .profile-input { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 12px; width: 100%; color: white; font-size: 12px; font-family: 'Rajdhani'; font-weight: bold; transition: all 0.2s; }
+        .profile-input:focus { outline: none; border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
+        .color-swatch { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); transition: transform 0.2s; }
+        .color-swatch:active { transform: scale(0.9); }
+        .color-swatch.active { border-color: white; box-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        
+        /* SETTINGS MODAL SPECIFIC */
+        .settings-grp { margin-bottom: 12px; }
+        .settings-label { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; display: block; }
     </style>
 </head><body>
     <canvas id="gameCanvas"></canvas>
@@ -78,6 +95,7 @@
     <div id="flash-layer"></div>
     <div id="season-particles" class="absolute inset-0 pointer-events-none overflow-hidden z-0"></div>
     <div id="ui-layer" class="absolute inset-0 pointer-events-none overflow-hidden z-10">
+        <!-- HUD -->
         <div id="hud" class="hidden w-full h-full relative">
             <div class="absolute top-4 left-4 flex flex-col gap-4 pointer-events-auto">
                 <div class="glass-panel p-2 flex items-center gap-3 pr-4 scale-90 origin-top-left md:scale-100">
@@ -123,11 +141,13 @@
                 <button id="btn-dash" class="action-btn bottom-12 right-36 w-20 h-20 rounded-full glass-panel border border-white/40 active:scale-90 flex items-center justify-center pointer-events-auto transition shadow-lg bg-blue-900/30" ontouchstart="event.stopPropagation(); window.game.player?.dash()" onmousedown="window.game.player?.dash()"><span class="text-3xl">⚡</span><div id="dash-cd" class="absolute inset-0 bg-black/70 origin-bottom h-0 transition-all duration-75 rounded-full"></div></button>
             </div>
         </div>
+
+        <!-- MAIN MENU -->
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.8.7</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.9.6</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -135,6 +155,7 @@
                 </div>
             </div>
             <div class="flex-1 overflow-y-auto safe-pb p-5 hide-scrollbar relative">
+                <!-- TABS -->
                 <div id="tab-play" class="tab-content flex flex-col items-center justify-center min-h-[65vh] gap-6 animate-fadeIn">
                     <div class="w-full max-w-md glass-panel p-5 border-l-4 border-yellow-500 bg-yellow-900/10 relative overflow-hidden">
                         <div class="flex items-center justify-between mb-2 relative z-10">
@@ -179,9 +200,12 @@
                     </button>
                 </div>
                 <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-5xl mx-auto pb-20">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-3xl font-black flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
-                        <div class="text-right text-xs font-bold text-blue-300">SAISON 1: TITAN FURY</div>
+                    <div class="flex flex-col md:flex-row justify-between items-end mb-4 border-b border-white/10 pb-2">
+                         <h2 class="text-4xl font-black flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
+                         <div class="text-right">
+                             <div class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500 italic tracking-tighter drop-shadow-lg">SAISON 1 : TITAN FURY</div>
+                             <div class="text-[10px] font-bold text-gray-400">Prochaine saison le Mercredi 3 Décembre 2025</div>
+                         </div>
                     </div>
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-blue-900/20 to-transparent border-blue-500/30">
                         <div class="flex justify-between items-center mb-4">
@@ -190,7 +214,7 @@
                         </div>
                         <div class="h-4 bg-black/50 rounded-full overflow-hidden"><div id="pass-bar" class="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-0 transition-all duration-300"></div></div>
                     </div>
-                    <div class="pass-track-container hide-scrollbar">
+                    <div class="pass-track-container">
                         <div class="pass-wrapper">
                              <div class="pass-track-line"></div>
                              <div class="pass-row" id="pass-track-free"><div class="pass-label">GRATUIT</div></div>
@@ -210,7 +234,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="shop-offers"></div>
                 </div>
                 <div id="tab-infos" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
-                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2>
+                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-gray-500">///</span> INFOS</h2>
                     <div class="grid grid-cols-2 gap-4 mb-8">
                         <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">☠️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Kills</div><div class="text-2xl font-bold" id="stat-kills">0</div></div>
                         <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">🌊</div><div class="text-[10px] text-gray-500 uppercase font-bold">Max Vague</div><div class="text-2xl font-bold" id="stat-wave">0</div></div>
@@ -218,7 +242,6 @@
                         <div class="glass-panel p-4 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">⚔️</div><div class="text-[10px] text-gray-500 uppercase font-bold">Victoires</div><div class="text-2xl font-bold" id="stat-wins">0</div></div>
                         <div class="glass-panel p-4 col-span-2 flex flex-col items-center justify-center py-6"><div class="text-3xl mb-2">💥</div><div class="text-[10px] text-gray-500 uppercase font-bold">Dégâts Totaux</div><div class="text-2xl font-bold" id="stat-dmg">0</div></div>
                     </div>
-                    
                     <h3 class="text-xl font-bold mb-4 text-blue-400">COMPARATIF mPASS</h3>
                     <div class="glass-panel p-4 mb-8 overflow-hidden">
                         <table class="w-full text-sm text-left text-gray-300">
@@ -254,74 +277,46 @@
                             </tr>
                         </table>
                     </div>
-
-                    <h3 class="text-xl font-bold mb-4 text-blue-400">GUIDE DU JEU</h3>
-                    
-                    <div class="mb-6">
-                        <h4 class="text-sm font-bold text-purple-400 mb-2 uppercase tracking-widest border-b border-purple-500/30 pb-1">MISSIONS</h4>
-                        <div class="grid gap-2 text-xs text-gray-300">
-                            <div class="flex gap-2"><span class="text-xl">🧟</span> <div><b class="text-white">Survie :</b> Vagues infinies d'ennemis. Le classique.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🏆</span> <div><b class="text-white">Classé :</b> Plus dur, plus de points. Pour les pros.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">⚔️</span> <div><b class="text-white">Duel 1v1 :</b> Toi contre un Bot énervé.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">💎</span> <div><b class="text-white">Braquage :</b> Détruis le coffre au centre en moins de 3 min.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">👹</span> <div><b class="text-white">Boss Rush :</b> 3 Boss d'affilée. Pas de pitié.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🌋</span> <div><b class="text-white">Raid Titan :</b> 5 Boss en même temps. Suicide ? Peut-être.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🛡️</span> <div><b class="text-white">Défense :</b> Protège le cristal bleu au centre.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🚂</span> <div><b class="text-white">Train Express :</b> Le train bouge ! Protège-le des robots.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">💰</span> <div><b class="text-white">Voleur :</b> Infiltre et vole 10 sacs d'or sans mourir.</div></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h4 class="text-sm font-bold text-green-400 mb-2 uppercase tracking-widest border-b border-green-500/30 pb-1">TERRAINS</h4>
-                        <div class="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                            <div><b class="text-white">Neon Tokyo :</b> Ville sombre, néons bleus.</div>
-                            <div><b class="text-white">Sandstorm :</b> Désert, visibilité réduite.</div>
-                            <div><b class="text-white">Ice Age :</b> Glace et froid polaire.</div>
-                            <div><b class="text-white">Jungle :</b> Végétation dense et verte.</div>
-                            <div><b class="text-white">Magma :</b> Volcan actif, sol rouge.</div>
-                            <div><b class="text-white">La Forge :</b> Usine de métal et de feu.</div>
-                            <div><b class="text-white">Ruines :</b> Vestiges de pierre grise.</div>
-                            <div><b class="text-white">Cyber City :</b> Métropole futuriste cyan.</div>
-                            <div><b class="text-white">Nébuleuse :</b> Espace, gravité flottante.</div>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h4 class="text-sm font-bold text-yellow-400 mb-2 uppercase tracking-widest border-b border-yellow-500/30 pb-1">MODIFICATEURS</h4>
-                        <div class="grid gap-2 text-xs text-gray-300">
-                            <div><b class="text-white">☠️ One Shot :</b> Tout le monde a 1 PV. Une balle = mort.</div>
-                            <div><b class="text-white">🧪 Poison :</b> Dégâts sur la durée pour tous les tirs.</div>
-                            <div><b class="text-white">⚡ Speed :</b> Tout le monde (toi + ennemis) est ultra rapide.</div>
-                            <div><b class="text-white">🧛 Vampire :</b> Tu voles de la vie en tirant.</div>
-                            <div><b class="text-white">♾️ Infini :</b> Munitions illimitées.</div>
-                            <div><b class="text-white">💥 Explosif :</b> Les ennemis explosent à leur mort.</div>
-                            <div><b class="text-white">🔙 Recul :</b> Tirer te propulse en arrière.</div>
-                            <div><b class="text-white">🐘 Géant :</b> Tout le monde est géant (x2 taille).</div>
-                        </div>
-                    </div>
-
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
-                    
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.8.7 (EXPLOSIVE & GÉANT)</h3><ul><li>☠️ Mods Globaux : One Shot, Speed...</li><li>💥 Nouveaux Mods: Explosif, Recul, Géant</li><li>📊 Stats mPass Corrigées</li><li>📚 Guide Mis à Jour</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.9.6 (SAISON & BALANCING)</h3><ul><li>🔥 SAISON 1 - AFFICHE MISE À JOUR</li><li>⚖️ Équilibrage : Bots scalent avec ton niveau</li><li>⚙️ Infos Créateur & Support</li><li>🛠️ Corrections de bugs</li></ul></div></div>
                 </div>
+                
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
-                    <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
-                        <div class="relative group cursor-pointer" onclick="window.ui.openAvatarSelector()">
-                            <div class="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 flex items-center justify-center text-4xl shadow-lg overflow-hidden hover:border-blue-500 transition" id="profile-avatar">👤</div>
-                            <div class="absolute bottom-0 right-0 bg-blue-600 border border-white text-[10px] p-1 rounded-full text-white shadow-sm">✏️</div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="text-xs text-gray-400 font-bold uppercase mb-1">Pseudonyme</div>
-                            <input type="text" id="profile-name" class="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white font-bold w-full mb-2 focus:outline-none focus:border-blue-500 transition" onchange="USER.name = this.value; Storage.save();" value="Player">
-                            <div class="flex justify-between items-center">
-                                <div class="text-xs text-blue-400 font-tech tracking-widest" id="profile-tag">#TAG</div>
-                                <div class="bg-black border border-gray-600 text-[10px] px-2 rounded text-yellow-400 font-bold" id="profile-lvl">LVL 1</div>
+                    <div class="glass-panel p-6 mb-6 flex flex-col gap-4 bg-blue-900/10 border-blue-500/30" id="profile-card-container">
+                        <div class="flex items-center gap-6">
+                            <div class="relative group cursor-pointer" onclick="window.ui.openAvatarSelector()">
+                                <div class="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 flex items-center justify-center text-4xl shadow-lg overflow-hidden hover:border-blue-500 transition" id="profile-avatar">👤</div>
+                                <div class="absolute bottom-0 right-0 bg-blue-600 border border-white text-[10px] p-1 rounded-full text-white shadow-sm">✏️</div>
+                            </div>
+                            <div class="flex-1 relative">
+                                <button onclick="window.ui.openSettings()" class="absolute top-0 right-0 text-2xl text-gray-400 hover:text-white transition">⚙️</button>
+                                <div class="text-xs text-gray-400 font-bold uppercase mb-1">Pseudonyme</div>
+                                <div id="profile-name-display" class="text-2xl font-black text-white mb-1 font-tech tracking-wider">Player</div>
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="text-xs text-blue-400 font-tech tracking-widest" id="profile-tag">#TAG</div>
+                                    <div class="bg-black border border-gray-600 text-[10px] px-2 rounded text-yellow-400 font-bold" id="profile-lvl">PASS 1</div>
+                                </div>
+                                <div id="profile-bio-display" class="text-xs text-gray-300 italic border-t border-white/10 pt-2 mt-1 leading-relaxed">...</div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- STATS COLLECTION -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                         <div class="glass-panel p-4 flex flex-col items-center">
+                            <div class="text-2xl mb-1">🦸‍♂️</div>
+                            <div class="text-[10px] text-gray-400 font-bold">HÉROS</div>
+                            <div class="text-xl font-black text-white" id="profile-unlocked-count">0/14</div>
+                         </div>
+                         <div class="glass-panel p-4 flex flex-col items-center">
+                            <div class="text-2xl mb-1">👕</div>
+                            <div class="text-[10px] text-gray-400 font-bold">SKINS</div>
+                            <div class="text-xl font-black text-white" id="profile-skins-count">0</div>
+                         </div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="glass-panel p-6">
                             <div class="font-bold text-lg mb-2 flex items-center gap-2">💾 Sauvegarde</div>
@@ -346,6 +341,68 @@
                 <button onclick="window.ui.showTab('profile')" id="nav-profile" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">👤</span><span class="text-[9px] font-bold">PROFIL</span></button>
             </div>
         </div>
+
+        <!-- SETTINGS MODAL -->
+        <div id="settings-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="window.ui.closeSettings()">
+             <div class="glass-panel p-6 max-w-sm w-full mx-4 flex flex-col gap-4 max-h-[80vh] overflow-y-auto hide-scrollbar" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4">
+                    <h3 class="text-xl font-black">PARAMÈTRES ⚙️</h3>
+                    <button onclick="window.ui.closeSettings()" class="text-2xl text-gray-400 hover:text-white">×</button>
+                </div>
+                
+                <div class="settings-grp">
+                    <label class="settings-label">Pseudonyme</label>
+                    <input type="text" id="setting-name" class="profile-input" onchange="USER.name = this.value; Storage.save(); window.ui.renderProfile()">
+                </div>
+
+                <div class="settings-grp">
+                    <label class="settings-label">Avatar</label>
+                    <button onclick="window.ui.openAvatarSelector()" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2">
+                        CHANGER D'AVATAR 👤
+                    </button>
+                </div>
+                
+                <div class="settings-grp">
+                    <label class="settings-label">Email</label>
+                    <input type="email" id="setting-email" placeholder="email@exemple.com" class="profile-input" onchange="USER.email = this.value; Storage.save();">
+                </div>
+
+                <div class="settings-grp">
+                    <label class="settings-label">Téléphone</label>
+                    <input type="tel" id="setting-phone" placeholder="+33 6..." class="profile-input" onchange="USER.phone = this.value; Storage.save();">
+                </div>
+
+                <div class="settings-grp">
+                    <label class="settings-label">Date de Naissance</label>
+                    <input type="date" id="setting-dob" class="profile-input" onchange="USER.dob = this.value; Storage.save();">
+                </div>
+
+                <div class="settings-grp">
+                    <label class="settings-label">Bio</label>
+                    <textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20" onchange="USER.bio = this.value; Storage.save(); window.ui.renderProfile()"></textarea>
+                </div>
+
+                <div class="settings-grp pt-2 border-t border-white/10 mt-2">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label>
+                        <div id="theme-lock-icon" class="text-[10px] text-gray-500"></div>
+                    </div>
+                    <div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div>
+                </div>
+
+                <button onclick="window.ui.closeSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
+
+                <div class="mt-4 pt-4 border-t border-white/10 text-center">
+                    <p class="text-[10px] text-gray-500 leading-relaxed">
+                        mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>
+                        Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a>
+                    </p>
+                    <div class="text-[8px] text-gray-600 mt-1">v0.9.6</div>
+                </div>
+             </div>
+        </div>
+
+        <!-- HERO DETAILS MODAL (Existing) -->
         <div id="hero-details-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
             <div class="glass-panel p-6 max-w-md w-full mx-4 relative border-2 border-blue-500/30" onclick="event.stopPropagation()" id="hero-card-inner">
                 <button onclick="document.getElementById('hero-details-modal').classList.add('hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl z-10">×</button>
@@ -385,13 +442,13 @@
         </div>
     </div>
     <script>
-        /* mBATTLE TITAN v0.8.7 - EXPLOSIVE & GÉANT */
+        /* mBATTLE TITAN v0.9.6 - SAISON & BALANCING */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
         
-        const RARITY = { common: { name: 'Commun', color: '#94a3b8', bg: 'bg-gray-500' }, rare: { name: 'Rare', color: '#3b82f6', bg: 'bg-blue-500' }, epic: { name: 'Épique', color: '#a855f7', bg: 'bg-purple-500' }, legendary: { name: 'Légendaire', color: '#eab308', bg: 'bg-yellow-500' }, mythic: { name: 'Mythique', color: '#ef4444', bg: 'bg-red-600' } };
-        const STARTERS = { soldier: { name: "Soldier", rarity: 'common', icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques.", passive: "Regen Rapide", skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000} ] }, tank: { name: "Heavy", rarity: 'rare', icon: "🛡️", hp: 320, dmg: 14, spd: 3.5, rate: 35, ammo:3, reload:55, price: 500, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une forteresse mobile.", passive: "Armure +20%", skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000} ] }, sniper: { name: "Sniper", rarity: 'rare', icon: "🦅", hp: 80, dmg: 120, spd: 5, rate: 65, ammo:3, reload:80, price: 800, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite.", gadget: "knockback", lore: "Ne rate jamais sa cible.", passive: "Critique +10%", skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}] }, assassin:{ name: "Assassin", rarity: 'epic', icon: "🗡️", hp: 90, dmg: 18, spd: 7.5, rate: 8, ammo:4, reload:30, price: 1200, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Une ombre dans la nuit.", passive: "Vitesse Kill", skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}] }, pyro: { name: "Pyro", rarity: 'epic', icon: "🔥", hp: 160, dmg: 7, spd: 5, rate: 4, ammo:50, reload:10, price: 1500, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Adore l'odeur du napalm.", passive: "Brûlure", skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}] }, ronin: { name: "Ronin", rarity: 'legendary', icon: "👹", hp: 180, dmg: 60, spd: 6.5, rate: 25, ammo:3, reload:40, price: 3000, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Cherche la rédemption.", passive: "Vol de Vie", skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}] }, cyber: { name: "Cyber", rarity: 'legendary', icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "Fusion homme-machine.", passive: "Précision", skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}] }, titan: { name: "Titan", rarity: 'mythic', icon: "🦾", hp: 600, dmg: 40, spd: 3.0, rate: 50, ammo:2, reload:70, price: 0, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "SAISON 1 GRATUIT.", gadget: "shield", lore: "Gardien légendaire.", passive: "Résistance", skins: [{id:'default', name:'Titan', c:'#eab308'}, {id:'prime', name:'Titan Prime', c:'#713f12', price: 9999}, {id:'frozen', name:'Givré', c:'#0ea5e9', price: 5000}] }, volt: { name: "Volt", rarity: 'epic', icon: "⚡", hp: 110, dmg: 18, spd: 6.0, rate: 10, ammo: 4, reload: 30, price: 2000, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique.", gadget: "speed", lore: "Énergie statique.", passive: "Etourdissement", skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}] }, goliath: { name: "Goliath", rarity: 'mythic', icon: "🗿", hp: 450, dmg: 12, spd: 3.0, rate: 40, ammo: 2, reload: 60, price: 4000, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Géant de pierre.", passive: "Écrasement", skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}] }, magma: { name: "Magma", rarity: 'mythic', icon: "🌋", hp: 380, dmg: 60, spd: 3.2, rate: 45, ammo: 2, reload: 55, price: 5000, scale:{hp:25, dmg:4}, color: '#7f1d1d', type: 'flame', desc: "SAISON 1.", gadget: "dash", lore: "Né dans un volcan.", passive: "Lave", skins: [{id:'default', name:'Magma', c:'#7f1d1d'}, {id:'blue', name:'Flamme Bleue', c:'#2563eb', price: 3000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 4000}] }, pulse: { name: "Pulse", rarity: 'legendary', icon: "💠", hp: 100, dmg: 25, spd: 5.8, rate: 12, ammo: 4, reload: 25, price: 3000, scale:{hp:8, dmg:3}, color: '#22d3ee', desc: "Ondes d'énergie.", gadget: "knockback", lore: "Technicien sonique.", passive: "Aura Dmg", skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}] }, viper: { name: "Viper", rarity: 'epic', icon: "🐍", hp: 110, dmg: 10, spd: 6.2, rate: 5, ammo: 25, reload: 40, price: 3500, scale:{hp:8, dmg:1}, color: '#4d7c0f', type: 'flame', desc: "Tire du poison.", gadget: "speed", lore: "Mortel et silencieux.", passive: "Poison", skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}] }, chrono: { name: "Chrono", rarity: 'mythic', icon: "⏳", hp: 100, dmg: 12, spd: 6.5, rate: 4, ammo: 30, reload: 15, price: 8000, scale:{hp:8, dmg:1}, color: '#0ea5e9', type: 'laser', desc: "Maître du temps.", gadget: "teleport", lore: "Vient du futur pour gagner.", passive: "Recharge Rapide", skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}] } };
+        const RARITY = { common: { name: 'Commun', color: '#94a3b8', bg: 'bg-gray-500', rank: 1 }, rare: { name: 'Rare', color: '#3b82f6', bg: 'bg-blue-500', rank: 2 }, epic: { name: 'Épique', color: '#a855f7', bg: 'bg-purple-500', rank: 3 }, legendary: { name: 'Légendaire', color: '#eab308', bg: 'bg-yellow-500', rank: 4 }, mythic: { name: 'Mythique', color: '#ef4444', bg: 'bg-red-600', rank: 5 } };
+        const STARTERS = { soldier: { name: "Soldier", rarity: 'common', icon: "🔫", hp: 130, dmg: 22, spd: 5.5, rate: 14, ammo:3, reload:40, price: 0, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques.", passive: "Regen Rapide", skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000} ] }, tank: { name: "Heavy", rarity: 'rare', icon: "🛡️", hp: 320, dmg: 14, spd: 3.5, rate: 35, ammo:3, reload:55, price: 500, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une forteresse mobile.", passive: "Armure +20%", skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000} ] }, sniper: { name: "Sniper", rarity: 'rare', icon: "🦅", hp: 80, dmg: 120, spd: 5, rate: 65, ammo:3, reload:80, price: 800, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite.", gadget: "knockback", lore: "Ne rate jamais sa cible.", passive: "Critique +10%", skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}] }, assassin:{ name: "Assassin", rarity: 'epic', icon: "🗡️", hp: 90, dmg: 18, spd: 7.5, rate: 8, ammo:4, reload:30, price: 1500, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Une ombre dans la nuit.", passive: "Vitesse Kill", skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}] }, pyro: { name: "Pyro", rarity: 'epic', icon: "🔥", hp: 160, dmg: 7, spd: 5, rate: 4, ammo:50, reload:10, price: 1500, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Adore l'odeur du napalm.", passive: "Brûlure", skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}] }, ronin: { name: "Ronin", rarity: 'legendary', icon: "👹", hp: 180, dmg: 60, spd: 6.5, rate: 25, ammo:3, reload:40, price: 3000, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Cherche la rédemption.", passive: "Vol de Vie", skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}] }, cyber: { name: "Cyber", rarity: 'legendary', icon: "🦾", hp: 140, dmg: 35, spd: 5, rate: 20, ammo:3, reload:45, price: 5000, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "Fusion homme-machine.", passive: "Précision", skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}] }, titan: { name: "Titan", rarity: 'mythic', icon: "🦾", hp: 600, dmg: 40, spd: 3.0, rate: 50, ammo:2, reload:70, price: 5000, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "SAISON 1 GRATUIT.", gadget: "shield", lore: "Gardien légendaire.", passive: "Résistance", skins: [{id:'default', name:'Titan', c:'#eab308'}, {id:'prime', name:'Titan Prime', c:'#713f12', price: 9999}, {id:'frozen', name:'Givré', c:'#0ea5e9', price: 5000}] }, volt: { name: "Volt", rarity: 'epic', icon: "⚡", hp: 110, dmg: 18, spd: 6.0, rate: 10, ammo: 4, reload: 30, price: 2000, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique.", gadget: "speed", lore: "Énergie statique.", passive: "Etourdissement", skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}] }, goliath: { name: "Goliath", rarity: 'mythic', icon: "🗿", hp: 450, dmg: 12, spd: 3.0, rate: 40, ammo: 2, reload: 60, price: 4000, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Géant de pierre.", passive: "Écrasement", skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}] }, magma: { name: "Magma", rarity: 'mythic', icon: "🌋", hp: 380, dmg: 60, spd: 3.2, rate: 45, ammo: 2, reload: 55, price: 5000, scale:{hp:25, dmg:4}, color: '#7f1d1d', type: 'flame', desc: "SAISON 1.", gadget: "dash", lore: "Né dans un volcan.", passive: "Lave", skins: [{id:'default', name:'Magma', c:'#7f1d1d'}, {id:'blue', name:'Flamme Bleue', c:'#2563eb', price: 3000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 4000}] }, pulse: { name: "Pulse", rarity: 'legendary', icon: "💠", hp: 100, dmg: 25, spd: 5.8, rate: 12, ammo: 4, reload: 25, price: 3000, scale:{hp:8, dmg:3}, color: '#22d3ee', desc: "Ondes d'énergie.", gadget: "knockback", lore: "Technicien sonique.", passive: "Aura Dmg", skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}] }, viper: { name: "Viper", rarity: 'epic', icon: "🐍", hp: 110, dmg: 10, spd: 6.2, rate: 5, ammo: 25, reload: 40, price: 3500, scale:{hp:8, dmg:1}, color: '#4d7c0f', type: 'flame', desc: "Tire du poison.", gadget: "speed", lore: "Mortel et silencieux.", passive: "Poison", skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}] }, chrono: { name: "Chrono", rarity: 'mythic', icon: "⏳", hp: 100, dmg: 12, spd: 6.5, rate: 4, ammo: 30, reload: 15, price: 8000, scale:{hp:8, dmg:1}, color: '#0ea5e9', type: 'laser', desc: "Maître du temps.", gadget: "teleport", lore: "Vient du futur pour gagner.", passive: "Recharge Rapide", skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}] } };
         const MODES = { survival: { name: "Survie", icon: "🧟", desc: "Vagues infinies.", ranked: false }, ranked: { name: "Classé", icon: "🏆", desc: "Compétition.", ranked: true }, duel: { name: "1v1 Duel", icon: "⚔️", desc: "Duel Bot IA.", ranked: false, boss: true }, heist: { name: "Braquage", icon: "💎", desc: "Détruis le coffre!", ranked: false, boss: true }, boss_rush: { name: "Boss Rush", icon: "👹", desc: "Combat de Boss.", ranked: false, boss: true }, titan_raid: { name: "Raid Titan", icon: "🌋", desc: "L'ultime défi.", ranked: false, boss: true, special: true }, defense: { name: "Défense", icon: "🛡️", desc: "Protège le cristal.", ranked: false, boss: true }, infection: { name: "Infection", icon: "☣️", desc: "Survivre à la horde.", ranked: false }, train_defense: { name: "Train Express", icon: "🚂", desc: "Protège le train !", ranked: false }, thief: { name: "Voleur", icon: "💰", desc: "Vole 10 sacs !", ranked: false } };
         const ARENAS = { tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, sand: { name: "Sandstorm", color: '#271a0c', grid: 'rgba(245,158,11,0.15)', wall: '#451a03' }, ice: { name: "Ice Age", color: '#082f49', grid: 'rgba(255,255,255,0.1)', wall: '#164e63' }, jungle: { name: "Jungle", color: '#064e3b', grid: 'rgba(34,197,94,0.2)', wall: '#052e16' }, magma: { name: "Magma", color: '#450a0a', grid: 'rgba(239,68,68,0.2)', wall: '#280505' }, titan_forge: { name: "La Forge", color: '#2a0a0a', grid: 'rgba(250,204,21,0.2)', wall: '#4a0404', special: true }, ruins: { name: "Ruines", color: '#292524', grid: 'rgba(168,162,158,0.1)', wall: '#44403c' }, cyber_city: { name: "Cyber City", color: '#0f172a', grid: 'rgba(6,182,212,0.2)', wall: '#164e63' }, nebula: { name: "Nébuleuse", color: '#1e1b4b', grid: 'rgba(232, 121, 249, 0.2)', wall: '#312e81' } };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
@@ -409,7 +466,9 @@
             {id:'dab', i:'🙅', price: 95}, {id:'rich', i:'💸', price: 195}, {id:'hacker', i:'💻', price: 145}, {id:'cat', i:'🙀', price: 115},
             {id:'alien', i:'👽', price: 20}, {id:'nerd', i:'🤓', price: 10}, {id:'rage', i:'🤬', price: 30}, {id:'mindblown', i:'🤯', price: 25},
             {id:'scream', i:'😱', price: 15}, {id:'star', i:'🤩', price: 20}, {id:'cowboy', i:'🤠', price: 25}, {id:'mask', i:'😷', price: 5},
-            {id:'ice', i:'🥶', price: 25}, {id:'boxe', i:'🥊', price: 30}, {id:'zen', i:'🧘', price: 10}, {id:'dice', i:'🎲', price: 15}
+            {id:'ice', i:'🥶', price: 25}, {id:'boxe', i:'🥊', price: 30}, {id:'zen', i:'🧘', price: 10}, {id:'dice', i:'🎲', price: 15},
+            {id:'salute', i:'🫡', price: 50}, {id:'melt', i:'🫠', price: 50}, {id:'invisible', i:'🫥', price: 60}, {id:'peek', i:'🫣', price: 40},
+            {id:'plead', i:'🥹', price: 40}, {id:'heart_hands', i:'🫶', price: 70}, {id:'dizzy', i:'😵‍💫', price: 30}, {id:'explode', i:'💥', price: 35}
         ];
         // Sort emotes by price
         EMOTE_LIST.sort((a, b) => a.price - b.price);
@@ -437,6 +496,7 @@
         const PREVIOUS_KEYS = ['mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
+            email: "", phone: "", dob: "", bio: "Salut! Je suis nouveau.", profileBg: "",
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'titan'], levels: { soldier: 1, titan: 1 }, selected: 'soldier',
             stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0 }, lastDaily: 0,
             pass: { tier: 1, xp: 0, claimed: [], claimedPro: [] },
@@ -449,9 +509,9 @@
 
         const PASS_REWARDS = {
             1: { free: 'coins:50', pro: 'skin:titan_prime' },
-            5: { free: 'emote:love', pro: 'gems:20' },
+            5: { free: 'emote:love', pro: 'emote:rich' }, // Changed to Rich (195)
             10: { free: 'box:1', pro: 'skin:assassin_ninja' },
-            15: { free: 'coins:100', pro: 'emote:crown' },
+            15: { free: 'coins:100', pro: 'emote:hacker' }, // Changed to Hacker (145)
             20: { free: 'box:1', pro: 'gems:40' },
             30: { free: 'box:1', pro: 'emote:robot' },
             40: { free: 'coins:200', pro: 'skin:pyro_blueflame' },
@@ -471,14 +531,23 @@
         };
 
         const Storage = {
-            save() { localStorage.setItem(CURRENT_VERSION_KEY, JSON.stringify(USER)); },
+            save() { 
+                try {
+                    localStorage.setItem(CURRENT_VERSION_KEY, JSON.stringify(USER)); 
+                } catch (e) {
+                    if (e.name === 'QuotaExceededError') {
+                        window.ui.notif("SAUVEGARDE IMPOSSIBLE (AVATAR TROP GROS?)", "#ef4444");
+                    } else {
+                        console.error("Save Error", e);
+                    }
+                }
+            },
             load() {
                 let d = localStorage.getItem(CURRENT_VERSION_KEY);
                 if (!d) { for (let key of PREVIOUS_KEYS) { const oldData = localStorage.getItem(key); if (oldData) { d = oldData; break; } } }
                 if (d) {
                     try {
                         const saved = JSON.parse(d);
-                        // Merge saved data with default structure
                         USER = { ...USER, ...saved,
                             stats: { ...USER.stats, ...(saved.stats||{}) },
                             pass: { ...USER.pass, ...(saved.pass||{}), claimedPro: saved.pass?.claimedPro || [] },
@@ -492,7 +561,6 @@
                         };
                         if(!USER.unlocked.includes('titan')) USER.unlocked.push('titan');
                         
-                        // Initialize game configuration if needed
                         if (typeof window.game !== 'undefined') {
                             if(!window.game.conf) window.game.conf = {};
                             if(!saved.conf || !saved.conf.difficulty) window.game.conf.difficulty = 'normal';
@@ -531,40 +599,39 @@
         const setText = (id, txt) => { const e=el(id); if(e) e.innerText=txt; };
 
         function processPassReward(rewardString) {
-            const [type, value] = rewardString.split(':');
-            const val = parseInt(value) || 1;
-            let success = false;
-
-            if (type === 'coins') {
-                USER.coins += val;
-                window.ui.notif(`+${val} 🪙`, "#eab308");
-                success = true;
-            } else if (type === 'gems') {
-                USER.gems += val;
-                window.ui.notif(`+${val} 💎`, "#a855f7");
-                success = true;
-            } else if (type === 'box') {
-                window.ui.buy('box', 0, 'free');
-                success = true;
-            } else if (type.startsWith('emote')) {
-                const emoteId = type.split(':')[1];
-                if (!USER.emotes.includes(emoteId)) {
-                    USER.emotes.push(emoteId);
-                    window.ui.notif(`EMOTE DÉBLOQUÉE: ${EMOTE_LIST.find(e => e.id === emoteId)?.i}`, "#22d3ee");
-                    window.ui.renderEmotes();
-                }
-                success = true;
-            } else if (type.startsWith('skin')) {
-                const [heroId, skinId] = type.split(':')[1].split('_');
-                const fullSkinId = `${heroId}_${skinId}`;
-                if (!USER.ownedSkins.includes(fullSkinId)) {
-                    USER.ownedSkins.push(fullSkinId);
-                    const skinName = STARTERS[heroId]?.skins.find(s => s.id === skinId)?.name || 'Skin';
-                    window.ui.notif(`SKIN DÉBLOQUÉ: ${skinName}!`, "#facc15");
-                }
-                success = true;
-            }
-            return success;
+             const [type, value] = rewardString.split(':');
+             const val = parseInt(value) || 1;
+             let success = false;
+             if (type === 'coins') { USER.coins += val; window.ui.notif(`+${val} 🪙`, "#eab308"); success = true; } 
+             else if (type === 'gems') { USER.gems += val; window.ui.notif(`+${val} 💎`, "#a855f7"); success = true; } 
+             else if (type === 'box') { window.ui.buy('box', 0, 'free'); success = true; } 
+             else if (type.startsWith('emote')) { 
+                 const emoteId = type.split(':')[1]; 
+                 if (!USER.emotes.includes(emoteId)) { USER.emotes.push(emoteId); window.ui.notif(`EMOTE DÉBLOQUÉE: ${EMOTE_LIST.find(e => e.id === emoteId)?.i}`, "#22d3ee"); window.ui.renderEmotes(); } 
+                 success = true; 
+             } 
+             else if (type.startsWith('skin')) { 
+                 const [heroId, skinId] = type.split(':')[1].split('_'); 
+                 const fullSkinId = `${heroId}_${skinId}`;
+                 const hero = STARTERS[heroId];
+                 let skinPrice = 2000; // Default fallback price
+                 if (hero && hero.skins) {
+                     const skinObj = hero.skins.find(s => s.id === skinId);
+                     if (skinObj && skinObj.price) skinPrice = skinObj.price;
+                 }
+                 
+                 // Check if user owns skin OR if user does not have the hero unlocked
+                 if (USER.ownedSkins.includes(fullSkinId) || !USER.unlocked.includes(heroId)) {
+                     USER.coins += skinPrice;
+                     window.ui.notif(`CONVERSION: +${skinPrice} 🪙`, "#eab308");
+                 } else {
+                     USER.ownedSkins.push(fullSkinId); 
+                     const skinName = hero?.skins.find(s => s.id === skinId)?.name || 'Skin'; 
+                     window.ui.notif(`SKIN DÉBLOQUÉ: ${skinName}!`, "#facc15"); 
+                 }
+                 success = true; 
+             }
+             return success;
         }
 
         window.ui = {
@@ -576,12 +643,7 @@
                     const min = Math.floor(window.game.timeLeft / 3600); const sec = Math.floor((window.game.timeLeft % 3600) / 60);
                     const te = el('hud-timer'); if(te) { te.innerText = (min < 10 ? "0"+min : min) + ":" + (sec < 10 ? "0"+sec : sec); te.classList.remove('hidden'); }
                 } else { const te = el('hud-timer'); if(te) te.classList.add('hidden'); }
-                if(window.game.conf.mode === 'thief') {
-                    el('hud-objective').innerText = `Sacs: ${window.game.lootCollected}/10`;
-                    el('hud-objective').classList.remove('hidden');
-                } else {
-                    el('hud-objective').classList.add('hidden');
-                }
+                if(window.game.conf.mode === 'thief') { el('hud-objective').innerText = `Sacs: ${window.game.lootCollected}/10`; el('hud-objective').classList.remove('hidden'); } else { el('hud-objective').classList.add('hidden'); }
                 for(let i=1; i<=3; i++) setStyle('ammo-'+i, 'opacity', i <= Math.floor(p.ammo) ? 1 : 0.3);
                 setStyle('dash-cd', 'height', Math.max(0,p.dashT/60*100)+'%');
                 setText('gadget-count', p.gadgetCharges);
@@ -597,8 +659,12 @@
                     else { bar.classList.add('bg-gradient-to-r', 'from-red-600', 'to-red-500'); bar.style.backgroundColor = ''; }
                 } else if(bui) bui.classList.add('hidden');
                 setStyle('gas-overlay', 'opacity', 0);
+                
+                // FIX: SHOW ACTUAL HERO LEVEL
+                const heroLvl = USER.levels[USER.selected] || 1;
+                setText('hud-lvl', "LVL " + heroLvl);
             },
-            notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
+             notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
             flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
             feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
             levelUp() { const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ const b=document.createElement('button'); b.className='glass-panel p-4 text-left flex items-center gap-4 active:scale-95 transition bg-blue-900/40 border border-blue-500/30'; b.innerHTML=`<div class="text-3xl">${p.icon}</div><div><div class="font-bold text-yellow-400 text-lg">${p.name}</div><div class="text-xs text-gray-300">${p.desc}</div></div>`; b.onclick=()=>{p.fn(window.game.player); s.classList.add('hidden'); window.game.state='PLAYING';}; c.appendChild(b); }); },
@@ -608,6 +674,7 @@
                 (window.game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : (e.type==='core'||e.type==='train'?'#3b82f6':'#f87171'); const r = (e.isBoss || e.isBot || e.type==='core' || e.type==='train') ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
                 (window.game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.8)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
             },
+
             showTab(id) { 
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
                 document.getElementById('tab-' + id).classList.remove('hidden'); 
@@ -623,7 +690,7 @@
                 if(id === 'emotes') this.renderEmotes(); 
                 if(id === 'play') this.updateDifficultyButtons(); 
                 
-                this.updateMenu(); // Force menu refresh
+                this.updateMenu(); 
             },
             updateDifficultyButtons() {
                 if(!window.game || !window.game.conf) return; 
@@ -631,26 +698,17 @@
                 const activeBtn = el(`diff-${window.game.conf.difficulty}`);
                 if (activeBtn) activeBtn.classList.add('active');
                 
-                // Also update modifier buttons
                 document.querySelectorAll('.mod-btn').forEach(btn => btn.classList.remove('active'));
                 const modBtn = el(`mod-${window.game.conf.modifier}`);
                 if(modBtn) modBtn.classList.add('active');
             },
             refreshShop(force = false) {
                 if (force) {
-                    if (USER.gems >= 10) {
-                        USER.gems -= 10;
-                        this.notif("-10 💎 REROLL", "#a855f7");
-                        USER.shop.lastRefresh = 0; // Force refresh trigger
-                    } else {
-                        this.notif("PAS ASSEZ DE GEMMES", "#ef4444");
-                        return;
-                    }
+                    if (USER.gems >= 10) { USER.gems -= 10; this.notif("-10 💎 REROLL", "#a855f7"); USER.shop.lastRefresh = 0; } 
+                    else { this.notif("PAS ASSEZ DE GEMMES", "#ef4444"); return; }
                 }
-                
                 if(!USER.shop.items || USER.shop.items.length === 0 || Date.now() > USER.shop.lastRefresh + 86400000) {
-                    USER.shop.lastRefresh = Date.now();
-                    USER.shop.items = [];
+                    USER.shop.lastRefresh = Date.now(); USER.shop.items = [];
                     const freeType = ['coins','xp','gems'][Math.floor(Math.random()*3)];
                     if(freeType === 'coins') USER.shop.items.push({ type: 'coins', cost: 0, val: 100, curr: 'free', name: "Pièces Gratuites" });
                     if(freeType === 'xp') USER.shop.items.push({ type: 'xp', cost: 0, val: 50, curr: 'free', name: "XP Pass Gratuit" });
@@ -662,28 +720,19 @@
                         if(t==='box') USER.shop.items.push({type:'box',cost:80,val:1,curr:'coins', name: "Mega Caisse"});
                         if(t==='xp') USER.shop.items.push({type:'xp',cost:100,val:100,curr:'coins', name: "Boost de Pass"});
                         if(t==='skin') {
-                            const keys = Object.keys(STARTERS);
-                            const s = STARTERS[keys[Math.floor(Math.random()*keys.length)]];
-                            if(s.skins && s.skins.length > 1) {
-                                const skin = s.skins[1]; 
-                                USER.shop.items.push({type:'skin',cost:skin.price,val:1,curr:'coins', name: `Skin ${skin.name}`, skinId: skin.id, hero: s.name, discount: Math.random() > 0.5 ? 30 : 0});
-                            } else {
-                                USER.shop.items.push({type:'coins',cost:20,val:300,curr:'gems', name: "Pack de Pièces"});
-                            }
+                            const keys = Object.keys(STARTERS); const s = STARTERS[keys[Math.floor(Math.random()*keys.length)]];
+                            if(s.skins && s.skins.length > 1) { const skin = s.skins[1]; USER.shop.items.push({type:'skin',cost:skin.price,val:1,curr:'coins', name: `Skin ${skin.name}`, skinId: skin.id, hero: s.name, discount: Math.random() > 0.5 ? 30 : 0}); } 
+                            else { USER.shop.items.push({type:'coins',cost:20,val:300,curr:'gems', name: "Pack de Pièces"}); }
                         }
                     }
-                    Storage.save();
-                    if(force) this.renderShop();
+                    Storage.save(); if(force) this.renderShop();
                 }
             },
             renderShop() {
                 this.refreshShop();
-                const now = Date.now(); 
-                const left = (USER.shop.lastRefresh + 86400000) - now; const hrs = Math.floor(left / 3600000); const mins = Math.floor((left % 3600000) / 60000);
+                const now = Date.now(); const left = (USER.shop.lastRefresh + 86400000) - now; const hrs = Math.floor(left / 3600000); const mins = Math.floor((left % 3600000) / 60000);
                 setText('shop-timer', `${hrs}h ${mins}m`);
-                const c = el('shop-offers'); 
-                if(!c) return;
-                c.innerHTML = '';
+                const c = el('shop-offers'); if(!c) return; c.innerHTML = '';
                 c.innerHTML += `<h3 class="col-span-1 md:col-span-2 text-xl font-bold text-yellow-400 flex items-center gap-2">🔥 OFFRES FLASH 🔥</h3>`;
                 USER.shop.items.forEach((item, idx) => {
                     let icon = item.type==='coins'?'🪙':(item.type==='gems'?'💎':(item.type==='xp'?'🎫':(item.type==='skin'?'👕':'📦')));
@@ -692,154 +741,84 @@
                     let btnClass = item.curr==='free' ? 'bg-green-600 hover:bg-green-500' : (item.curr==='gems'?'bg-purple-600 hover:bg-purple-500':'bg-yellow-600 hover:bg-yellow-500');
                     let costDisplay = `${item.cost} ${curIcon}`;
                     let discountBadge = '';
-                    if(item.discount) {
-                        const newCost = Math.floor(item.cost * (1 - item.discount/100));
-                        costDisplay = `<span class="line-through text-gray-400 text-xs mr-2">${item.cost}</span> ${newCost} ${curIcon}`;
-                        item.realCost = newCost;
-                    } else {
-                        item.realCost = item.cost;
-                    }
+                    if(item.discount) { const newCost = Math.floor(item.cost * (1 - item.discount/100)); costDisplay = `<span class="line-through text-gray-400 text-xs mr-2">${item.cost}</span> ${newCost} ${curIcon}`; item.realCost = newCost; } 
+                    else { item.realCost = item.cost; }
                     if(item.curr === 'free') costDisplay = 'GRATUIT';
-                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition border border-white/10 ${color} relative overflow-hidden">
-                        ${discountBadge}
-                        <div class="text-5xl mb-2">${icon}</div>
-                        <div class="font-bold text-lg">${item.name}</div>
-                        <div class="text-xs text-gray-400 mb-4">${item.type==='skin' ? 'Skin Rare' : `+${item.val} ${icon}`}</div>
-                        <button onclick="window.ui.buySpecial(${idx})" class="w-full ${btnClass} py-3 rounded-xl font-bold text-sm">${costDisplay}</button>
-                    </div>`;
+                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition border border-white/10 ${color} relative overflow-hidden">${discountBadge}<div class="text-5xl mb-2">${icon}</div><div class="font-bold text-lg">${item.name}</div><div class="text-xs text-gray-400 mb-4">${item.type==='skin' ? 'Skin Rare' : `+${item.val} ${icon}`}</div><button onclick="window.ui.buySpecial(${idx})" class="w-full ${btnClass} py-3 rounded-xl font-bold text-sm">${costDisplay}</button></div>`;
                 });
             },
             renderPass() {
                 setText('pass-lvl', USER.pass.tier); setText('pass-xp-txt', `${USER.pass.xp}/100 XP`); setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
                 const status = el('pass-pro-status');
-                if(status) {
-                    if(USER.mPassPro) { status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">PRO ACTIVÉ</span>'; }
-                    else { status.innerHTML = `<button onclick="window.ui.buyPassPro()" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">ACHETER PASS PRO (99 💎)</button>`; }
-                }
-                const tr = el('pass-track-free');
-                const trPro = el('pass-track-pro');
-                if (!tr || !trPro) return;
-                let freeHtml = '<div class="pass-label">GRATUIT</div>';
-                let proHtml = '<div class="pass-label">PRO 👑</div>';
+                if(status) { if(USER.mPassPro) { status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">PRO ACTIVÉ</span>'; } else { status.innerHTML = `<button onclick="window.ui.buyPassPro()" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">ACHETER PASS PRO (159 💎)</button>`; } }
+                const tr = el('pass-track-free'); const trPro = el('pass-track-pro'); if (!tr || !trPro) return;
+                let freeHtml = '<div class="pass-label">GRATUIT</div>'; let proHtml = '<div class="pass-label">PRO 👑</div>';
                 for(let i=1; i<=50; i++) {
-                    const freeRwdStr = getPassReward(i, false);
-                    const proRwdStr = getPassReward(i, true);
-                    const [rwdFType, rwdFVal] = freeRwdStr.split(':');
-                    const [rwdPType, rwdPVal] = proRwdStr.split(':');
-                    const getDisplay = (type, val) => {
-                        let icon = '🎁', text = '';
-                        if(type === 'coins') { icon = '🪙'; text = `+${val} Pièces`; }
-                        else if(type === 'gems') { icon = '💎'; text = `+${val} Gemmes`; }
-                        else if(type === 'box') { icon = '📦'; text = 'Caisse'; }
-                        else if(type.startsWith('emote')) { icon = EMOTE_LIST.find(e => e.id === type.split(':')[1])?.i || '😀'; text = 'Emote'; }
-                        else if(type.startsWith('skin')) { icon = '👕'; text = (type.includes('titan_prime')) ? 'TITAN PRIME' : 'Skin Rare'; }
-                        return { icon, text };
-                    };
-                    const displayF = getDisplay(rwdFType, rwdFVal);
-                    const displayP = getDisplay(rwdPType, rwdPVal);
-                    let claimedF = USER.pass.claimed.includes(i);
-                    let claimedP = USER.pass.claimedPro.includes(i);
-                    let unlocked = USER.pass.tier >= i;
-                    let proLocked = !USER.mPassPro;
-                    let freeState = claimedF ? 'claimed' : (unlocked ? 'active cursor-pointer' : 'locked');
-                    let proState = claimedP ? 'claimed' : ((unlocked && !proLocked) ? 'active cursor-pointer pro' : 'locked pro');
-                    let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, false, '${freeRwdStr}')"` : '';
-                    let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, true, '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE PASS PRO !', '#a855f7')"` : '');
-                    freeHtml += `
-                        <div class="pass-step ${freeState} shrink-0 mx-2" ${fnF}>
-                            <div class="tier-badge">PALIER ${i}</div>
-                            <div class="text-4xl mb-2">${displayF.icon}</div>
-                            <div class="text-[10px] font-bold">${displayF.text}</div>
-                        </div>`;
-                    proHtml += `
-                        <div class="pass-step ${proState} shrink-0 mx-2" ${fnP}>
-                            <div class="tier-badge">PALIER ${i}</div>
-                            <div class="text-4xl mb-2">${displayP.icon}</div>
-                            <div class="text-[10px] font-bold">${displayP.text}</div>
-                        </div>`;
+                    const freeRwdStr = getPassReward(i, false); const proRwdStr = getPassReward(i, true);
+                    const [rwdFType, rwdFVal] = freeRwdStr.split(':'); const [rwdPType, rwdPVal] = proRwdStr.split(':');
+                    const getDisplay = (type, val) => { let icon = '🎁', text = ''; if(type === 'coins') { icon = '🪙'; text = `+${val} Pièces`; } else if(type === 'gems') { icon = '💎'; text = `+${val} Gemmes`; } else if(type === 'box') { icon = '📦'; text = 'Caisse'; } else if(type.startsWith('emote')) { icon = EMOTE_LIST.find(e => e.id === type.split(':')[1])?.i || '😀'; text = 'Emote'; } else if(type.startsWith('skin')) { icon = '👕'; text = (type.includes('titan_prime')) ? 'TITAN PRIME' : 'Skin Rare'; } return { icon, text }; };
+                    const displayF = getDisplay(rwdFType, rwdFVal); const displayP = getDisplay(rwdPType, rwdPVal);
+                    let claimedF = USER.pass.claimed.includes(i); let claimedP = USER.pass.claimedPro.includes(i);
+                    let unlocked = USER.pass.tier >= i; let proLocked = !USER.mPassPro;
+                    let freeState = claimedF ? 'claimed' : (unlocked ? 'active cursor-pointer' : 'locked'); let proState = claimedP ? 'claimed' : ((unlocked && !proLocked) ? 'active cursor-pointer pro' : 'locked pro');
+                    let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, false, '${freeRwdStr}')"` : ''; let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, true, '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE PASS PRO !', '#a855f7')"` : '');
+                    let overlayF = claimedF ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-2xl"><span class="text-4xl text-green-500">✅</span></div>' : '';
+                    let overlayP = claimedP ? '<div class="absolute inset-0 flex items-center justify-center bg-black/60 rounded-2xl"><span class="text-4xl text-yellow-400">✨</span></div>' : '';
+                    freeHtml += `<div class="pass-step ${freeState} shrink-0 mx-2" ${fnF}>${overlayF}<div class="tier-badge">PALIER ${i}</div><div class="text-4xl mb-2">${displayF.icon}</div><div class="text-[10px] font-bold">${displayF.text}</div></div>`;
+                    proHtml += `<div class="pass-step ${proState} shrink-0 mx-2" ${fnP}>${overlayP}<div class="tier-badge">PALIER ${i}</div><div class="text-4xl mb-2">${displayP.icon}</div><div class="text-[10px] font-bold">${displayP.text}</div></div>`;
                 }
-                tr.innerHTML = freeHtml;
-                trPro.innerHTML = proHtml;
+                tr.innerHTML = freeHtml; trPro.innerHTML = proHtml;
             },
             renderLists() {
-                const currentMode = (window.game && window.game.conf) ? window.game.conf.mode : 'survival';
-                const currentArena = (window.game && window.game.conf) ? window.game.conf.arena : 'tokyo';
+                const currentMode = (window.game && window.game.conf) ? window.game.conf.mode : 'survival'; const currentArena = (window.game && window.game.conf) ? window.game.conf.arena : 'tokyo';
                 const sl = el('list-starters'); sl.innerHTML = '';
-                Object.keys(STARTERS).forEach(k => {
+                
+                // SORT HEROES BY RARITY
+                const heroKeys = Object.keys(STARTERS).sort((a,b) => {
+                    return RARITY[STARTERS[a].rarity].rank - RARITY[STARTERS[b].rarity].rank;
+                });
+
+                heroKeys.forEach(k => {
                     const s = STARTERS[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5';
                     const rarity = RARITY[s.rarity] || RARITY.common;
                     const borderColor = active.includes('border-blue-500') ? '' : `border-color: ${rarity.color}40;`;
                     const bgStyle = active.includes('bg-blue-900') ? '' : `background: linear-gradient(135deg, ${rarity.color}10, rgba(255,255,255,0.02));`;
-                    sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="${borderColor} ${bgStyle}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
-                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider text-white shadow-sm" style="background-color:${rarity.color}">${rarity.name}</div>
-                        <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
-                        <div class="font-black text-sm uppercase tracking-wider" style="color:${rarity.color}">${s.name}</div>
-                        <div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div>
-                        <div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>
-                    </div>`;
+                    sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="${borderColor} ${bgStyle}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center"><div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider text-white shadow-sm" style="background-color:${rarity.color}">${rarity.name}</div><div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div><div class="font-black text-sm uppercase tracking-wider" style="color:${rarity.color}">${s.name}</div><div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div><div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div></div>`;
                 });
                 const ml = el('list-modes'); ml.innerHTML = ''; 
-                Object.keys(MODES).forEach(k => { 
-                    const m = MODES[k]; 
-                    const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; 
-                    const active = currentMode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; 
-                    ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; 
-                }); 
+                Object.keys(MODES).forEach(k => { const m = MODES[k]; const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; const active = currentMode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; }); 
                 const al = el('list-arenas'); al.innerHTML = ''; 
-                Object.keys(ARENAS).forEach(k => { 
-                    const a = ARENAS[k]; 
-                    const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; 
-                    const active = currentArena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; 
-                    al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; 
-                });
+                Object.keys(ARENAS).forEach(k => { const a = ARENAS[k]; const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; const active = currentArena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; });
             },
             openHeroDetails(k) {
-                const s = STARTERS[k];
-                const unlocked = USER.unlocked.includes(k);
-                const lvl = USER.levels[k] || 1;
-                const rarity = RARITY[s.rarity] || RARITY.common;
-                const rBadge = el('hd-rarity');
-                if(rBadge) {
-                    rBadge.innerText = rarity.name;
-                    rBadge.style.backgroundColor = rarity.color;
-                    rBadge.style.color = '#000'; 
-                    rBadge.style.boxShadow = `0 0 10px ${rarity.color}`;
-                }
+                const s = STARTERS[k]; const unlocked = USER.unlocked.includes(k); const lvl = USER.levels[k] || 1; const rarity = RARITY[s.rarity] || RARITY.common;
+                const rBadge = el('hd-rarity'); if(rBadge) { rBadge.innerText = rarity.name; rBadge.style.backgroundColor = rarity.color; rBadge.style.color = '#000'; rBadge.style.boxShadow = `0 0 10px ${rarity.color}`; }
                 setText('hd-icon', s.icon); setText('hd-name', s.name); setText('hd-lvl', "NIVEAU " + lvl); setText('hd-desc', s.lore || s.desc); setText('hd-gadget-name', getGadgetName(s.gadget)); setText('hd-passive', s.passive || "Aucun");
-                const skinsContainer = el('hd-skins-list');
-                skinsContainer.innerHTML = '';
-                if(s.skins) {
-                    s.skins.forEach(skin => {
-                        const fullSkinId = `${k}_${skin.id}`;
-                        const isOwned = skin.id === 'default' || (USER.ownedSkins && USER.ownedSkins.includes(fullSkinId));
-                        const isSelected = (USER.skins && USER.skins[k] === skin.id) || (skin.id === 'default' && !USER.skins[k]);
-                        const style = isSelected ? 'border-yellow-400 bg-yellow-900/30' : (isOwned ? 'border-white/20 bg-white/5' : 'border-gray-700 bg-black/50 grayscale');
-                        const priceDisplay = skin.price ? `${skin.price}🪙` : 'Gratuit';
-                        const actionText = isOwned ? (isSelected?'ÉQUIPÉ':'METTRE') : priceDisplay;
-                        const clickAction = isOwned ? `window.ui.equipSkin('${k}', '${skin.id}')` : `window.ui.buySkin('${k}', '${skin.id}', ${skin.price})`;
-                        skinsContainer.innerHTML += `<div onclick="${clickAction}" class="w-16 h-16 rounded-lg border-2 ${style} flex flex-col items-center justify-center cursor-pointer shrink-0"><div class="text-2xl" style="color:${skin.c}">${s.icon}</div><div class="text-[8px] font-bold mt-1">${actionText}</div></div>`;
-                    });
-                }
+                const skinsContainer = el('hd-skins-list'); skinsContainer.innerHTML = '';
+                if(s.skins) { s.skins.forEach(skin => { const fullSkinId = `${k}_${skin.id}`; const isOwned = skin.id === 'default' || (USER.ownedSkins && USER.ownedSkins.includes(fullSkinId)); const isSelected = (USER.skins && USER.skins[k] === skin.id) || (skin.id === 'default' && !USER.skins[k]); const style = isSelected ? 'border-yellow-400 bg-yellow-900/30' : (isOwned ? 'border-white/20 bg-white/5' : 'border-gray-700 bg-black/50 grayscale'); const priceDisplay = skin.price ? `${skin.price}🪙` : 'Gratuit'; const actionText = isOwned ? (isSelected?'ÉQUIPÉ':'METTRE') : priceDisplay; const clickAction = isOwned ? `window.ui.equipSkin('${k}', '${skin.id}')` : `window.ui.buySkin('${k}', '${skin.id}', ${skin.price})`; skinsContainer.innerHTML += `<div onclick="${clickAction}" class="w-16 h-16 rounded-lg border-2 ${style} flex flex-col items-center justify-center cursor-pointer shrink-0"><div class="text-2xl" style="color:${skin.c}">${s.icon}</div><div class="text-[8px] font-bold mt-1">${actionText}</div></div>`; }); }
                 setTimeout(() => { setStyle('hd-bar-hp', 'width', (s.hp/600*100) + '%'); setStyle('hd-bar-dmg', 'width', (s.dmg/150*100) + '%'); setStyle('hd-bar-spd', 'width', (s.spd/10*100) + '%'); }, 50);
-                const actions = el('hd-actions');
-                if(unlocked) {
-                    const upgradeCost = lvl * 150;
-                    if(lvl >= 10) { actions.innerHTML = `<button onclick="window.game.setStarter('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">SÉLECTIONNER</button><button class="w-full max-level font-bold py-3 rounded-xl flex justify-center items-center gap-2 cursor-default border border-yellow-500/50 text-yellow-500 bg-yellow-900/20">NIVEAU MAX</button>`; }
-                    else { actions.innerHTML = `<button onclick="window.game.setStarter('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">SÉLECTIONNER</button><button onclick="window.ui.upgrade('${k}'); window.ui.openHeroDetails('${k}')" class="w-full bg-green-600/80 hover:bg-green-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">AMÉLIORER <span class="bg-black/20 px-2 rounded text-xs">${upgradeCost} 🪙</span></button>`; }
-                } else { 
-                    actions.innerHTML = `<button onclick="window.ui.unlock('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 text-lg">ACHETER <span class="bg-black/20 px-3 py-1 rounded text-sm">${s.price} 🪙</span></button>`; 
-                }
+                const actions = el('hd-actions'); if(unlocked) { const upgradeCost = lvl * 150; if(lvl >= 10) { actions.innerHTML = `<button onclick="window.game.setStarter('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">SÉLECTIONNER</button><button class="w-full max-level font-bold py-3 rounded-xl flex justify-center items-center gap-2 cursor-default border border-yellow-500/50 text-yellow-500 bg-yellow-900/20">NIVEAU MAX</button>`; } else { actions.innerHTML = `<button onclick="window.game.setStarter('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl">SÉLECTIONNER</button><button onclick="window.ui.upgrade('${k}'); window.ui.openHeroDetails('${k}')" class="w-full bg-green-600/80 hover:bg-green-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2">AMÉLIORER <span class="bg-black/20 px-2 rounded text-xs">${upgradeCost} 🪙</span></button>`; } } else { actions.innerHTML = `<button onclick="window.ui.unlock('${k}'); document.getElementById('hero-details-modal').classList.add('hidden')" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 rounded-xl flex justify-center items-center gap-2 text-lg">ACHETER <span class="bg-black/20 px-3 py-1 rounded text-sm">${s.price} 🪙</span></button>`; }
                 el('hero-details-modal').classList.remove('hidden');
             },
             equipSkin(heroId, skinId) { if(!USER.skins) USER.skins = {}; USER.skins[heroId] = skinId; Storage.save(); this.openHeroDetails(heroId); },
             buySkin(heroId, skinId, price) { if(USER.coins >= price) { USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
+            
             renderProfile() { 
-                el('profile-name').value = USER.name; 
+                // Render Display Values
+                setText('profile-name-display', USER.name || 'Player');
                 setText('profile-tag', USER.tag); 
+                setText('profile-lvl', "PASS " + USER.pass.tier); 
+                setText('profile-bio-display', USER.bio || 'Aucune bio.');
                 
-                // HANDLE CUSTOM IMAGE OR EMOJI
+                let unlockedHeroes = USER.unlocked.length;
+                let totalHeroes = Object.keys(STARTERS).length;
+                let ownedSkinsCount = USER.ownedSkins ? USER.ownedSkins.length : 0;
+                setText('profile-unlocked-count', `${unlockedHeroes}/${totalHeroes}`);
+                setText('profile-skins-count', ownedSkinsCount);
+
+                // Render Avatar
                 const avatarContainer = el('profile-avatar');
-                avatarContainer.innerHTML = ''; // Clear existing content
+                avatarContainer.innerHTML = ''; 
                 if(USER.avatar.startsWith('data:image')) {
                     avatarContainer.innerHTML = `<img src="${USER.avatar}" class="avatar-img rounded-full">`;
                     avatarContainer.classList.remove('text-4xl');
@@ -848,11 +827,72 @@
                     avatarContainer.classList.add('text-4xl');
                 }
                 
-                let totalLvl = Object.values(USER.levels).reduce((a,b)=>a+b, 0); 
-                setText('profile-lvl', "LVL " + totalLvl); 
+                // MPASS PRO FEATURES
+                const card = el('profile-card-container');
+                const avContainer = el('profile-avatar').parentElement;
+
+                // 1. Gold Border
+                if(USER.mPassPro) {
+                    avContainer.classList.add('border-gold-glow');
+                    avContainer.classList.remove('border-white/20');
+                } else {
+                    avContainer.classList.remove('border-gold-glow');
+                    avContainer.classList.add('border-white/20');
+                }
+
+                // 2. Custom Background
+                if (USER.mPassPro && USER.profileBg) {
+                    card.style.background = USER.profileBg;
+                } else {
+                    card.style.background = 'rgba(30, 58, 138, 0.1)'; // Reset to default blue tint
+                }
+            },
+            openSettings() {
+                // Fill inputs with current values
+                el('setting-name').value = USER.name || '';
+                el('setting-email').value = USER.email || '';
+                el('setting-phone').value = USER.phone || '';
+                el('setting-dob').value = USER.dob || '';
+                el('setting-bio').value = USER.bio || '';
+                
+                // Theme selector logic inside modal
+                const lockIcon = el('theme-lock-icon');
+                const themeSelector = el('profile-theme-selector');
+                
+                if (USER.mPassPro) {
+                    lockIcon.innerHTML = '';
+                    themeSelector.innerHTML = '';
+                    const themes = [
+                        { c: 'linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%)', name: 'Défaut' },
+                        { c: 'linear-gradient(135deg, #f59e0b 0%, #78350f 100%)', name: 'Or' },
+                        { c: 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)', name: 'Cyber' },
+                        { c: 'linear-gradient(135deg, #22c55e 0%, #064e3b 100%)', name: 'Toxique' },
+                        { c: 'linear-gradient(135deg, #ef4444 0%, #7f1d1d 100%)', name: 'Sang' },
+                        { c: 'linear-gradient(135deg, #000000 0%, #4c1d95 100%)', name: 'Nuit' }
+                    ];
+                    themes.forEach(t => {
+                        themeSelector.innerHTML += `<div onclick="USER.profileBg='${t.c}'; Storage.save(); window.ui.renderProfile()" class="color-swatch" style="background:${t.c}"></div>`;
+                    });
+                } else {
+                    lockIcon.innerHTML = '🔒 Requis';
+                    themeSelector.innerHTML = '<div class="text-xs text-gray-500 italic w-full text-center py-2">Débloque le mPass Pro pour personnaliser !</div>';
+                }
+
+                el('settings-modal').classList.remove('hidden');
+            },
+            closeSettings() {
+                el('settings-modal').classList.add('hidden');
+                // Re-render profile to ensure changes are visible
+                this.renderProfile();
             },
             openAvatarSelector() { const grid = el('avatar-grid'); grid.innerHTML = ''; ICONS.forEach(icon => { grid.innerHTML += `<button onclick="window.ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`; }); el('avatar-selector').classList.remove('hidden'); },
-            selectAvatar(icon) { USER.avatar = icon; Storage.save(); el('avatar-selector').classList.add('hidden'); this.renderProfile(); },
+            selectAvatar(icon) { 
+                USER.avatar = icon; 
+                Storage.save(); 
+                el('avatar-selector').classList.add('hidden'); 
+                // Immediately update DOM in Profile and HUD
+                this.renderProfile(); 
+            },
             
             uploadAvatar(input) {
                 if (input.files && input.files[0]) {
@@ -915,7 +955,7 @@
                 USER.shop.items.splice(idx, 1); 
                 Storage.save(); this.updateMenu(); this.renderShop(); this.renderPass(); 
             } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            buyPassPro() { if(USER.gems >= 99) { USER.gems -= 99; USER.mPassPro = true; this.notif("PASS PRO ACTIVÉ !", "#facc15"); Storage.save(); this.updateMenu(); this.renderPass(); } else { this.notif("PAS ASSEZ DE GEMMES !", "#ef4444"); } },
+            buyPassPro() { if(USER.gems >= 159) { USER.gems -= 159; USER.mPassPro = true; this.notif("PASS PRO ACTIVÉ !", "#facc15"); Storage.save(); this.updateMenu(); this.renderPass(); this.renderProfile(); } else { this.notif("PAS ASSEZ DE GEMMES !", "#ef4444"); } },
             claimPass(tier, isPro, rewardString) { const hasPass = isPro ? USER.mPassPro : true; const alreadyClaimed = isPro ? USER.pass.claimedPro.includes(tier) : USER.pass.claimed.includes(tier); if(USER.pass.tier >= tier && hasPass && !alreadyClaimed) { if (processPassReward(rewardString)) { if(isPro) USER.pass.claimedPro.push(tier); else USER.pass.claimed.push(tier); Storage.save(); this.renderPass(); this.updateMenu(); } else { this.notif("Erreur Récompense", "#ff0000"); } } },
             exportSave() { const data = btoa(JSON.stringify(USER)); navigator.clipboard.writeText(data).then(() => this.notif("CODE COPIÉ !", "#22c55e")); },
             importSave() { 
@@ -1015,26 +1055,36 @@
             if(window.game.conf.modifier === 'recoil') { this.move(Math.cos(this.angle + Math.PI) * 15, Math.sin(this.angle + Math.PI) * 15); }
             for(let i=0;i<cnt;i++){ const a=this.angle+(Math.random()-0.5)*spr+(i-(cnt-1)/2)*0.1, s=t==='sniper'?25:(t==='flame'?10:(t==='laser'?30:18)), l=t==='flame'?20:60; window.game.projs.push({x:this.x+Math.cos(this.angle)*25,y:this.y+Math.sin(this.angle)*25,vx:Math.cos(a)*s,vy:Math.sin(a)*s,dmg:dmg,life:l,r:t==='flame'?8:(t==='laser'?4:5),c:this.c,friend:true}); } } dash(){ if(this.dashT>0)return; this.dashT=60; window.game.shake=10; const stepSize = 20; const totalDist = 180; const steps = totalDist / stepSize; const dx = Math.cos(this.angle) * stepSize; const dy = Math.sin(this.angle) * stepSize; for(let i=0; i<steps; i++) { this.move(dx, dy); } for(let i=0;i<8;i++)window.game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4}); } useGadget() { if(this.gadgetCharges <= 0) return; this.gadgetCharges--; window.ui.notif("GADGET!", "#22c55e"); const t=this.stats.gadget; if(t==="heal") { this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)window.game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3}); } if(t==="shield") { this.maxHp+=1000; this.hp+=1000; } if(t==="teleport") { let tx=this.x+Math.cos(this.angle)*300, ty=this.y+Math.sin(this.angle)*300; let cx=false; for(let w of window.game.map){ if(w.type!==1 && w.collide({x:tx,y:ty,r:this.r})) cx=true; } if(!cx) { this.x=tx; this.y=ty; } else window.ui.notif("BLOQUÉ !", "#ef4444"); } if(t==="speed") { this.activeEffects.speed = 180; } if(t==="knockback") { for(let e of window.game.ents) { let d = Dist(this, e); if(d < 300) { let a = Math.atan2(e.y-this.y, e.x-this.x); e.x += Math.cos(a)*200; e.y += Math.sin(a)*200; } } } } draw(ctx){ ctx.save(); ctx.shadowColor = this.c; ctx.shadowBlur = 20; super.draw(ctx); ctx.translate(this.x,this.y); ctx.rotate(this.angle); ctx.fillStyle='#1e293b'; ctx.fillRect(10,-6,28,12); if(this.reloadT > 0 && window.game.conf.modifier !== 'infinite') { ctx.rotate(-this.angle); ctx.fillStyle = 'white'; ctx.fillRect(-15, 30, 30 * (this.reloadT/this.stats.reload), 3); } ctx.restore(); } }
         class Bot extends Player{ constructor(){ super(USER.selected==='soldier'?'tank':'soldier'); this.c='#ef4444'; this.isBot=true; this.x=100; this.y=100; this.mode='WANDER'; this.target=null; } update(){ if(this.cd>0)this.cd--; const p=window.game.player, d=Dist(this,p); this.angle=Math.atan2(p.y-this.y,p.x-this.x); let playerHidden = false; for(let w of window.game.map) { if(w.type === 1 && ColRect(window.game.player, w)) { playerHidden = true; break; } } 
-            if(window.game.conf.mode === 'duel') { 
+            if (window.game.conf.mode === 'train_defense' && window.game.train) {
+                // TRAIN DEFENSE LOGIC: IGNORE PLAYER, KILL TRAIN
+                this.target = window.game.train;
+                this.mode = 'ATTACK_TRAIN';
+                this.angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
+                // Move towards train
+                this.move(Math.cos(this.angle)*this.stats.spd, Math.sin(this.angle)*this.stats.spd);
+                // Shoot if close
+                if (Dist(this, this.target) < 400) this.shoot();
+                return; // Stop other logic
+            } else if(window.game.conf.mode === 'duel') { 
                 this.mode = 'CHASE'; // Always chase in duel
                 if (d < 500 && this.cd <= 0) this.shoot(); // Shoot if close enough
-            } else if (window.game.conf.mode === 'train_defense' && window.game.train) {
-                this.target = window.game.train;
-                this.mode = 'CHASE_TRAIN';
-                this.angle = Math.atan2(this.target.y - this.y, this.target.x - this.x);
-                if (Dist(this, this.target) < 300) this.shoot();
             } else { 
                 if(d < 500 && !playerHidden) this.mode = 'CHASE'; else this.mode = 'WANDER'; 
                 if (this.mode === 'CHASE' && Math.random()<0.05) this.shoot();
             } 
             
+            // Bot Emotes
+            if(Math.random() < 0.002 && this.emoteTimer <= 0) {
+                const emotes = ['😡', '😈', '💀', '🤡'];
+                this.emote = emotes[Math.floor(Math.random() * emotes.length)];
+                this.emoteTimer = 120;
+            }
+
             let tx,ty; 
             if(this.mode==='CHASE'){ 
                 let strafe = Math.sin(window.game.frame * 0.05) * 100; 
                 tx = p.x + Math.cos(this.angle + Math.PI/2) * strafe; 
                 ty = p.y + Math.sin(this.angle + Math.PI/2) * strafe; 
-            } else if(this.mode==='CHASE_TRAIN') {
-                tx = this.target.x; ty = this.target.y;
             } else { 
                 if(window.game.conf.mode === 'duel') { 
                     if(!this.target || Dist(this,this.target)<50) this.target={x:window.game.world/2 + Rnd(-300,300), y:window.game.world/2 + Rnd(-300,300)};
@@ -1053,9 +1103,20 @@
             if(window.game.frame%60===0 && this.hp<this.maxHp)this.hp++; 
             if(window.game.gasRadius && Dist(this, {x:window.game.world/2, y:window.game.world/2}) > window.game.gasRadius) this.hp -= 10; 
             if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; } 
-        } shoot(){ if(this.cd>0)return; this.cd=20; window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:false}); } }
+        } shoot(){ if(this.cd>0)return; this.cd=20; window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:false, type: this.stats.type}); } }
         class Enemy extends Entity{ constructor(t,m=1){ const diffMult = DIFFICULTY[window.game.conf.difficulty].mult; const enemyMult = m * diffMult; super(0,0,20,'#ef4444'); let safe=false; while(!safe){ this.x=Rnd(100,window.game.world-100);this.y=Rnd(100,window.game.world-100); let wallCol = false; for(let w of window.game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; } if(!wallCol && Dist(this,window.game.player)>600) safe=true; } this.type=t; let hp=60,s=2.0, dmg=1; if(t==='fast'){hp=40;s=4.0;this.c='#f97316';this.r=15;} if(t==='tank'){hp=200;s=1.2;this.c='#7e22ce';this.r=30;} if(t==='boss'){hp=5000;s=1.5;this.c='#dc2626';this.r=60;this.isBoss=true;this.cd=0; dmg=3;} if(t==='chest'){hp=5000;s=0;this.c='#facc15';this.r=40;this.isBoss=true;} if(t==='train'){hp=10000;s=1.0;this.c='#3b82f6';this.r=30;this.type='train';} 
+            
+            // BALANCE: SCALE ENEMY WITH PLAYER LEVEL
+            const pLvl = USER.levels[USER.selected] || 1;
+            // +8% HP and +5% DMG per player level to match power creep
+            const scaleFactorHP = 1 + (pLvl * 0.08);
+            const scaleFactorDMG = 1 + (pLvl * 0.05);
+
+            hp *= scaleFactorHP;
+            dmg *= scaleFactorDMG;
+
             if(window.game.conf.modifier === 'giant') { this.r *= 2; hp *= 2; s *= 0.8; }
+            
             this.hp=hp * enemyMult; this.maxHp=this.hp; this.spd=s*0.85; this.baseDmg = dmg * enemyMult; this.cd = 100 + Math.random() * 100; if(this.isBoss) this.name = t === 'boss' ? 'BOSS' : 'COFFRE'; else this.name = `Bot n°${Math.floor(Math.random() * 89999) + 10000}`; this.activeEffects = {}; } update(){ if(this.spd === 0) return; const p=window.game.player; let sepX = 0, sepY = 0; for(let other of window.game.ents) { if(other !== this) { let d = Dist(this, other); if(d < this.r * 2.5 && d > 0) { let ang = Math.atan2(this.y - other.y, this.x - other.x); sepX += Math.cos(ang); sepY += Math.sin(ang); } } } if (window.game.conf.mode === 'survival' || window.game.conf.mode === 'ranked') { if (this.cd > 0) this.cd--; if (this.cd <= 0 && Dist(this, p) < 400) { const a = Math.atan2(p.y - this.y, p.x - this.x); window.game.projs.push({ x: this.x, y: this.y, vx: Math.cos(a) * 3 * 1.08, vy: Math.sin(a) * 3 * 1.08, dmg: 10 * DIFFICULTY[window.game.conf.difficulty].mult, life: 100, r: 6, c: this.c, friend: false }); this.cd = 150; } } if(this.type === 'boss') { const d = Dist(this, p); const a = Math.atan2(p.y - this.y, p.x - this.x); this.x += Math.cos(a) * this.spd; this.y += Math.sin(a) * this.spd; if(this.cd > 0) this.cd--; if(this.cd <= 0 && d < 800) { this.cd = 60; window.game.projs.push({ x: this.x, y: this.y, vx: Math.cos(a) * 2.5 * 1.08, vy: Math.sin(a) * 2.5 * 1.08, dmg: 40 * DIFFICULTY[window.game.conf.difficulty].mult, life: 200, r: 20, c: '#ef4444', friend: false }); } } else { let playerHidden = false; for(let w of window.game.map) { if(w.type === 1 && ColRect(window.game.player, w)) { playerHidden = true; break; } } let tx, ty; if(playerHidden && Dist(this, p) > 150) { if(!this.target || Dist(this,this.target)<50 || Math.random()<0.01) this.target={x:Rnd(100,window.game.world-100), y:Rnd(100,window.game.world-100)}; tx=this.target.x; ty=this.target.y; } else { tx=p.x; ty=p.y; } const a=Math.atan2(ty-this.y, tx-this.x); let speed = this.spd; if(window.game.conf.modifier === 'speed') speed *= 2; let mx = Math.cos(a)*speed + sepX*0.5; let my = Math.sin(a)*speed + sepY*0.5; const nx=this.x+mx, ny=this.y+my; let cx=false, cy=false; for(let w of window.game.map){if(w.type===1)continue; if(w.collide({x:nx,y:this.y,r:this.r}))cx=true;if(w.collide({x:this.x,y:ny,r:this.r}))cy=true;} if(!cx)this.x=nx;if(!cy)this.y=ny; } if(Math.hypot(this.x-p.x,this.y-p.y)<this.r+p.r){p.hp-=this.baseDmg;window.ui.flash();if(window.game.conf.modifier === 'oneshot') p.hp = 0; if(p.hp<=0)window.game.over("Tué par "+this.name);} if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; } } draw(ctx){ if(this.isBoss){ctx.beginPath();ctx.arc(this.x,this.y,this.r+5,0,Math.PI*2);ctx.strokeStyle=this.type==='chest'?'#facc15':'#ef4444';ctx.setLineDash([5,5]);ctx.stroke();ctx.setLineDash([]);} super.draw(ctx); const pct=this.hp/this.maxHp; ctx.save(); ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(this.x-20,this.y-this.r-15,40,6); ctx.fillStyle=this.isBoss?'#ef4444':'#22c55e';ctx.fillRect(this.x-19,this.y-this.r-14,38*pct,4); ctx.restore(); } }
         class Train extends Entity {
             constructor() {
@@ -1152,6 +1213,7 @@
                 } 
                 setText('hud-icon', STARTERS[USER.selected].icon); 
                 this.state='PLAYING'; // Set state to PLAYING
+                window.ui.hud(); // Force update HUD on start to show level correctly
             }, 
             spawnDefenders(cx, cy, count) { for(let i=0; i<count; i++) { const angle = (Math.PI*2/count)*i; const e = new Enemy('basic', 1); e.x = cx + Math.cos(angle)*150; e.y = cy + Math.sin(angle)*150; this.ents.push(e); } }, 
             togglePause(){this.state=this.state==='PLAYING'?'PAUSED':(this.state==='PAUSED'?'PLAYING':this.state);}, 
@@ -1399,7 +1461,40 @@
                     }); 
                     this.projs.forEach(p => { 
                         ctx.shadowColor=p.c; ctx.shadowBlur=10; 
-                        ctx.fillStyle=p.c; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); 
+                        ctx.fillStyle=p.c;
+                        
+                        // SPECIAL PROJECTILE VISUALS based on type
+                        ctx.beginPath();
+                        if (p.type === 'sniper') {
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p.x - p.vx*2, p.y - p.vy*2);
+                            ctx.lineWidth = 2; ctx.strokeStyle = p.c; ctx.stroke();
+                        } else if(p.type === 'flame' || p.type === 'poison') {
+                             ctx.arc(p.x, p.y, p.r * (0.8 + Math.random()*0.4), 0, Math.PI*2);
+                             ctx.fill();
+                        } else if(p.type === 'shotgun') {
+                             ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                             ctx.fill();
+                             ctx.beginPath(); ctx.arc(p.x-2, p.y-2, 2, 0, Math.PI*2); ctx.fillStyle='black'; ctx.fill();
+                        } else if(p.type === 'laser') {
+                             ctx.moveTo(p.x, p.y);
+                             ctx.lineTo(p.x - p.vx, p.y - p.vy);
+                             ctx.lineWidth = 4; ctx.strokeStyle = p.c; ctx.stroke();
+                             ctx.shadowBlur = 20;
+                        } else if(p.type === 'electric') {
+                             ctx.moveTo(p.x, p.y);
+                             ctx.lineTo(p.x - p.vx/2 + Rnd(-5,5), p.y - p.vy/2 + Rnd(-5,5));
+                             ctx.lineTo(p.x - p.vx, p.y - p.vy);
+                             ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+                        } else if(p.type === 'pulse') {
+                             ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                             ctx.strokeStyle = p.c; ctx.lineWidth=3; ctx.stroke();
+                        } else {
+                             // Default capsule for normal/soldier
+                             ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                             ctx.fill();
+                        }
+                        
                         ctx.shadowBlur=0; 
                     }); 
                     this.texts.forEach((t,i)=>{t.y+=t.vy;t.life--;ctx.globalAlpha=t.life/40;ctx.fillStyle=t.c;ctx.font="bold 20px Orbitron";ctx.fillText(t.t,t.x,t.y);ctx.globalAlpha=1;if(t.life<=0)this.texts.splice(i,1);}); 
