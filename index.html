@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v0.9.6 - mAI</title>
+    <title>mBattle v0.9.7</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -147,7 +147,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-blue-500/20 border border-blue-400/30 flex items-center justify-center text-xl">🤖</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.9.6</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-blue-400 font-bold tracking-widest">v0.9.7</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -200,12 +200,9 @@
                     </button>
                 </div>
                 <div id="tab-pass" class="tab-content hidden animate-fadeIn w-full max-w-5xl mx-auto pb-20">
-                    <div class="flex flex-col md:flex-row justify-between items-end mb-4 border-b border-white/10 pb-2">
-                         <h2 class="text-4xl font-black flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
-                         <div class="text-right">
-                             <div class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500 italic tracking-tighter drop-shadow-lg">SAISON 1 : TITAN FURY</div>
-                             <div class="text-[10px] font-bold text-gray-400">Prochaine saison le Mercredi 3 Décembre 2025</div>
-                         </div>
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-3xl font-black flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> mPASS</h2>
+                        <div class="text-right text-xs font-bold text-blue-300">SAISON 1: TITAN FURY</div>
                     </div>
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-blue-900/20 to-transparent border-blue-500/30">
                         <div class="flex justify-between items-center mb-4">
@@ -279,7 +276,7 @@
                     </div>
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.9.6 (SAISON & BALANCING)</h3><ul><li>🔥 SAISON 1 - AFFICHE MISE À JOUR</li><li>⚖️ Équilibrage : Bots scalent avec ton niveau</li><li>⚙️ Infos Créateur & Support</li><li>🛠️ Corrections de bugs</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v0.9.7 (BOTS AGGRESSIFS)</h3><ul><li>⚡ Bots +10% Vitesse</li><li>🔫 Bots Tirs Réalistes (Rate)</li><li>🔥 Bots +15% Agressivité</li><li>🛠️ Corrections de bugs</li></ul></div></div>
                 </div>
                 
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
@@ -397,7 +394,7 @@
                         mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>
                         Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a>
                     </p>
-                    <div class="text-[8px] text-gray-600 mt-1">v0.9.6</div>
+                    <div class="text-[8px] text-gray-600 mt-1">v0.9.7</div>
                 </div>
              </div>
         </div>
@@ -442,7 +439,7 @@
         </div>
     </div>
     <script>
-        /* mBATTLE TITAN v0.9.6 - SAISON & BALANCING */
+        /* mBATTLE TITAN v0.9.7 - BOTS AGGRESSIFS */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
@@ -1070,7 +1067,7 @@
                 if (d < 500 && this.cd <= 0) this.shoot(); // Shoot if close enough
             } else { 
                 if(d < 500 && !playerHidden) this.mode = 'CHASE'; else this.mode = 'WANDER'; 
-                if (this.mode === 'CHASE' && Math.random()<0.05) this.shoot();
+                if (this.mode === 'CHASE' && Math.random()<0.06) this.shoot(); // 15% more frequent shooting trigger
             } 
             
             // Bot Emotes
@@ -1096,14 +1093,14 @@
                 tx=this.target.x; ty=this.target.y; 
             } 
             const a=Math.atan2(ty-this.y, tx-this.x); 
-            let speed = this.stats.spd * 0.96; 
+            let speed = this.stats.spd * 1.1; // +10% SPEED BUFF
             if(window.game.conf.modifier === 'speed') speed *= 2; 
             this.move(Math.cos(a)*speed, Math.sin(a)*speed); 
             if(Math.random()<0.01) this.dash(); 
             if(window.game.frame%60===0 && this.hp<this.maxHp)this.hp++; 
             if(window.game.gasRadius && Dist(this, {x:window.game.world/2, y:window.game.world/2}) > window.game.gasRadius) this.hp -= 10; 
             if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; } 
-        } shoot(){ if(this.cd>0)return; this.cd=20; window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:false, type: this.stats.type}); } }
+        } shoot(){ if(this.cd>0)return; this.cd=this.stats.rate; window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:false, type: this.stats.type}); } }
         class Enemy extends Entity{ constructor(t,m=1){ const diffMult = DIFFICULTY[window.game.conf.difficulty].mult; const enemyMult = m * diffMult; super(0,0,20,'#ef4444'); let safe=false; while(!safe){ this.x=Rnd(100,window.game.world-100);this.y=Rnd(100,window.game.world-100); let wallCol = false; for(let w of window.game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; } if(!wallCol && Dist(this,window.game.player)>600) safe=true; } this.type=t; let hp=60,s=2.0, dmg=1; if(t==='fast'){hp=40;s=4.0;this.c='#f97316';this.r=15;} if(t==='tank'){hp=200;s=1.2;this.c='#7e22ce';this.r=30;} if(t==='boss'){hp=5000;s=1.5;this.c='#dc2626';this.r=60;this.isBoss=true;this.cd=0; dmg=3;} if(t==='chest'){hp=5000;s=0;this.c='#facc15';this.r=40;this.isBoss=true;} if(t==='train'){hp=10000;s=1.0;this.c='#3b82f6';this.r=30;this.type='train';} 
             
             // BALANCE: SCALE ENEMY WITH PLAYER LEVEL
