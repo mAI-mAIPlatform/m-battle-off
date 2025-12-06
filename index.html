@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="fr"><head>
+ <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.0.0 - Saison 2</title>
+    <title>mBattle v1.1.0 - Saison 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -54,18 +54,22 @@
         .safe-pb { padding-bottom: max(90px, env(safe-area-inset-bottom) + 90px); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         /* --- PASS --- */
-        .pass-track-container { overflow-x: auto; padding: 30px 20px; scroll-behavior: smooth; position: relative; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%; }
-        .pass-wrapper { display: inline-block; min-width: 100%; position: relative; }
-        .pass-row { display: flex; gap: 40px; align-items: center; margin-bottom: 40px; position: relative; padding-left: 20px; padding-right: 20px; z-index: 10; }
-        .pass-step { min-width: 110px; height: 130px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 10; transition: all 0.3s; box-shadow: 0 10px 25px rgba(0,0,0,0.3); white-space: normal; text-align: center; overflow: hidden; }
-        .pass-step.pro { background: linear-gradient(145deg, rgba(88, 28, 135, 0.6), rgba(15, 23, 42, 0.95)); border-color: rgba(168, 85, 247, 0.5); }
-        
-        /* New Claimed Style */
-        .pass-step.claimed { border-color: #22c55e !important; background: rgba(20, 83, 45, 0.6) !important; transform: scale(0.95); }
-        .check-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; color: #22c55e; text-shadow: 0 0 10px rgba(0,0,0,0.8); z-index: 20; animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        
-        .pass-step.active { transform: scale(1.15); z-index: 20; border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+        .pass-track-container { overflow-x: auto; padding: 40px 20px; scroll-behavior: smooth; position: relative; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); }
+        .pass-wrapper { display: inline-flex; flex-direction: column; min-width: 100%; position: relative; gap: 30px; padding: 0 40px; }
+        .pass-track-main-line { position: absolute; left: 0; right: 0; top: 50%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; z-index: 0; transform: translateY(-50%); }
+        .pass-row { display: flex; gap: 40px; align-items: center; position: relative; z-index: 10; padding: 10px 0; }
+        .pass-step { width: 100px; height: 120px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.3); overflow: visible; }
+        .pass-step.pro { background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border-color: rgba(99, 102, 241, 0.3); }
+        .pass-step.locked { opacity: 0.5; filter: grayscale(1); transform: scale(0.95); }
+        .pass-step.active { transform: scale(1.1) translateY(-5px); border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.2); z-index: 20; }
+        .pass-step.active.pro { border-color: #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.4); }
+        .pass-step.claimed { opacity: 0.8; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
+        .check-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #22c55e; background: rgba(0,0,0,0.6); border-radius: 16px; backdrop-filter: blur(2px); animation: popIn 0.3s; z-index: 25; }
+        .tier-badge { position: absolute; top: -10px; background: #334155; border: 1px solid rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 800; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 30; white-space: nowrap; }
+        .pass-step.active .tier-badge { background: #22d3ee; color: black; border-color: transparent; }
+        .pass-step.pro .tier-badge { background: #4c1d95; }
+        .pass-step.active.pro .tier-badge { background: #a855f7; color: white; }
+
         /* EMOTES */
         .emote-wheel { position: absolute; bottom: 120px; right: 20px; display: flex; flex-wrap: wrap; width: 160px; gap: 10px; z-index: 70; pointer-events: auto; }
         .emote-btn { width: 60px; height: 60px; background: rgba(0,0,0,0.8); border-radius: 50%; border: 2px solid white; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; cursor: pointer; }
@@ -141,7 +145,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.0.0.8.6</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.1.0</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -209,9 +213,9 @@
                     <!-- Le conteneur pass-track-container est défilable -->
                     <div class="pass-track-container hide-scrollbar" id="pass-scroll-container">
                         <div class="pass-wrapper">
-                             <div class="pass-track-line"></div>
-                             <div class="pass-row" id="pass-track-free"><div class="pass-label">GRATUIT</div></div>
-                             <div class="pass-row pro" id="pass-track-pro"><div class="pass-label">PRO 👑</div></div>
+                             <div class="pass-track-main-line"></div>
+                             <div class="pass-row" id="pass-track-free"></div>
+                             <div class="pass-row pro" id="pass-track-pro"></div>
                         </div>
                     </div>
                 </div>
@@ -290,21 +294,25 @@
                             <div class="flex gap-2"><span class="text-xl">🚂</span> <div><b class="text-white">Train Express :</b> Le train bouge ! Protège-le des robots.</div></div>
                             <div class="flex gap-2"><span class="text-xl">💰</span> <div><b class="text-white">Voleur :</b> Infiltre et vole 10 sacs d'or sans mourir.</div></div>
                             <div class="flex gap-2"><span class="text-xl">🌀</span> <div><b class="text-white">Cyber Hack :</b> Pirate les zones (reste dedans) pour gagner.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">😡</span> <div><b class="text-white">Carnage :</b> Élimine 50 ennemis le plus vite possible !</div></div>
+                            <div class="flex gap-2"><span class="text-xl">⭕</span> <div><b class="text-white">Zone :</b> Contrôle le centre de la carte à 100%.</div></div>
                         </div>
                     </div>
 
                     <div class="mb-6">
                         <h4 class="text-sm font-bold text-green-400 mb-2 uppercase tracking-widest border-b border-green-500/30 pb-1">TERRAINS</h4>
                         <div class="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                            <div><b class="text-white">Neon Tokyo :</b> Ville sombre, néons bleus.</div>
-                            <div><b class="text-white">Sandstorm :</b> Désert, visibilité réduite.</div>
-                            <div><b class="text-white">Ice Age :</b> Glace et froid polaire.</div>
-                            <div><b class="text-white">Jungle :</b> Végétation dense et verte.</div>
-                            <div><b class="text-white">Magma :</b> Volcan actif, sol rouge.</div>
-                            <div><b class="text-white">Ruines :</b> Vestiges de pierre grise.</div>
-                            <div><b class="text-white">Cyber City :</b> Métropole futuriste cyan.</div>
-                            <div><b class="text-white">Nébuleuse :</b> Espace, gravité flottante.</div>
-                            <div><b class="text-white">Mainframe :</b> Matrice numérique verte.</div>
+                            <div><b class="text-white">Neon Tokyo :</b> Ville sombre, pluie de néons.</div>
+                            <div><b class="text-white">Sandstorm :</b> Tempête de sable et vent.</div>
+                            <div><b class="text-white">Ice Age :</b> Glace, neige abondante.</div>
+                            <div><b class="text-white">Jungle :</b> Végétation, feuilles volantes.</div>
+                            <div><b class="text-white">Magma :</b> Volcan, cendres et fumée.</div>
+                            <div><b class="text-white">Ruines :</b> Vestiges, pluie acide.</div>
+                            <div><b class="text-white">Cyber City :</b> Flux de données rapides.</div>
+                            <div><b class="text-white">Nébuleuse :</b> Espace, étoiles filantes.</div>
+                            <div><b class="text-white">Mainframe :</b> Matrice, code binaire.</div>
+                            <div><b class="text-white">Moon Base :</b> Gravité faible, étoiles.</div>
+                            <div><b class="text-white">Cristal :</b> Grotte mystique scintillante.</div>
                         </div>
                     </div>
 
@@ -325,7 +333,7 @@
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class="patch-note"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
                 </div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
@@ -343,6 +351,16 @@
                             </div>
                         </div>
                     </div>
+                <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">📜 QUÊTES DU JOUR <span class="text-[10px] text-gray-500 bg-black px-2 py-0.5 rounded" id="quest-timer">Reset 24h</span></h3>
+                        <div id="daily-quests-list" class="flex flex-col gap-2"></div>
+                    </div>
+
+                    <div class="glass-panel p-6 mb-6 bg-purple-900/10 border-purple-500/30">
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-purple-400">🌟 QUÊTES DE SAISON</h3>
+                        <div id="season-quests-list" class="flex flex-col gap-2"></div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="glass-panel p-6">
                             <div class="font-bold text-lg mb-2 flex items-center gap-2">💾 Sauvegarde</div>
@@ -380,7 +398,7 @@
                 <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20" onchange="USER.bio = this.value; Storage.save(); window.ui.renderProfile()"></textarea></div>
                 <div class="settings-grp pt-2 border-t border-white/10 mt-2"><div class="flex justify-between items-center mb-2"><label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label><div id="theme-lock-icon" class="text-[10px] text-gray-500"></div></div><div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div></div>
                 <button onclick="window.ui.closeSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
-                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v0.9.9</div></div>
+                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.1.0</div></div>
              </div>
         </div>
 
@@ -426,12 +444,12 @@
         </div>
     </div>
     <script>
-        /* mBATTLE v1.0.0.8.5 - SAISON 2 */
+        /* mBATTLE v1.1.0 - SAISON 2 */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
         
-        // --- FACTEURS DE TUNING V1.0.0.8.3 ---
+        // --- FACTEURS DE TUNING V1.0.0 ---
         const SPEED_FACTOR = 0.64; 
         const RATE_FACTOR = 1.38; 
         const RELOAD_FACTOR = 1.02;
@@ -462,10 +480,10 @@
 
             tank: { name: "Heavy", rarity: 'rare', icon: "🛡️", hp: 320, dmg: 14, spd: 3.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo:3, reload:Math.ceil(55 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une forteresse mobile.", passive: "Armure +20%", 
                     proj: { r: 8, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#22c55e', trailColor: '#166534' },
-                    skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000} ] }, 
+                    skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000}, {id:'titan', name:'Titan', c:'#eab308', price: 3000} ] }, 
             bomber: { name: "Bomber", rarity: 'rare', icon: "💣", hp: 150, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo:2, reload:Math.ceil(60 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:15, dmg:5}, color: '#f59e0b', type: 'shotgun', desc: "Explosifs.", gadget: "knockback", lore: "Adore les feux d'artifice.", passive: "Dégâts Zone", 
                       proj: { r: 10, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'circle', color: '#f59e0b', trailColor: '#fed7aa' },
-                      skins: [{id:'default', name:'Bomber', c:'#f59e0b'}] },
+                      skins: [{id:'default', name:'Bomber', c:'#f59e0b'}, {id:'nuke', name:'Nucléaire', c:'#84cc16', price: 1800}, {id:'frost', name:'Givre', c:'#0ea5e9', price: 1500}, {id:'shadow', name:'Ombre', c:'#171717', price: 2200}] },
             sniper: { name: "Sniper", rarity: 'rare', icon: "🦅", hp: 80, dmg: 120, spd: 5 * SPEED_FACTOR, rate: Math.ceil(65 * RATE_FACTOR), ammo:3, reload:Math.ceil(80 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite.", gadget: "knockback", lore: "Ne rate jamais sa cible.", passive: "Critique +10%", 
                       proj: { r: 6, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 100, shape: 'sniper', color: '#a855f7', trailColor: '#7c3aed' },
                       skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}] }, 
@@ -479,13 +497,13 @@
 
             assassin:{ name: "Assassin", rarity: 'epic', icon: "🗡️", hp: 90, dmg: 18, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo:4, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Une ombre dans la nuit.", passive: "Vitesse Kill", 
                        proj: { r: 5, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 55, shape: 'circle', color: '#ef4444', trailColor: '#991b1b' },
-                       skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}] }, 
+                       skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}, {id:'crimson', name:'Pourpre', c:'#be185d', price: 3000}] }, 
             pyro: { name: "Pyro", rarity: 'epic', icon: "🔥", hp: 160, dmg: 7, spd: 5 * SPEED_FACTOR, rate: Math.ceil(4 * RATE_FACTOR), ammo:50, reload:Math.ceil(10 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Adore l'odeur du napalm.", passive: "Brûlure", 
                     proj: { r: 15, speed: Math.ceil(10 * PROJ_SPEED_FACTOR), life: 30, shape: 'flame', color: '#f97316', trailColor: '#fef3c7' },
-                    skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}] }, 
+                    skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}, {id:'inferno', name:'Inferno', c:'#7f1d1d', price: 2500}] }, 
             viper: { name: "Viper", rarity: 'epic', icon: "🐍", hp: 110, dmg: 10, spd: 6.2 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 25, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:1}, color: '#4d7c0f', type: 'flame', desc: "Tire du poison.", gadget: "speed", lore: "Mortel et silencieux.", passive: "Poison", 
                      proj: { r: 6, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 70, shape: 'snake', color: '#4d7c0f', trailColor: '#10b981' },
-                     skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}] }, 
+                     skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}, {id:'venom', name:'Venin', c:'#10b981', price: 2500}, {id:'ice', name:'Glace', c:'#0ea5e9', price: 2200}] }, 
             shaman: { name: "Shaman", rarity: 'epic', icon: "🌿", hp: 140, dmg: 15, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo:4, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:12, dmg:2}, color: '#10b981', type: 'normal', desc: "Aura toxique.", gadget: "heal", lore: "Force de la nature.", passive: "Poison Aura",
                       proj: { r: 7, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 65, shape: 'circle', color: '#10b981', trailColor: '#6ee7b7' },
                       skins: [{id:'default', name:'Shaman', c:'#10b981'}, {id:'spirit', name:'Esprit', c:'#e5e7eb', price: 2000}, {id:'void', name:'Néant', c:'#374151', price: 3000}] }, 
@@ -494,7 +512,7 @@
                       skins: [{id:'default', name:'Reaper', c:'#171717'}, {id:'blood', name:'Sanglant', c:'#b91c1c', price: 2500}, {id:'toxic', name:'Toxique', c:'#10b981', price: 3500}] }, 
             volt: { name: "Volt", rarity: 'epic', icon: "⚡", hp: 110, dmg: 18, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 4, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique.", gadget: "speed", lore: "Énergie statique.", passive: "Etourdissement", 
                     proj: { r: 6, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#facc15', trailColor: '#fef08a' },
-                    skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}] }, 
+                    skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}, {id:'neon', name:'Néon', c:'#22d3ee', price: 2800}] }, 
             // NOUVEAU HÉROS : ÉPIQUE
             hex: { name: "Hex", rarity: 'epic', icon: "🔮", hp: 130, dmg: 10, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:2, reload:Math.ceil(60 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:10, dmg:1}, color: '#a855f7', type: 'normal', desc: "Malédiction.", gadget: "knockback", lore: "Jette des sorts de ralentissement.", passive: "Dégâts DOT",
                    proj: { r: 8, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 90, shape: 'hex', color: '#a855f7', trailColor: '#d8b4fe' },
@@ -502,16 +520,16 @@
 
             ronin: { name: "Ronin", rarity: 'legendary', icon: "👹", hp: 180, dmg: 60, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:3, reload:Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Cherche la rédemption.", passive: "Vol de Vie", 
                      proj: { r: 50, speed: 0, life: 1, shape: 'melee', color: '#be185d', trailColor: '#f0f' },
-                     skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}] }, 
+                     skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}, {id:'demon', name:'Démon', c:'#7f1d1d', price: 4000}] }, 
             samurai: { name: "Samurai", rarity: 'legendary', icon: "⚔️", hp: 250, dmg: 70, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo:2, reload:Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:20, dmg:10}, color: '#1e3a8a', type: 'melee', desc: "Lame lourde.", gadget: "shield", lore: "Le protecteur de l'empereur.", passive: "Parade", 
                        proj: { r: 60, speed: 0, life: 1, shape: 'melee', color: '#1e3a8a', trailColor: '#3b82f6' },
-                       skins: [{id:'default', name:'Samurai', c:'#1e3a8a'}, {id:'gold', name:'Samurai Or', c:'#eab308', price: 3500}] }, // NOUVEAUX SKINS
+                       skins: [{id:'default', name:'Samurai', c:'#1e3a8a'}, {id:'gold', name:'Samurai Or', c:'#eab308', price: 3500}, {id:'shogun', name:'Shogun', c:'#7f1d1d', price: 4000}, {id:'shadow', name:'Ombre', c:'#0f172a', price: 3800}] },
             cyber: { name: "Cyber", rarity: 'legendary', icon: "💻", hp: 140, dmg: 35, spd: 5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo:3, reload:Math.ceil(45 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "Fusion homme-machine.", passive: "Précision", 
                      proj: { r: 4, speed: 40, life: 80, shape: 'laser', color: '#06b6d4', trailColor: '#67e8f9' },
-                     skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}] }, 
+                     skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}, {id:'matrix', name:'Matrix', c:'#10b981', price: 3500}] }, 
             pulse: { name: "Pulse", rarity: 'legendary', icon: "💠", hp: 100, dmg: 25, spd: 5.8 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 4, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:8, dmg:3}, color: '#22d3ee', type: 'laser', desc: "Ondes d'énergie.", gadget: "stun", lore: "Technicien sonique.", passive: "Aura Dmg", 
                      proj: { r: 8, speed: 35, life: 60, shape: 'laser', color: '#22d3ee', trailColor: '#67e8f9' },
-                     skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}] }, 
+                     skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}, {id:'quantum', name:'Quantique', c:'#a855f7', price: 4000}] }, 
             // NOUVEAU HÉROS : LÉGENDAIRE
             centurion: { name: "Centurion", rarity: 'legendary', icon: "🛡️", hp: 400, dmg: 25, spd: 3.2 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo:5, reload:Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:35, dmg:4}, color: '#78350f', type: 'shotgun', desc: "Lenteur. Bouclier frontal.", gadget: "shield", lore: "Le dernier rempart de l'ancienne garde.", passive: "Blocage",
                        proj: { r: 7, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#f59e0b', trailColor: '#78350f' },
@@ -522,21 +540,58 @@
                      skins: [{id:'default', name:'Titan', c:'#eab308'}, {id:'prime', name:'Titan Prime', c:'#713f12', price: 9999}, {id:'frozen', name:'Givré', c:'#0ea5e9', price: 5000}] }, 
             goliath: { name: "Goliath", rarity: 'mythic', icon: "🗿", hp: 450, dmg: 12, spd: 3.0 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo: 2, reload: Math.ceil(60 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Géant de pierre.", passive: "Écrasement", 
                        proj: { r: 18, speed: 10, life: 120, shape: 'rock', color: '#78716c', trailColor: '#a8a29e' },
-                       skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}] }, 
+                       skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}, {id:'crystal', name:'Cristal', c:'#67e8f9', price: 4500}] }, 
             magma: { name: "Magma", rarity: 'mythic', icon: "🌋", hp: 380, dmg: 60, spd: 3.2 * SPEED_FACTOR, rate: Math.ceil(45 * RATE_FACTOR), ammo: 2, reload: Math.ceil(55 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:25, dmg:4}, color: '#7f1d1d', type: 'flame', desc: "SAISON 1.", gadget: "dash", lore: "Né dans un volcan.", passive: "Lave", 
                      proj: { r: 12, speed: 14, life: 40, shape: 'flame', color: '#7f1d1d', trailColor: '#f97316' },
                      skins: [{id:'default', name:'Magma', c:'#7f1d1d'}, {id:'blue', name:'Flamme Bleue', c:'#2563eb', price: 3000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 4000}] }, 
             chrono: { name: "Chrono", rarity: 'mythic', icon: "⏳", hp: 100, dmg: 12, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(4 * RATE_FACTOR), ammo: 30, reload: 15, price: PRICE_MYTHIC, scale:{hp:8, dmg:1}, color: '#0ea5e9', type: 'laser', desc: "Maître du temps.", gadget: "teleport", lore: "Vient du futur pour gagner.", passive: "Recharge Rapide", 
                       proj: { r: 5, speed: 32, life: 90, shape: 'laser', color: '#0ea5e9', trailColor: '#7dd3fc' },
-                      skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}] },
+                      skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}, {id:'past', name:'Passé', c:'#78350f', price: 4500}, {id:'void', name:'Vide', c:'#4c1d95', price: 5200}] },
             // NOUVEAU HÉROS : MYTHIQUE
             overlord: { name: "Overlord", rarity: 'mythic', icon: "👑", hp: 550, dmg: 35, spd: 2.8 * SPEED_FACTOR, rate: Math.ceil(45 * RATE_FACTOR), ammo:5, reload:Math.ceil(80 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:45, dmg:4}, color: '#ef4444', type: 'shotgun', desc: "Tir en cône, très lent.", gadget: "knockback", lore: "Le chef suprême de l'invasion.", passive: "Omni-vision",
                         proj: { r: 15, speed: 15, life: 50, shape: 'circle', color: '#be185d', trailColor: '#fecaca' },
                         skins: [{id:'default', name:'Overlord', c:'#ef4444'}] }, // NOUVEAUX SKINS
 
-            engineer: { name: "Engineer", rarity: 'rare', icon: "⚙️", hp: 180, dmg: 15, spd: 4.8 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo:8, reload:Math.ceil(40 * RELOAD_FACTOR), price: 500, scale:{hp:15, dmg:2}, color: '#fbbf24', type: 'normal', desc: "Construit des tourelles de défense.", gadget: "turret", lore: "Le génie du champ de bataille.", passive: "Tourelle",
-                     proj: { r: 6, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#fbbf24', trailColor: '#eab308' },
-                     skins: [{id:'default', name:'Engineer', c:'#fbbf24'}, {id:'robot', name:'Robotique', c:'#94a3b8', price: 1000}, {id:'stealth', name:'Furtif', c:'#1e293b', price: 1500}] },
+            // --- NOUVEAUX HÉROS AJOUTÉS (v1.0.1) ---
+            archer: { name: "Archer", rarity: 'common', icon: "🏹", hp: 100, dmg: 25, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo:1, reload:Math.ceil(20 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:5, dmg:3}, color: '#166534', type: 'normal', desc: "Tire des flèches précises.", gadget: "speed", lore: "Chasseur de la forêt cybernétique.", passive: "Précision",
+                      proj: { r: 3, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'arrow', color: '#166534', trailColor: '#86efac' },
+                      skins: [{id:'default', name:'Archer', c:'#166534'}, {id:'elf', name:'Elfe', c:'#4ade80', price: 1000}, {id:'dark', name:'Sombre', c:'#1e293b', price: 1500}] },
+
+            brawler: { name: "Brawler", rarity: 'common', icon: "🥊", hp: 160, dmg: 12, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(6 * RATE_FACTOR), ammo:20, reload:Math.ceil(25 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:12, dmg:1}, color: '#b91c1c', type: 'melee', desc: "Combat au corps à corps.", gadget: "dash", lore: "Champion de boxe clandestin.", passive: "Rage",
+                       proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#b91c1c', trailColor: '#fca5a5' },
+                       skins: [{id:'default', name:'Brawler', c:'#b91c1c'}, {id:'gold', name:'Champion', c:'#eab308', price: 2000}, {id:'street', name:'Rue', c:'#475569', price: 1000}] },
+
+            grenadier: { name: "Grenadier", rarity: 'rare', icon: "🧨", hp: 140, dmg: 35, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:3, reload:Math.ceil(45 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:10, dmg:4}, color: '#ea580c', type: 'shotgun', desc: "Lance-grenades.", gadget: "knockback", lore: "Expert en démolition.", passive: "Explosion+",
+                         proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#ea580c', trailColor: '#fdba74' },
+                         skins: [{id:'default', name:'Grenadier', c:'#ea580c'}, {id:'military', name:'Militaire', c:'#3f6212', price: 1500}, {id:'party', name:'Fête', c:'#db2777', price: 2000}] },
+            vortex: { name: "Vortex", rarity: 'epic', icon: "🌀", hp: 120, dmg: 15, spd: 5.8 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo:8, reload:Math.ceil(35 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:2}, color: '#7c3aed', type: 'normal', desc: "Tirs gravitationnels.", gadget: "teleport", lore: "Manipule l'espace-temps.", passive: "Ralentissement",
+                      proj: { r: 6, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#7c3aed', trailColor: '#c4b5fd' },
+                      skins: [{id:'default', name:'Vortex', c:'#7c3aed'}, {id:'galaxy', name:'Galaxie', c:'#1e1b4b', price: 3000}, {id:'blackhole', name:'Trou Noir', c:'#000000', price: 3500}] },
+
+            nova: { name: "Nova", rarity: 'legendary', icon: "🌟", hp: 130, dmg: 28, spd: 6.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo:5, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:10, dmg:3}, color: '#fef08a', type: 'laser', desc: "Énergie stellaire.", gadget: "stun", lore: "Une étoile vivante.", passive: "Éblouissement",
+                    proj: { r: 5, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'star', color: '#fef08a', trailColor: '#facc15' },
+                    skins: [{id:'default', name:'Nova', c:'#fef08a'}, {id:'supernova', name:'Supernova', c:'#f97316', price: 4000}, {id:'dwarf', name:'Naine Blanche', c:'#e2e8f0', price: 3500}] },
+
+            // NOUVEAUX HÉROS v1.0.3
+            rock: { name: "Rock", rarity: 'common', icon: "🪨", hp: 150, dmg: 20, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 2}, color: '#78716c', type: 'shotgun', desc: "Lance des pierres.", gadget: "shield", lore: "Un golem de pierre.", passive: "Résistance", proj: { r: 6, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'rock', color: '#78716c', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Rock', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#65a30d', price: 1000}, {id:'magma', name:'Magma', c:'#ef4444', price: 1500}] },
+            frost: { name: "Frost", rarity: 'rare', icon: "❄️", hp: 120, dmg: 15, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 5, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'normal', desc: "Gèle les ennemis.", gadget: "stun", lore: "Venu du grand nord.", passive: "Ralentissement", proj: { r: 5, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#0ea5e9', trailColor: '#7dd3fc' }, skins: [{id:'default', name:'Frost', c:'#0ea5e9'}, {id:'dark', name:'Sombre', c:'#1e3a8a', price: 1500}, {id:'polar', name:'Polaire', c:'#f0f9ff', price: 2000}] },
+            blaze: { name: "Blaze", rarity: 'epic', icon: "🔥", hp: 110, dmg: 8, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 30, reload: Math.ceil(20 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 1}, color: '#f97316', type: 'flame', desc: "Lance-flammes.", gadget: "dash", lore: "Pyromane expert.", passive: "Brûlure", proj: { r: 8, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'flame', color: '#f97316', trailColor: '#fdba74' }, skins: [{id:'default', name:'Blaze', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2500}, {id:'shadow', name:'Ombre', c:'#171717', price: 3000}] },
+            storm: { name: "Storm", rarity: 'legendary', icon: "⛈️", hp: 100, dmg: 25, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 4, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 6, dmg: 3}, color: '#6366f1', type: 'laser', desc: "Foudre en chaîne.", gadget: "teleport", lore: "Maître des orages.", passive: "Choc", proj: { r: 4, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'laser', color: '#6366f1', trailColor: '#818cf8' }, skins: [{id:'default', name:'Storm', c:'#6366f1'}, {id:'red', name:'Rouge', c:'#ef4444', price: 3500}, {id:'zeus', name:'Divin', c:'#facc15', price: 4500}] },
+            glitch: { name: "Glitch", rarity: 'mythic', icon: "👾", hp: 90, dmg: 40, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 3, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 5}, color: '#10b981', type: 'normal', desc: "Bug du système.", gadget: "teleport", lore: "Une anomalie dans le code.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'square', color: '#10b981', trailColor: '#34d399' }, skins: [{id:'default', name:'Glitch', c:'#10b981'}, {id:'error', name:'Erreur', c:'#dc2626', price: 5000}, {id:'matrix', name:'Matrice', c:'#22c55e', price: 6000}] },
+            
+            // NOUVEAUX HÉROS v1.0.4
+            grunt: { name: "Grunt", rarity: 'common', icon: "🪖", hp: 160, dmg: 18, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 10, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 10, dmg: 2}, color: '#57534e', type: 'normal', desc: "Soldat lourd.", gadget: "knockback", lore: "L'infanterie de base.", passive: "Gilet Pare-balles", proj: { r: 5, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#57534e', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Grunt', c:'#57534e'}, {id:'sand', name:'Sable', c:'#d6d3d1', price: 1000}, {id:'jungle', name:'Jungle', c:'#166534', price: 1500}] },
+            raptor: { name: "Raptor", rarity: 'rare', icon: "🦖", hp: 140, dmg: 25, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#65a30d', type: 'melee', desc: "Prédateur rapide.", gadget: "dash", lore: "Une expérience génétique échappée.", passive: "Saignement", proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#65a30d', trailColor: '#bef264' }, skins: [{id:'default', name:'Raptor', c:'#65a30d'}, {id:'blue', name:'Alpha', c:'#2563eb', price: 2000}, {id:'red', name:'Féroce', c:'#dc2626', price: 1500}] },
+            orbit: { name: "Orbit", rarity: 'epic', icon: "🪐", hp: 150, dmg: 12, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 6, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 12, dmg: 2}, color: '#ec4899', type: 'normal', desc: "Tirs orbitaux.", gadget: "shield", lore: "Contrôle des satellites tueurs.", passive: "Satellite", proj: { r: 6, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Orbit', c:'#ec4899'}, {id:'space', name:'Espace', c:'#1e3a8a', price: 2500}, {id:'sun', name:'Solaire', c:'#ea580c', price: 3000}] },
+            solar: { name: "Solar", rarity: 'legendary', icon: "☀️", hp: 160, dmg: 40, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 15, dmg: 4}, color: '#f59e0b', type: 'shotgun', desc: "Éruptions solaires.", gadget: "stun", lore: "Puissance d'une étoile.", passive: "Radiance", proj: { r: 10, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 60, shape: 'star', color: '#f59e0b', trailColor: '#fde047' }, skins: [{id:'default', name:'Solar', c:'#f59e0b'}, {id:'eclipse', name:'Éclipse', c:'#1f2937', price: 4000}, {id:'blue', name:'Géante Bleue', c:'#3b82f6', price: 4500}] },
+            spectre: { name: "Spectre", rarity: 'mythic', icon: "👻", hp: 100, dmg: 55, spd: 6.8 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 2, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 6}, color: '#64748b', type: 'normal', desc: "Tueur fantôme.", gadget: "invis", lore: "On ne le voit que trop tard.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#64748b', trailColor: '#f1f5f9' }, skins: [{id:'default', name:'Spectre', c:'#64748b'}, {id:'demon', name:'Démon', c:'#b91c1c', price: 5500}, {id:'void', name:'Néant', c:'#000000', price: 6000}] },
+            
+            // NOUVEUX HÉROS v1.1.0 (FINAL)
+            spike: { name: "Spike", rarity: 'common', icon: "🌵", hp: 170, dmg: 25, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo: 3, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 3}, color: '#166534', type: 'shotgun', desc: "Explosion d'épines.", gadget: "knockback", lore: "La nature se défend.", passive: "Dégâts Zone", proj: { r: 5, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 50, shape: 'star', color: '#166534', trailColor: '#86efac' }, skins: [{id:'default', name:'Spike', c:'#166534'}, {id:'sakura', name:'Sakura', c:'#f9a8d4', price: 1500}, {id:'dark', name:'Sombre', c:'#0f172a', price: 1000}] },
+            tesla: { name: "Tesla", rarity: 'rare', icon: "🔋", hp: 130, dmg: 14, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 15, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'laser', desc: "Tir électrique continu.", gadget: "stun", lore: "Inventeur fou.", passive: "Recharge Rapide", proj: { r: 4, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#0ea5e9', trailColor: '#bae6fd' }, skins: [{id:'default', name:'Tesla', c:'#0ea5e9'}, {id:'gold', name:'Or', c:'#eab308', price: 2000}, {id:'coil', name:'Bobine', c:'#b91c1c', price: 1500}] },
+            siren: { name: "Siren", rarity: 'epic', icon: "🎤", hp: 120, dmg: 20, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 3}, color: '#ec4899', type: 'normal', desc: "Ondes sonores.", gadget: "knockback", lore: "Sa voix est une arme.", passive: "Précision", proj: { r: 10, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Siren', c:'#ec4899'}, {id:'pop', name:'Popstar', c:'#f472b6', price: 2500}, {id:'rock', name:'Rockstar', c:'#111827', price: 3000}] },
+            paladin: { name: "Paladin", rarity: 'legendary', icon: "🔨", hp: 300, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo: 3, reload: Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 30, dmg: 5}, color: '#facc15', type: 'melee', desc: "Marteau sacré.", gadget: "heal", lore: "Défenseur de la lumière.", passive: "Regen Rapide", proj: { r: 40, speed: 0, life: 1, shape: 'melee', color: '#facc15', trailColor: '#fef9c3' }, skins: [{id:'default', name:'Paladin', c:'#facc15'}, {id:'fallen', name:'Déchu', c:'#7f1d1d', price: 4500}, {id:'ice', name:'Givre', c:'#e0f2fe', price: 4000}] },
+            zenith: { name: "Zenith", rarity: 'mythic', icon: "🌌", hp: 200, dmg: 80, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 2, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 10}, color: '#4c1d95', type: 'sniper', desc: "Rayon cosmique.", gadget: "teleport", lore: "Au-delà de l'univers.", passive: "Précision", proj: { r: 8, speed: Math.ceil(40 * PROJ_SPEED_FACTOR), life: 100, shape: 'star', color: '#4c1d95', trailColor: '#a78bfa' }, skins: [{id:'default', name:'Zenith', c:'#4c1d95'}, {id:'infinity', name:'Infini', c:'#000000', price: 6000}, {id:'light', name:'Lumière', c:'#ffffff', price: 5500}] },
         };
         
         // Fonction pour trier les héros par rareté
@@ -564,7 +619,11 @@
             infection: { name: "Infection", icon: "☣️", desc: "Survivre à la horde.", ranked: false }, 
             train_defense: { name: "Train Express", icon: "🚂", desc: "Protège le train !", ranked: false }, 
             thief: { name: "Voleur", icon: "💰", desc: "Vole 10 sacs !", ranked: false },
-            cyber_hack: { name: "Cyber Hack", icon: "💻", desc: "Pirate les zones !", ranked: false, special: true }
+            cyber_hack: { name: "Cyber Hack", icon: "💻", desc: "Pirate les zones !", ranked: false, special: true },
+            gungame: { name: "Jeu d'Armes", icon: "🔫", desc: "Change d'arme à chaque kill !", ranked: false, special: true },
+            escape: { name: "Cyber Escape", icon: "🛸", desc: "Rejoins l'extraction !", ranked: false, special: true },
+            rampage: { name: "Carnage", icon: "😡", desc: "Tuer 50 ennemis !", ranked: false, special: true },
+            zone_control: { name: "Zone", icon: "⭕", desc: "Contrôle la zone !", ranked: false, special: true }
         };
         const ARENAS = { 
             tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
@@ -575,7 +634,10 @@
             ruins: { name: "Ruines", color: '#292524', grid: 'rgba(168,162,158,0.1)', wall: '#44403c' }, 
             cyber_city: { name: "Cyber City", color: '#0f172a', grid: 'rgba(6,182,212,0.2)', wall: '#164e63' }, 
             nebula: { name: "Nébuleuse", color: '#1e1b4b', grid: 'rgba(232, 121, 249, 0.2)', wall: '#312e81' },
-            mainframe: { name: "Mainframe", color: '#022c22', grid: 'rgba(34, 211, 238, 0.3)', wall: '#134e4a', special: true }
+            mainframe: { name: "Mainframe", color: '#022c22', grid: 'rgba(34, 211, 238, 0.3)', wall: '#134e4a', special: true },
+            moon: { name: "Moon Base", color: '#1e293b', grid: 'rgba(148, 163, 184, 0.1)', wall: '#334155' },
+            crystal: { name: "Cristal", color: '#2e1065', grid: 'rgba(167, 139, 250, 0.2)', wall: '#4c1d95', special: true },
+            solaris: { name: "Solaris", color: '#451a03', grid: 'rgba(251, 146, 60, 0.2)', wall: '#7c2d12', special: true }
         };
         const PERKS = [{ name: 'Gros Calibre', icon: '💪', desc: '+25% Dégâts', fn: p => p.stats.dmg *= 1.25 }, { name: 'Armure Nano', icon: '🦺', desc: '+30% PV Max', fn: p => { p.maxHp *= 1.3; p.hp += 50; } }, { name: 'Turbo', icon: '👟', desc: '+15% Vitesse', fn: p => p.stats.spd *= 1.15 }];
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
@@ -616,8 +678,8 @@
             giant: { name: 'Géant', color: 'text-purple-600' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_0';
-        const PREVIOUS_KEYS = ['mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_0_6';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -628,8 +690,158 @@
             emotes: ['happy', 'angry', 'gg', 'rip'], equippedEmotes: ['happy', 'angry', 'gg', 'rip'],
             mPassPro: false,
             skins: {}, 
-            ownedSkins: [] 
+            ownedSkins: [],
+            quests: { daily: [], season: [], lastGenerated: 0 }
         };
+
+        const QuestSystem = {
+            generateDaily() {
+                const now = Date.now();
+                if (now - USER.quests.lastGenerated > 86400000) { // 24h
+                    USER.quests.daily = [];
+                    USER.quests.lastGenerated = now;
+                    // Generate 5 to 7 random quests
+                    const count = 5 + Math.floor(Math.random() * 3);
+                    const modeKeys = Object.keys(MODES).filter(k => !MODES[k].boss && !MODES[k].special);
+                    const heroKeys = Object.keys(STARTERS);
+
+                    for(let i=0; i<count; i++) {
+                        const type = Math.random();
+                        let q = { id: Math.random().toString(36).substr(2, 9), progress: 0, completed: false, claimed: false };
+                        
+                        if (type < 0.2) { 
+                            const m = modeKeys[Math.floor(Math.random() * modeKeys.length)];
+                            q.type = 'play'; q.mode = m; q.target = 3; q.desc = `Jouer 3 parties en ${MODES[m].name}`; q.reward = { type: 'xp', val: 150 };
+                        } else if (type < 0.35) { 
+                            q.type = 'kill'; q.target = 50 + Math.floor(Math.random()*50); q.desc = `Éliminer ${q.target} ennemis`; q.reward = { type: 'coins', val: 200 };
+                        } else if (type < 0.5) { 
+                            q.type = 'xp'; q.target = 500 + Math.floor(Math.random()*500); q.desc = `Gagner ${q.target} XP`; q.reward = { type: 'xp', val: 150 };
+                        } else if (type < 0.65) {
+                            const h = heroKeys[Math.floor(Math.random() * heroKeys.length)];
+                            q.type = 'play'; q.hero = h; q.target = 2; q.desc = `Jouer 2 parties avec ${STARTERS[h].name}`; q.reward = { type: 'gems', val: 5 };
+                        } else if (type < 0.8) {
+                            const amount = 5000 + Math.floor(Math.random() * 10000);
+                            q.type = 'dmg'; q.target = amount; q.desc = `Infliger ${amount} dégâts`; q.reward = { type: 'coins', val: 250 };
+                        } else if (type < 0.9) {
+                            q.type = 'collect'; q.target = 10; q.itemType = 'coins'; q.desc = "Ramasser 10 tas de pièces"; q.reward = { type: 'coins', val: 300 };
+                        } else {
+                            q.type = 'win'; q.target = 1; q.desc = "Gagner 1 partie"; q.reward = { type: 'box', val: 1 };
+                        }
+                        USER.quests.daily.push(q);
+                    }
+                    Storage.save();
+                }
+            },
+            generateSeason() {
+                if (!USER.quests.season || USER.quests.season.length < 10) { // Force update if not enough quests
+                   // Existing quests preservation could be done here, but simpler to reset/init for this "Saison 2" update
+                   USER.quests.season = [
+                       { id: 's2_q1', type: 'play', arena: 'crystal', target: 5, progress: 0, completed: false, claimed: false, desc: "Jouer 5 parties Grotte de Cristal", reward: { type: 'xp', val: 500 } },
+                       { id: 's2_q2', type: 'play', mode: 'cyber_hack', target: 5, progress: 0, completed: false, claimed: false, desc: "Jouer 5 parties Cyber Hack", reward: { type: 'gems', val: 20 } },
+                       { id: 's2_q3', type: 'kill', target: 500, progress: 0, completed: false, claimed: false, desc: "Éliminer 500 ennemis (Total)", reward: { type: 'coins', val: 2000 } },
+                       { id: 's2_q4', type: 'dmg', target: 100000, progress: 0, completed: false, claimed: false, desc: "Infliger 100k Dégâts", reward: { type: 'mega_caisse_loot', val: 1 } },
+                       { id: 's2_q5', type: 'win', target: 10, progress: 0, completed: false, claimed: false, desc: "Gagner 10 parties", reward: { type: 'gems', val: 50 } },
+                       { id: 's2_q6', type: 'play', hero: 'drone', target: 3, progress: 0, completed: false, claimed: false, desc: "Jouer 3 fois avec Drone", reward: { type: 'xp', val: 300 } },
+                       { id: 's2_q7', type: 'play', hero: 'soldier', target: 3, progress: 0, completed: false, claimed: false, desc: "Jouer 3 fois avec Soldier", reward: { type: 'xp', val: 300 } },
+                       { id: 's2_q8', type: 'collect', itemType: 'gems', target: 50, progress: 0, completed: false, claimed: false, desc: "Récupérer 50 Gemmes au sol", reward: { type: 'skin', val: 1, name: 'Skin Aléatoire' } },
+                       { id: 's2_q9', type: 'survive', target: 10, progress: 0, completed: false, claimed: false, desc: "Survivre Vague 10 (Survie)", reward: { type: 'box', val: 2 } },
+                       { id: 's2_q10', type: 'play', mode: 'heist', target: 5, progress: 0, completed: false, claimed: false, desc: "Jouer 5 parties Braquage", reward: { type: 'xp', val: 400 } },
+                       { id: 's2_q11', type: 'kill', target: 1000, progress: 0, completed: false, claimed: false, desc: "Tueur en série (1000 Kills)", reward: { type: 'gems', val: 100 } },
+                       { id: 's2_q12', type: 'xp', target: 5000, progress: 0, completed: false, claimed: false, desc: "Gagner 5000 XP", reward: { type: 'coins', val: 5000 } },
+                       { id: 's2_q13', type: 'play', mode: 'ranked', target: 10, progress: 0, completed: false, claimed: false, desc: "Jouer 10 parties Classées", reward: { type: 'mega_caisse_loot', val: 2 } },
+                       { id: 's2_q14', type: 'play', mode: 'boss_rush', target: 3, progress: 0, completed: false, claimed: false, desc: "Survivre 3 Boss Rush", reward: { type: 'gems', val: 30 } },
+                       { id: 's2_q15', type: 'play', hero: 'tank', target: 5, progress: 0, completed: false, claimed: false, desc: "Jouer 5 fois avec Heavy", reward: { type: 'xp', val: 500 } },
+                       { id: 's2_q16', type: 'dmg', target: 500000, progress: 0, completed: false, claimed: false, desc: "Dégâts Massifs (500k)", reward: { type: 'gems', val: 150 } },
+                       { id: 's2_q17', type: 'collect', itemType: 'coins', target: 100, progress: 0, completed: false, claimed: false, desc: "Riche: 100 tas de pièces", reward: { type: 'xp', val: 800 } },
+                       { id: 's2_q18', type: 'play', arena: 'moon', target: 5, progress: 0, completed: false, claimed: false, desc: "Mission Lunaire (5 parties)", reward: { type: 'box', val: 3 } },
+                       { id: 's2_q19', type: 'play', mode: 'infection', target: 5, progress: 0, completed: false, claimed: false, desc: "Survivre à l'infection (5 fois)", reward: { type: 'coin', val: 1000 } },
+                       { id: 's2_q20', type: 'win', target: 50, progress: 0, completed: false, claimed: false, desc: "Gagner 50 parties", reward: { type: 'skin', val: 1, name: 'Skin Épique' } },
+                       { id: 's2_q21', type: 'kill', target: 100, progress: 0, completed: false, claimed: false, desc: "Chasseur : 100 Kills", reward: { type: 'xp', val: 200 } },
+                       { id: 's2_q22', type: 'play', mode: 'rampage', target: 3, progress: 0, completed: false, claimed: false, desc: "Faire 3 Carnages", reward: { type: 'coins', val: 500 } },
+                       { id: 's2_q23', type: 'play', mode: 'zone_control', target: 3, progress: 0, completed: false, claimed: false, desc: "Contrôler la zone 3 fois", reward: { type: 'gems', val: 15 } },
+                       // Add more static quests here as requested by "beaucoup plus de quêtes"
+                   ];
+                   
+                   // Ensure loaded quests for existing users are merged if we really wanted, 
+                   // but hard reset for season update is cleaner to ensure they see the new ones.
+                   Storage.save();
+                }
+            },
+            check(type, data) {
+                let changed = false;
+                const checkList = (list) => {
+                    list.forEach(q => {
+                        if (q.completed) return;
+                        let match = false;
+                        if (q.type === type) {
+                            if (q.type === 'play') {
+                                if (q.mode && q.mode !== data.mode) return;
+                                if (q.arena && q.arena !== data.arena) return;
+                                if (q.hero && q.hero !== data.hero) return;
+                                match = true;
+                            } else if (q.type === 'kill') {
+                                match = true;
+                            } else if (q.type === 'xp') {
+                                match = true;
+                            } else if (q.type === 'dmg') {
+                                match = true;
+                            } else if (q.type === 'collect') {
+                                if (q.itemType && q.itemType !== data.itemType) return;
+                                match = true;
+                            } else if (q.type === 'win') {
+                                if (q.mode && q.mode !== data.mode) return;
+                                match = true;
+                            } else if (q.type === 'survive') {
+                                if (data.wave >= q.target) { q.progress = q.target; match = true; } // Direct completion for survive wave X
+                            }
+                        }
+                        if (match) {
+                            if (type === 'xp' || type === 'dmg' || type === 'collect') q.progress += data.amount || 1; 
+                            else if(type !== 'survive') q.progress++;
+                            
+                            if (q.progress >= q.target) { q.progress = q.target; q.completed = true; window.ui.notif("QUÊTE TERMINÉE !", "#22c55e"); }
+                            changed = true;
+                        }
+                    });
+                };
+                if (USER.quests) { checkList(USER.quests.daily); checkList(USER.quests.season); }
+                if (changed) Storage.save();
+            },
+            claim(listType, id) {
+                const list = USER.quests[listType];
+                const q = list.find(x => x.id === id);
+                if (q && q.completed && !q.claimed) {
+                    q.claimed = true;
+                    if (q.reward.type === 'xp') {
+                        USER.pass.xp += q.reward.val; window.ui.notif(`+${q.reward.val} XP`, "#22c55e");
+                        while(USER.pass.xp >= 100) { if(USER.pass.tier < 50) { USER.pass.tier++; USER.pass.xp -= 100; window.ui.notif("PASS LEVEL UP!", "#facc15"); } else { USER.pass.xp = 100; break; } }
+                    } else if (q.reward.type === 'coins') { USER.coins += q.reward.val; window.ui.notif(`+${q.reward.val} 🪙`, "#eab308"); } 
+                    else if (q.reward.type === 'gems') { USER.gems += q.reward.val; window.ui.notif(`+${q.reward.val} 💎`, "#a855f7"); }
+                    else if (q.reward.type === 'box') { window.ui.buy('box', 0, 'free'); }
+                    else if (q.reward.type === 'mega_caisse_loot') { openLootCrate(); }
+                    else if (q.reward.type === 'skin') {
+                        // Récompense Skin Aléatoire
+                        const keys = Object.keys(STARTERS);
+                        const candidates = [];
+                        keys.forEach(k => {
+                            if(STARTERS[k].skins) STARTERS[k].skins.forEach(s => {
+                                if(!USER.ownedSkins.includes(`${k}_${s.id}`)) candidates.push({h: k, s: s});
+                            });
+                        });
+                        
+                        if(candidates.length > 0) {
+                            const win = candidates[Math.floor(Math.random() * candidates.length)];
+                            USER.ownedSkins.push(`${win.h}_${win.s.id}`);
+                            window.ui.notif(`SKIN DÉBLOQUÉ: ${win.s.name} (${STARTERS[win.h].name})`, "#facc15");
+                        } else {
+                            USER.gems += 50; window.ui.notif("TOUS SKINS POSSÉDÉS -> +50 💎", "#a855f7");
+                        }
+                    }
+                    Storage.save(); window.ui.renderProfile(); window.ui.updateMenu();
+                }
+            }
+        };
+        window.QuestSystem = QuestSystem;
 
         // MISE À JOUR : Remplacement des skins mPass par des caisses
         const PASS_REWARDS = {
@@ -679,9 +891,7 @@
                     try {
                         const saved = JSON.parse(d);
                         USER = { ...USER, ...saved,
-                            // Maintien des anciennes stats et ajout des nouvelles avec valeur par défaut si non trouvées
                             stats: { ...USER.stats, ...(saved.stats||{}), losses: saved.stats?.losses || 0, maxPassTier: saved.stats?.maxPassTier || 1 },
-                            // Reset pass for new season but keep old items if migration
                             pass: isMigration ? { tier: 1, xp: 0, claimed: [], claimedPro: [] } : { ...USER.pass, ...(saved.pass||{}) },
                             shop: { ...USER.shop, ...(saved.shop||{}) },
                             levels: { ...USER.levels, ...(saved.levels||{}) },
@@ -689,7 +899,8 @@
                             equippedEmotes: saved.equippedEmotes || ['happy', 'angry', 'gg', 'rip'],
                             mPassPro: isMigration ? false : (saved.mPassPro || false), // Reset Pro status for new season
                             skins: saved.skins || {},
-                            ownedSkins: saved.ownedSkins || []
+                            ownedSkins: saved.ownedSkins || [],
+                            quests: saved.quests || { daily: [], season: [], lastGenerated: 0 }
                         };
                         
                         // Ensure new free hero is unlocked
@@ -714,6 +925,8 @@
                     USER.stats.losses = 0;
                     USER.stats.maxPassTier = 1;
                 }
+                QuestSystem.generateDaily();
+                QuestSystem.generateSeason();
                 window.ui.refreshShop();
             }
         };
@@ -766,7 +979,7 @@
             }
         }
         const getGadgetName = (g) => { 
-            const map = { 'heal': 'Soin (+1000)', 'shield': 'Bouclier (+1000)', 'teleport': 'TP', 'dash': 'Dash Feu', 'speed': 'Turbo', 'knockback': 'Choc', 'stun': 'Étourdissant', 'turret': 'Tourelle' }; // Feature 8
+            const map = { 'heal': 'Soin (+1000)', 'shield': 'Bouclier (+1000)', 'teleport': 'TP', 'dash': 'Dash Feu', 'speed': 'Turbo', 'knockback': 'Choc', 'stun': 'Étourdissant', 'turret': 'Tourelle', 'invis': 'Invisibilité' }; // Feature 8
             return map[g] || g.toUpperCase(); 
         }
 
@@ -830,15 +1043,17 @@
 
             if (type === 'coins') {
                 USER.coins += val;
+                Storage.save();
+                window.ui.updateMenu();
                 window.ui.notif(`+${val} 🪙`, "#eab308");
-                el('top-coins').closest('.currency-badge').classList.add('flash-coins'); // Animation
-                setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300);
+                try { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } catch(e){}
                 success = true;
             } else if (type === 'gems') {
                 USER.gems += val;
+                Storage.save();
+                window.ui.updateMenu();
                 window.ui.notif(`+${val} 💎`, "#a855f7");
-                el('top-gems').closest('.currency-badge').classList.add('flash-gems'); // Animation
-                setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300);
+                try { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } catch(e){}
                 success = true;
             } else if (type === 'box') {
                 window.ui.buy('box', 0, 'free');
@@ -895,6 +1110,19 @@
                     el('hud-objective').classList.remove('hidden');
                 } else if(window.game.conf.mode === 'cyber_hack') {
                     el('hud-objective').innerText = `Hack: ${Math.floor(window.game.hackProgress)}%`;
+                    el('hud-objective').classList.remove('hidden');
+                } else if(window.game.conf.mode === 'escape') {
+                    const exit = window.game.ents.find(e => e.type === 'exit');
+                    if(exit) {
+                         const dist = Math.floor(Dist(window.game.player, exit) / 10);
+                         el('hud-objective').innerText = `Extraction: ${dist}m`;
+                         el('hud-objective').classList.remove('hidden');
+                    }
+                } else if(window.game.conf.mode === 'rampage') {
+                    el('hud-objective').innerText = `Kills: ${window.game.killCount}/50`;
+                    el('hud-objective').classList.remove('hidden');
+                } else if(window.game.conf.mode === 'zone_control') {
+                    el('hud-objective').innerText = `Zone: ${Math.floor(window.game.zoneProgress)}%`;
                     el('hud-objective').classList.remove('hidden');
                 } else {
                     el('hud-objective').classList.add('hidden');
@@ -963,6 +1191,7 @@
                     if (USER.gems >= 10) {
                         USER.gems -= 10;
                         this.notif("-10 💎 REROLL", "#a855f7");
+                        this.updateMenu();
                         USER.shop.lastRefresh = 0; // Force refresh trigger
                     } else {
                         this.notif("PAS ASSEZ DE GEMMES", "#ef4444");
@@ -971,7 +1200,8 @@
                 }
                 
                 // NOUVEAU : Plus d'items de base garantis
-                if(!USER.shop.items || USER.shop.items.length === 0 || Date.now() > USER.shop.lastRefresh + 86400000) {
+                USER.shop.items = USER.shop.items || [];
+                if(USER.shop.items.length === 0 || Date.now() > USER.shop.lastRefresh + 86400000) {
                     USER.shop.lastRefresh = Date.now();
                     USER.shop.items = [];
 
@@ -1046,16 +1276,14 @@
                 const status = el('pass-pro-status');
                 if(status) {
                     if(USER.mPassPro) { status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">PRO ACTIVÉ</span>'; }
-                    // PRIX PASS PRO (159)
                     else { status.innerHTML = `<button onclick="window.ui.buyPassPro()" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">ACHETER PASS PRO (159 💎)</button>`; }
                 }
                 const tr = el('pass-track-free');
                 const trPro = el('pass-track-pro');
                 if (!tr || !trPro) return;
-                let freeHtml = '<div class="pass-label">GRATUIT</div>';
-                let proHtml = '<div class="pass-label">PRO 👑</div>';
+                let freeHtml = '';
+                let proHtml = '';
                 
-                // MISE À JOUR : Correction du bug pStats is not defined
                 const getRewardDisplay = (rewardString) => {
                     const [type, value] = rewardString.split(':');
                     const val = parseInt(value) || 1;
@@ -1064,10 +1292,9 @@
                     else if(type === 'gems') { icon = '💎'; text = `+${val} Gemmes`; }
                     else if(type === 'box' || type === 'mega_caisse_loot') { icon = '📦'; text = 'Caisse'; }
                     else if(type.startsWith('emote')) { icon = EMOTE_LIST.find(e => e.id === type.split(':')[1])?.i || '😀'; text = 'Emote'; }
-                    else if(type.startsWith('skin')) { icon = '👕'; text = 'Skin Rare'; }
+                    else if(type.startsWith('skin')) { icon = '👕'; text = 'Skin'; }
                     return { icon, text };
                 };
-                // FIN MISE À JOUR
                 
                 for(let i=1; i<=50; i++) {
                     const freeRwdStr = getPassReward(i, false);
@@ -1080,27 +1307,28 @@
                     let claimedP = USER.pass.claimedPro.includes(i);
                     let unlocked = USER.pass.tier >= i;
                     let proLocked = !USER.mPassPro;
+                    
                     let freeState = claimedF ? 'claimed' : (unlocked ? 'active cursor-pointer' : 'locked');
                     let proState = claimedP ? 'claimed' : ((unlocked && !proLocked) ? 'active cursor-pointer pro' : 'locked pro');
+                    
                     let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, false, '${freeRwdStr}')"` : '';
                     let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, true, '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE PASS PRO !', '#a855f7')"` : '');
                     
-                    // Contenu avec coche verte si récupéré
                     let contentF = claimedF ? `<div class="check-mark">✅</div>` : '';
-                    contentF += `<div class="text-4xl mb-2 ${claimedF ? 'opacity-20' : ''}">${displayF.icon}</div>
-                                 <div class="text-[10px] font-bold ${claimedF ? 'opacity-50' : ''}">${displayF.text}</div>`;
+                    contentF += `<div class="text-3xl mb-1 ${claimedF ? 'opacity-20' : ''}">${displayF.icon}</div>
+                                 <div class="text-[9px] font-bold ${claimedF ? 'opacity-50' : ''} text-center leading-tight px-1">${displayF.text}</div>`;
 
                     let contentP = claimedP ? `<div class="check-mark">✅</div>` : '';
-                    contentP += `<div class="text-4xl mb-2 ${claimedP ? 'opacity-20' : ''}">${displayP.icon}</div>
-                                 <div class="text-[10px] font-bold ${claimedP ? 'opacity-50' : ''}">${displayP.text}</div>`;
+                    contentP += `<div class="text-3xl mb-1 ${claimedP ? 'opacity-20' : ''}">${displayP.icon}</div>
+                                 <div class="text-[9px] font-bold ${claimedP ? 'opacity-50' : ''} text-center leading-tight px-1">${displayP.text}</div>`;
 
                     freeHtml += `
-                        <div id="pass-free-tier-${i}" class="pass-step ${freeState} shrink-0 mx-2" ${fnF}>
+                        <div id="pass-free-tier-${i}" class="pass-step ${freeState} shrink-0" ${fnF}>
                             <div class="tier-badge">PALIER ${i}</div>
                             ${contentF}
                         </div>`;
                     proHtml += `
-                        <div id="pass-pro-tier-${i}" class="pass-step ${proState} shrink-0 mx-2" ${fnP}>
+                        <div id="pass-pro-tier-${i}" class="pass-step ${proState} shrink-0" ${fnP}>
                             <div class="tier-badge">PALIER ${i}</div>
                             ${contentP}
                         </div>`;
@@ -1108,34 +1336,25 @@
                 tr.innerHTML = freeHtml;
                 trPro.innerHTML = proHtml;
 
-                // FIX SCROLL: Forcer le défilement jusqu'au palier actuel pour une meilleure UX
                 const scrollContainer = el('pass-scroll-container');
                 const currentTierIndex = USER.pass.tier;
 
                 if (scrollContainer) {
                     const freeRow = el('pass-track-free');
-                    // Le premier enfant (index 0) est le label. Le tier N est à l'index N.
                     if (freeRow && currentTierIndex > 0) {
-                        // Cible: le dernier palier atteint (même si c'est le 50)
-                        const targetTier = Math.min(50, currentTierIndex);
-                        // On trouve le palier actuellement le plus élevé réclamé (ou le dernier débloqué)
-                        const lastClaimedFree = USER.pass.claimed.length > 0 ? Math.max(...USER.pass.claimed) : 1;
-                        const scrollTier = Math.min(50, Math.max(lastClaimedFree, currentTierIndex));
-
-                        const targetElement = freeRow.querySelector(`#pass-free-tier-${scrollTier}`);
+                        const targetTier = Math.min(50, Math.max(1, currentTierIndex));
+                        // On défile vers le palier actuel ou le dernier non réclamé si inférieur
+                        // Mais généralement on veut voir où on en est
+                        const targetElement = freeRow.querySelector(`#pass-free-tier-${targetTier}`);
                         
                         if (targetElement) {
-                             // Calculer la position pour centrer l'élément à l'écran
-                             // targetElement.offsetLeft est relatif au conteneur pass-row
                             const centerOffset = targetElement.offsetLeft - (scrollContainer.offsetWidth / 2) + (targetElement.offsetWidth / 2);
-                            
-                            // Mettre à jour le scroll en utilisant scrollLeft pour le défilement horizontal
-                            scrollContainer.scrollLeft = centerOffset;
+                            // Petit delai pour que le rendu soit effectif
+                            setTimeout(() => { scrollContainer.scrollLeft = centerOffset; }, 50);
                         }
                     }
                 }
                 
-                // Mise à jour de la stat de palier max
                 USER.stats.maxPassTier = Math.max(USER.stats.maxPassTier || 1, USER.pass.tier);
                 Storage.save();
             },
@@ -1271,8 +1490,49 @@
                     avatarContainer.classList.add('text-4xl');
                 }
                 
+                // UPDATE QUEST TIMER
+                if (USER.quests && USER.quests.lastGenerated) {
+                    const diff = (USER.quests.lastGenerated + 86400000) - Date.now();
+                    const qt = el('quest-timer');
+                    if (qt) {
+                        if (diff > 0) {
+                            const hrs = Math.floor(diff / 3600000);
+                            const mins = Math.floor((diff % 3600000) / 60000);
+                            qt.innerText = `Reset: ${hrs}h ${mins}m`;
+                        } else {
+                            qt.innerText = "Disponible !";
+                        }
+                    }
+                }
+                
                 let totalLvl = Object.values(USER.levels).reduce((a,b)=>a+b, 0); 
                 setText('profile-lvl', "LVL " + totalLvl); 
+
+                // RENDER QUESTS
+                const renderQ = (list, id, typeList) => {
+                    const c = el(id); if(!c) return; c.innerHTML = '';
+                    list.forEach(q => {
+                        const pct = Math.min(100, (q.progress / q.target) * 100);
+                        const rIcon = q.reward.type === 'xp' ? '⭐' : (q.reward.type === 'coins' ? '🪙' : '💎');
+                        const status = q.claimed ? '<span class="text-green-500 font-bold text-xs">OUI</span>' : (q.completed ? `<button onclick="window.QuestSystem.claim('${typeList}', '${q.id}')" class="bg-green-600 hover:bg-green-500 text-white font-bold px-3 py-1 rounded text-xs animate-pulse">RÉCUPÉRER</button>` : `<span class="text-gray-500 text-xs">${q.progress}/${q.target}</span>`);
+                        const style = q.completed ? (q.claimed ? 'border-green-900/30 opacity-50' : 'border-green-500 bg-green-900/20') : 'border-white/10 bg-black/40';
+                        
+                        c.innerHTML += `<div class="p-3 rounded-lg border ${style} flex justify-between items-center transition">
+                            <div class="flex-1">
+                                <div class="text-sm font-bold text-white mb-1">${q.desc}</div>
+                                <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-blue-500 transition-all" style="width:${pct}%"></div></div>
+                            </div>
+                            <div class="ml-4 flex flex-col items-end gap-1">
+                                <div class="text-xs font-bold text-yellow-400">+${q.reward.val}${rIcon}</div>
+                                ${status}
+                            </div>
+                        </div>`;
+                    });
+                };
+                if(USER.quests) {
+                    renderQ(USER.quests.daily, 'daily-quests-list', 'daily');
+                    renderQ(USER.quests.season, 'season-quests-list', 'season');
+                }
             },
             openAvatarSelector() { const grid = el('avatar-grid'); grid.innerHTML = ''; ICONS.forEach(icon => { grid.innerHTML += `<button onclick="window.ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`; }); el('avatar-selector').classList.remove('hidden'); },
             selectAvatar(icon) { USER.avatar = icon; Storage.save(); el('avatar-selector').classList.add('hidden'); this.renderProfile(); },
@@ -1340,11 +1600,20 @@
             toggleEmoteWheel() { const wheel = el('emote-wheel'); if(wheel.classList.contains('hidden')) { wheel.innerHTML = ''; USER.equippedEmotes.forEach(id => { const e = EMOTE_LIST.find(em => em.id === id); wheel.innerHTML += `<div onclick="window.ui.triggerEmote('${e.i}'); window.ui.toggleEmoteWheel()" class="emote-btn">${e.i}</div>`; }); wheel.classList.remove('hidden'); } else { wheel.classList.add('hidden'); } },
             triggerEmote(emoji) { window.game.player.emote = emoji; window.game.player.emoteTimer = 120; },
             updateMenu() {
-                // FIX: Ensure game exists before accessing properties to prevent crash on early load
-                const confMode = (typeof window.game !== 'undefined' && window.game.conf) ? window.game.conf.mode : 'survival';
-                const m = MODES[confMode];
+                // FIX: Ensure game exists before accessing properties
+                let confMode = 'survival';
+                if(typeof window.game !== 'undefined' && window.game.conf && window.game.conf.mode) {
+                    confMode = window.game.conf.mode;
+                }
+                const m = MODES[confMode] || MODES['survival'];
                 
-                const s = STARTERS[USER.selected];
+                let s = STARTERS[USER.selected];
+                if (!s) {
+                    // Fallback to soldier if selected hero is invalid
+                    USER.selected = 'soldier';
+                    s = STARTERS['soldier'];
+                    Storage.save();
+                }
                 
                 // Gestion des animations de gain (non persistantes, elles sont sur set/add)
                 
@@ -1374,18 +1643,17 @@
                 USER.coins += 200; 
                 USER.lastDaily = Date.now(); 
                 Storage.save(); 
+                this.updateMenu();
                 this.notif("+200 🪙", "#eab308"); 
-                el('top-coins').closest('.currency-badge').classList.add('flash-coins');
-                setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300);
+                try { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } catch(e){}
                 this.renderLists(); 
-                this.updateMenu(); 
                 this.renderShop(); 
             },
             buy(t, cost, curr) { let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; } if(ok) { if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; this.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; this.notif("+30 💎","#a855f7"); } 
                 
                 // Trigger flash on manual purchase/gain
-                if (t === 'coins') { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); }
-                if (t === 'gems') { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); }
+                try { if (t === 'coins') { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } } catch(e){}
+                try { if (t === 'gems') { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } } catch(e){}
                 
                 Storage.save(); this.updateMenu(); this.renderShop(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
             buySpecial(idx) { 
@@ -1408,12 +1676,12 @@
                     if(item.type==='gems') { 
                         USER.gems += item.val; 
                         this.notif(`+${item.val} 💎`, "#a855f7"); 
-                        el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); 
+                        try { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } catch(e){} 
                     } 
                     if(item.type==='coins') { 
                         USER.coins += item.val; 
                         this.notif(`+${item.val} 🪙`, "#eab308"); 
-                        el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); 
+                        try { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } catch(e){} 
                     } 
                     if(item.type==='xp') { USER.pass.xp += item.val; this.notif(`+${item.val} XP`, "#facc15"); while(USER.pass.xp >= 100) { if(USER.pass.tier < 50) { USER.pass.tier++; USER.pass.xp -= 100; window.ui.notif("PASS LEVEL UP!", "#facc15"); } else { USER.pass.xp = 100; break; } } } 
                     if(item.type==='box') { this.buy('box', 0, 'free'); } 
@@ -1594,6 +1862,7 @@
 
             if(window.game.conf.modifier === 'giant') { this.r *= 2; this.maxHp *= 2; this.hp *= 2; }
             if(window.game.conf.modifier === 'oneshot') { this.hp = 1; this.maxHp = 1; } // Force One Shot HP
+            this.invisible = 0; // New Invisible state
         } 
         update(){ 
             if (this.isStunned > 0) { this.isStunned--; return; } // Stunned = skip update
@@ -1713,20 +1982,27 @@
             window.ui.notif("GADGET!", "#22c55e"); 
             const t=this.stats.gadget; 
             
-            if(t==="heal") { this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)window.game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3}); } 
-            if(t==="shield") { this.maxHp+=1000; this.hp+=1000; } 
+            if(t==="heal") { 
+                if(window.game.conf.modifier === 'oneshot') { window.ui.notif("SOIN IMPOSSIBLE (ONE SHOT)", "#ef4444"); this.gadgetCharges++; return; }
+                this.hp=Math.min(this.maxHp,this.hp+1000); for(let i=0;i<10;i++)window.game.parts.push({x:this.x,y:this.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#22c55e',r:3}); 
+            } 
+            if(t==="shield") { 
+                if(window.game.conf.modifier === 'oneshot') { window.ui.notif("BOUCLIER IMPOSSIBLE", "#ef4444"); this.gadgetCharges++; return; }
+                this.maxHp+=1000; this.hp+=1000; 
+            } 
             if(t==="teleport") { let tx=this.x+Math.cos(this.angle)*300, ty=this.y+Math.sin(this.angle)*300; let cx=false; for(let w of window.game.map){ if(w.type!==1 && w.collide({x:tx,y:ty,r:this.r})) cx=true; } if(!cx) { this.x=tx; this.y=ty; } else window.ui.notif("BLOQUÉ !", "#ef4444"); } 
             if(t==="speed") { this.activeEffects.speed = 180; } 
             if(t==="knockback") { for(let e of window.game.ents) { let d = Dist(this, e); if(d < 300) { let a = Math.atan2(e.y-this.y, e.x-this.x); e.x += Math.cos(a)*200; e.y += Math.sin(a)*200; } } } 
             // Feature 8: Nouveau Gadget 'stun'
             if(t==="stun") {
-                 for(let e of window.game.ents) { 
+                for(let e of window.game.ents) {
                     if(Dist(this, e) < 300) { 
-                        e.isStunned = 120; // 2 seconds stun
+                        e.isStunned = 120; 
                         window.game.parts.push({x:e.x,y:e.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#facc15',r:5}); 
-                    } 
-                } 
+                    }
+                }
             }
+            if(t==="invis") { this.invisible = 180; window.ui.notif("INVISIBLE !", "#94a3b8"); }
         } draw(ctx){ 
             ctx.save(); 
             ctx.shadowColor = this.c; ctx.shadowBlur = 20; 
@@ -1736,6 +2012,7 @@
                  ctx.shadowColor = '#facc15'; 
                  ctx.shadowBlur = 30;
             }
+            if (this.invisible > 0) ctx.globalAlpha = 0.4; else ctx.globalAlpha = 1;
             
             super.draw(ctx); 
             ctx.translate(this.x,this.y); 
@@ -1772,12 +2049,22 @@
                 const p=window.game.player, d=Dist(this,p); 
                 this.angle=Math.atan2(p.y-this.y,p.x-this.x); 
                 let playerHidden = false; 
-                for(let w of window.game.map) { 
-                    if(w.type === 1 && ColRect(window.game.player, w)) { 
-                        playerHidden = true; 
-                        break; 
-                    } 
+                // Fix Vision
+                const distV = Math.hypot(p.x - this.x, p.y - this.y);
+                const stepsV = Math.min(10, Math.floor(distV / 50));
+                for(let i = 1; i < stepsV; i++) {
+                    const cx = this.x + (p.x - this.x) * (i / stepsV);
+                    const cy = this.y + (p.y - this.y) * (i / stepsV);
+                    for(let w of window.game.map) {
+                        if(w.type !== 1 && ColRect({x:cx, y:cy, r:5}, w)) {
+                            playerHidden = true;
+                            break;
+                        }
+                    }
+                    if(playerHidden) break;
                 } 
+
+                if (window.game.player.invisible > 0) playerHidden = true; // Bot can't see invisible player
                 
                 // Logique de tir
                 if(d < 500 && !playerHidden && this.cd <= 0) {
@@ -1813,7 +2100,7 @@
                 this.move(Math.cos(a)*speed, Math.sin(a)*speed); 
                 if(Math.random()<0.01) this.dash(); 
                 // FIX 2: Régénération HP après 5s sans dégâts (bots aussi)
-                if(window.game.frame%60===0 && this.hp<this.maxHp && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot')this.hp++; 
+                if(window.game.frame%60===0 && this.hp<this.maxHp && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot')this.hp += Math.max(1, Math.floor(this.maxHp * 0.01)); 
                 if(window.game.gasRadius && Dist(this, {x:window.game.world/2, y:window.game.world/2}) > window.game.gasRadius) this.hp -= 10; 
                 if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; } 
             } 
@@ -1890,12 +2177,22 @@
                 } 
             } else { 
                 let playerHidden = false; 
-                for(let w of window.game.map) { 
-                    if(w.type === 1 && ColRect(window.game.player, w)) { 
-                        playerHidden = true; 
-                        break; 
-                    } 
-                } 
+                // Fix Vision
+                const distV = Math.hypot(p.x - this.x, p.y - this.y);
+                const stepsV = Math.min(10, Math.floor(distV / 50));
+                for(let i = 1; i < stepsV; i++) {
+                    const cx = this.x + (p.x - this.x) * (i / stepsV);
+                    const cy = this.y + (p.y - this.y) * (i / stepsV);
+                    for(let w of window.game.map) {
+                        if(w.type !== 1 && ColRect({x:cx, y:cy, r:5}, w)) {
+                            playerHidden = true;
+                            break;
+                        }
+                    }
+                    if(playerHidden) break;
+                }
+                if (window.game.player.invisible > 0) playerHidden = true; // Enemy can't see invisible player
+                
                 let tx, ty; 
                 if(playerHidden && Dist(this, p) > 150) { 
                     if(!this.target || Dist(this,this.target)<50 || Math.random()<0.01) this.target={x:Rnd(100,window.game.world-100), y:Rnd(100,window.game.world-100)}; 
@@ -1917,7 +2214,7 @@
             if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; this.hitTimer = 0; } 
             
             // FIX 2: Régénération HP après 5s sans dégâts
-            if(window.game.frame%60===0 && this.hp<this.maxHp && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot') this.hp++;
+            if(window.game.frame%60===0 && this.hp<this.maxHp && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot') this.hp += Math.max(1, Math.floor(this.maxHp * 0.01));
 
             if (this.flashTimer > 0) this.flashTimer--;
         } 
@@ -1987,7 +2284,7 @@
             ctx:document.getElementById('gameCanvas').getContext('2d'), 
             conf:{mode:'survival', arena:'tokyo', difficulty: 'normal', modifier: 'normal'}, 
             state:'MENU', frame:0, world:2000, cam:{x:0,y:0}, shake:0, gasRadius:0, timeLeft: 0, 
-            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0,
+            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0, killCount: 0, zoneProgress: 0,
             init() { 
                 this.resize(); 
                 window.onresize=()=>this.resize(); 
@@ -2015,7 +2312,7 @@
                 el('hud').classList.remove('hidden'); 
                 this.player=new Player(USER.selected); 
                 this.ents=[]; this.projs=[]; this.parts=[]; this.bgParts = []; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0; this.timeLeft = 3 * 60 * 60; 
-                this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0;
+                this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
                 
                 for(let i=0;i<25;i++){const w=Math.random()*150+50,h=Math.random()*150+50,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);if(Math.hypot(x-this.world/2,y-this.world/2)>400)this.map.push(new Wall(x,y,w,h,0));} 
                 // FIX 1: Réduction du nombre de buissons (40 -> 38)
@@ -2049,6 +2346,19 @@
                     // Clear center
                     this.map = this.map.filter(w => Math.hypot(w.x-term.x, w.y-term.y) > 400);
                     window.ui.notif("PIRATE LE TERMINAL !", "#22d3ee");
+                } else if(this.conf.mode === 'escape') {
+                    // Spawn extraction point at end of world
+                    const exit = new Enemy('chest', 10);
+                    exit.x = this.world - 150; exit.y = this.world - 150; exit.type = 'exit'; exit.c = '#10b981'; exit.r = 60;
+                    this.ents.push(exit);
+                    // Clear area
+                    this.map = this.map.filter(w => Math.hypot(w.x-exit.x, w.y-exit.y) > 400);
+                    window.ui.notif("REJOINS L'EXTRACTION !", "#10b981");
+                } else if(this.conf.mode === 'rampage') {
+                    window.ui.notif("CARNAGE : 50 KILLS", "#ef4444");
+                } else if(this.conf.mode === 'zone_control') {
+                    // Zone centrale
+                    window.ui.notif("CONTRÔLE LA ZONE", "#a855f7");
                 } else { 
                     window.ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); 
                 } 
@@ -2082,7 +2392,8 @@
 
                 let gt = 1 + Math.floor(finalScore / 100) * 2; 
                 if(this.boost) gt *= 2; 
-                if((this.conf.mode==='duel' || this.conf.mode==='heist' || this.conf.mode==='boss_rush' || this.conf.mode==='titan_raid' || this.conf.mode==='train_defense' || this.conf.mode==='cyber_hack') && r==="VICTOIRE") { gt += 20; USER.stats.wins++; } 
+                if(this.boost) gt *= 2; 
+                if((this.conf.mode==='duel' || this.conf.mode==='heist' || this.conf.mode==='boss_rush' || this.conf.mode==='titan_raid' || this.conf.mode==='train_defense' || this.conf.mode==='cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control') && r==="VICTOIRE") { gt += 20; USER.stats.wins++; } 
                 let gc = Math.floor(finalScore/10); 
                 if(r==="VICTOIRE") gc += 50; 
                 if(finalScore >= 200 || r==="VICTOIRE") { 
@@ -2099,29 +2410,54 @@
                 USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); 
                 USER.stats.games++; 
                 USER.stats.maxPassTier = Math.max(USER.stats.maxPassTier || 1, USER.pass.tier); // Mise à jour de la stat de Palier Max
+                
+                // Quest Check
+                if (window.QuestSystem) {
+                    window.QuestSystem.check('play', { mode: this.conf.mode, arena: this.conf.arena, hero: USER.selected });
+                    if(r === "VICTOIRE") window.QuestSystem.check('win', { mode: this.conf.mode });
+                    window.QuestSystem.check('survive', { wave: this.wave });
+                }
+
                 Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`); 
             }, 
-            // Amélioration de l'effet d'ambiance
+            // Amélioration de l'effet d'ambiance 2.0
             drawTerrainEffects() { 
                 if(this.state !== 'PLAYING') return; 
                 const arena = this.conf.arena; 
-                let spawnRate = 0.3; let color = 'rgba(255,255,255,0.5)'; let vy = 2; 
+                let spawnRate = 0.3; let color = 'rgba(255,255,255,0.5)'; let vy = 2; let vx = 0; let size = 3; let life = 200;
                 
-                if(arena === 'ice') { spawnRate = 0.9; color = 'rgba(220,240,255,0.7)'; vy = 3.5; } // Plus de neige visible
-                else if(arena === 'magma') { spawnRate = 0.5; color = 'rgba(255,100,50,0.7)'; vy = -2.5; } // Plus de fumée rouge
-                else if(arena === 'tokyo' || arena === 'cyber_city') { spawnRate = 0.3; color = 'rgba(0,255,200,0.4)'; vy = 5; } 
-                else if(arena === 'sand') { spawnRate = 0.6; color = 'rgba(230,200,100,0.5)'; vy = 4; } 
-                else if(arena === 'jungle') { spawnRate = 0.4; color = 'rgba(100,200,100,0.5)'; vy = 1; }
-                else if(arena === 'nebula') { spawnRate = 0.7; color = 'rgba(216, 180, 254, 0.5)'; vy = 0.5; }
-                else if(arena === 'mainframe') { spawnRate = 0.9; color = 'rgba(34, 211, 238, 0.5)'; vy = -4.5; } // Digital rain encore plus dense
+                // Configs uniques par terrain
+                if(arena === 'ice') { spawnRate = 0.9; color = 'rgba(220,240,255,0.8)'; vy = 3.5; vx = 1; } 
+                else if(arena === 'magma') { spawnRate = 0.6; color = 'rgba(255,80,0,0.6)'; vy = -3; size = 5; } 
+                else if(arena === 'tokyo') { spawnRate = 0.3; color = 'rgba(0, 255, 200, 0.4)'; vy = 5; } 
+                else if(arena === 'cyber_city') { spawnRate = 0.3; color = 'rgba(232, 121, 249, 0.4)'; vy = 6; }
+                else if(arena === 'sand') { spawnRate = 0.7; color = 'rgba(230,180,50,0.4)'; vy = 4; vx = 3; } 
+                else if(arena === 'jungle') { spawnRate = 0.4; color = 'rgba(50, 200, 100, 0.4)'; vy = 1.5; vx = -0.5; }
+                else if(arena === 'nebula') { spawnRate = 0.6; color = 'rgba(168, 85, 247, 0.5)'; vy = 0.5; vx = 0.5; size = 2; }
+                else if(arena === 'mainframe') { spawnRate = 1.0; color = 'rgba(34, 211, 238, 0.6)'; vy = -4.5; size = 2; } // Code rain up
+                else if(arena === 'ruins') { spawnRate = 0.8; color = 'rgba(148, 163, 184, 0.5)'; vy = 5; vx = -1; } // Rain
+                else if(arena === 'moon') { spawnRate = 0.2; color = 'rgba(255, 255, 255, 0.8)'; vy = -0.5; size=1; } // Stars
+                else if(arena === 'crystal') { spawnRate = 0.6; color = 'rgba(192, 132, 252, 0.6)'; vy = -1; vx = 0; size = 4; } // Glitter
+                else if(arena === 'solaris') { spawnRate = 0.5; color = 'rgba(253, 186, 116, 0.6)'; vy = -4; size = 5; } // Sparks
                 
                 if(Math.random() < spawnRate) { 
-                    this.bgParts.push({ x: this.cam.x + Math.random() * CFG.w, y: (vy > 0 ? this.cam.y - 10 : this.cam.y + CFG.h + 10), vx: (Math.random() - 0.5) * 2, vy: vy * (0.8 + Math.random() * 0.4), life: 200, c: color, r: Math.random() * 3 + 1 }); 
+                    this.bgParts.push({ 
+                        x: this.cam.x + Math.random() * CFG.w, 
+                        y: (vy > 0 ? this.cam.y - 10 : this.cam.y + CFG.h + 10), 
+                        vx: (Math.random() - 0.5) * 2 + vx, 
+                        vy: vy * (0.8 + Math.random() * 0.4), 
+                        life: life, c: color, r: Math.random() * size + 1 
+                    }); 
                 } 
                 for(let i=this.bgParts.length-1; i>=0; i--) { 
                     const p = this.bgParts[i]; p.x += p.vx; p.y += p.vy; p.life--; 
                     if(p.life <= 0) { this.bgParts.splice(i, 1); continue; } 
-                    if(p.x < this.cam.x - 50 || p.x > this.cam.x + CFG.w + 50 || p.y < this.cam.y - 50 || p.y > this.cam.y + CFG.h + 50) { this.bgParts.splice(i, 1); continue; } 
+                    
+                    // Optimisation: Suppression hors écran large
+                    if(p.x < this.cam.x - 50 || p.x > this.cam.x + CFG.w + 50 || p.y < this.cam.y - 50 || p.y > this.cam.y + CFG.h + 50) { 
+                        this.bgParts.splice(i, 1); continue; 
+                    } 
+                    
                     this.ctx.fillStyle = p.c; this.ctx.beginPath(); this.ctx.arc(p.x - this.cam.x, p.y - this.cam.y, p.r, 0, Math.PI*2); this.ctx.fill(); 
                 } 
             }, 
@@ -2134,29 +2470,34 @@
                         this.timeLeft--; 
                         if(this.timeLeft <= 0) { 
                             this.over(this.conf.mode === 'cyber_hack' && this.hackProgress < 100 ? "ECHEC PIRATAGE" : "VICTOIRE"); return; 
-                        } 
-                        if(this.conf.mode === 'heist' && this.frame % (20*60) === 0) { 
+                        }
+                    }
+                    if(this.conf.mode === 'escape') {
+                        this.timeLeft--;
+                        if(this.timeLeft <= 0) { this.over("TEMPS ÉCOULÉ"); return; }
+                    }
+                    if((this.conf.mode === 'heist') && this.frame % (20*60) === 0) { 
                             const chest = this.ents.find(e => e.type === 'chest'); 
                             if(chest) { 
                                 this.spawnDefenders(chest.x, chest.y, 3); window.ui.notif("RENFORTS !", "#ef4444"); 
                             } 
                         } 
-                    } 
                     if(!this.ents) this.ents = []; if(!this.map) this.map = []; 
                     
                     // SPAWN LOGIC
-                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack'){ 
-                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal')){ 
-                            const max=5+Math.floor(this.wave*1.5); 
+                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control'){ 
+                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit')){ 
+                            let max=5+Math.floor(this.wave*1.5); 
+                            if(this.conf.mode === 'rampage') max *= 2; // Double spawn for rampage
                             const enemyWaveMult = 1+(this.conf.mode==='ranked'?0.2:0.1)*this.wave; 
                             
                             // Feature 1: Mini-Boss Spawn (Vague 3 & 6)
                             if(this.frame%1800===0){
                                 this.wave++;
-                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack'){
+                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control'){
                                     this.ents.push(new Enemy('boss', enemyWaveMult * 2));
                                     window.ui.notif("BOSS !!!","#ef4444");
-                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack') {
+                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control') {
                                     this.ents.push(new Enemy('mini_boss', enemyWaveMult * 1.5));
                                     window.ui.notif("MINI BOSS !","#facc15");
                                 } else {
@@ -2165,7 +2506,7 @@
                             }
                             
                             // Spawn enemies
-                            if(this.ents.filter(e => !e.friend && e.type !== 'train' && e.type !== 'terminal').length < max && this.frame%60===0){
+                            if(this.ents.filter(e => !e.friend && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit').length < max && this.frame%60===0){
                                 let t='basic'; if(this.wave>2&&Math.random()>0.7)t='fast'; if(this.wave>4&&Math.random()>0.8)t='tank'; 
                                 const en = new Enemy(t, enemyWaveMult);
                                 // For Train mode, spawn near train sometimes
@@ -2173,11 +2514,17 @@
                                     en.x = this.train.x + Rnd(-300, 300);
                                     en.y = this.train.y + Rnd(-300, 300); 
                                 }
+                                // Escape mode: spawn near player (chose)
+                                if(this.conf.mode === 'escape') {
+                                     en.x = this.player.x + Rnd(-400, 400); en.y = this.player.y + Rnd(-400, 400);
+                                     if(Dist(en, this.player) < 300) { en.x += 300; }
+                                     en.mode = 'CHASE';
+                                }
                                 this.ents.push(en);
                             } 
                             
                         } 
-                    } else if(this.ents.length===0 && this.conf.mode !== 'train_defense' && this.conf.mode !== 'cyber_hack') this.over("VICTOIRE"); 
+                    } else if(this.ents.length===0 && this.conf.mode !== 'train_defense' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape') this.over("VICTOIRE"); 
                     
                     this.player.update(); 
                     if(this.train) {
@@ -2192,6 +2539,23 @@
                                 if(Math.random() < 0.1) window.game.parts.push({x:term.x+Rnd(-20,20),y:term.y+Rnd(-20,20),vx:0,vy:-2,life:30,c:'#22d3ee',r:2});
                             }
                             if(this.hackProgress >= 100) this.over("VICTOIRE");
+                        }
+                    }
+                    if(this.conf.mode === 'escape') {
+                        const exit = this.ents.find(e => e.type === 'exit');
+                        if(exit && Dist(this.player, exit) < exit.r + this.player.r) {
+                            this.over("VICTOIRE");
+                        }
+                    }
+                    if(this.conf.mode === 'rampage') {
+                         if(this.killCount >= 50) this.over("VICTOIRE");
+                    }
+                    if(this.conf.mode === 'zone_control') {
+                        // Check if player is in center zone (radius 200)
+                        if(Dist(this.player, {x:this.world/2, y:this.world/2}) < 200) {
+                            this.zoneProgress += 0.1;
+                            if(this.frame % 30 === 0) window.ui.notif("CAPTURE...", "#a855f7");
+                            if(this.zoneProgress >= 100) this.over("VICTOIRE");
                         }
                     }
                     
@@ -2235,11 +2599,14 @@
                                 e.hitCD=20; 
                                 e.hp-=b.dmg; 
                                 e.hitTimer = 0; // Reset hitTimer
-                                if(b.friend) USER.stats.dmg+=b.dmg; 
+                                if(b.friend) {
+                                    USER.stats.dmg+=b.dmg; 
+                                    window.QuestSystem.check('dmg', { amount: Math.floor(b.dmg) });
+                                } 
                                 if(window.game.conf.modifier === 'poison') e.activeEffects.poison = 120; 
                                 // FIX: Lifesteal handled for melee
                                 if(b.friend && (USER.selected === 'ronin' || USER.selected === 'reaper')) { // Ronin et Reaper ont le lifesteal
-                                    window.game.player.hp = Math.min(window.game.player.maxHp, window.game.player.hp + Math.floor(b.dmg * 0.4));
+                                    if(window.game.conf.modifier !== 'oneshot') window.game.player.hp = Math.min(window.game.player.maxHp, window.game.player.hp + Math.floor(b.dmg * 0.4));
                                 }
                                 if(window.game.conf.modifier === 'recoil' && b.friend) { e.x += Math.cos(window.game.player.angle)*20; e.y += Math.sin(window.game.player.angle)*20; } // Knockback enemy
                                 
@@ -2281,10 +2648,11 @@
                                     e.hp-=b.dmg; 
                                     e.hitTimer = 0; // Reset hitTimer
                                     USER.stats.dmg+=b.dmg; 
+                                    window.QuestSystem.check('dmg', { amount: Math.floor(b.dmg) }); 
                                     
                                     if(window.game.conf.modifier === 'poison') e.activeEffects.poison = 120; 
                                     // FIX: Lifesteal for ranged
-                                    if(window.game.conf.modifier === 'vampire') window.game.player.hp = Math.min(window.game.player.maxHp, window.game.player.hp + 5); // Life Steal (Vampire modifier)
+                                    if(window.game.conf.modifier === 'vampire' && window.game.conf.modifier !== 'oneshot') window.game.player.hp = Math.min(window.game.player.maxHp, window.game.player.hp + 5); // Life Steal (Vampire modifier)
                                     if(window.game.conf.modifier === 'recoil') { e.x += Math.cos(Math.atan2(b.vy, b.vx))*20; e.y += Math.sin(Math.atan2(b.vy, b.vx))*20; }
                                     
                                     // Flash Feedback
@@ -2332,16 +2700,28 @@
                             if(l.type==='cube'){this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;window.ui.notif("POWER UP!","#22c55e");}
                             else if(l.type==='loot_bag'){
                                 this.lootCollected++;
+                                window.QuestSystem.check('collect', { itemType: 'loot_bag', amount: 1 });
                                 window.ui.notif(`SAC RÉCUPÉRÉ (${this.lootCollected}/10)`, "#facc15");
                                 if(this.lootCollected >= 10) this.over("VICTOIRE");
                             }
                             else{
+                                window.QuestSystem.check('collect', { itemType: l.t, amount: 1 });
                                 if(l.t==='hp'){
                                     this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);
                                     for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#22c55e',r:3}); // VFX
+                                } else if(l.t==='coins') {
+                                    USER.coins += 10;
+                                    window.ui.feed("Pièces", "+10 🪙", true);
+                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#eab308',r:3});
+                                } else if(l.t==='gems') {
+                                    USER.gems += 1;
+                                    window.ui.feed("Gemme", "+1 💎", true);
+                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3});
                                 } else {
-                                    this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+30); // Évite l'overflow visuel
-                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3}); // VFX
+                                    // xp
+                                    this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+30); 
+                                    window.QuestSystem.check('xp', { amount: 30 }); 
+                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3}); 
                                 }
                             }
                             this.items.splice(i,1);
@@ -2387,6 +2767,24 @@
                             ctx.fillText(Math.floor(this.hackProgress)+"%", 0, -40);
                             ctx.restore();
                         }
+                    } else if(this.conf.mode === 'escape') {
+                         const exit = this.ents.find(e => e.type === 'exit');
+                         if(exit) {
+                             ctx.save(); ctx.translate(exit.x, exit.y);
+                             ctx.fillStyle = `rgba(16, 185, 129, 0.3)`;
+                             ctx.beginPath(); ctx.arc(0, 0, 100 + Math.sin(this.frame*0.1)*20, 0, Math.PI*2); ctx.fill();
+                             ctx.fillStyle = '#10b981'; ctx.font = "bold 30px Orbitron"; ctx.textAlign = 'center';
+                             ctx.fillText("EXIT", 0, -40);
+                             ctx.restore();
+                         }
+                    } else if(this.conf.mode === 'zone_control') {
+                         ctx.save(); ctx.translate(this.world/2, this.world/2);
+                         ctx.fillStyle = `rgba(168, 85, 247, 0.2)`;
+                         ctx.beginPath(); ctx.arc(0, 0, 200, 0, Math.PI*2); ctx.fill(); 
+                         ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 5; ctx.stroke();
+                         ctx.beginPath(); ctx.arc(0, 0, 200 * (this.zoneProgress/100), 0, Math.PI*2); 
+                         ctx.fillStyle = `rgba(168, 85, 247, 0.5)`; ctx.fill();
+                         ctx.restore();
                     }
                     ctx.strokeStyle='#ef4444'; ctx.lineWidth=5; ctx.strokeRect(0,0,this.world,this.world); 
                     this.items.forEach(l=>{
@@ -2456,7 +2854,7 @@
                 this.player.super=Math.min(100,this.player.super+(e.isBoss?30:10)); 
                 // Fix: Lifesteal passive for non-melee heroes
                 if(this.player.stats.passive === "Vol de Vie" && this.player.stats.type !== 'melee') {
-                     this.player.hp=Math.min(this.player.maxHp,this.player.hp+(e.isBoss?50:10)); // Heal on kill for ranged lifesteal
+                     if(window.game.conf.modifier !== 'oneshot') this.player.hp=Math.min(this.player.maxHp,this.player.hp+(e.isBoss?50:10)); // Heal on kill for ranged lifesteal
                 }
 
                 // Feature: Bot Emote on Kill (5% chance)
@@ -2477,8 +2875,22 @@
                     }
                 }
 
-                if(Math.random()<0.3)this.items.push({x:e.x,y:e.y,t:Math.random()>0.5?'hp':'xp'}); 
+                if(Math.random()<0.3) {
+                     const r = Math.random();
+                     let t = 'xp';
+                     if(r < 0.35) t = 'hp';
+                     else if(r < 0.7) t = 'xp';
+                     else if(r < 0.95) t = 'coins';
+                     else t = 'gems';
+                     
+                     this.items.push({x:e.x, y:e.y, t:t});
+                }  
+                // Manual check for 'collect' logic if we want "enemies drop X" or similar, but 'collect' is on pickup.
+                // However, coins and gems from box:
+                
                 USER.stats.kills++; 
+                this.killCount++;
+                window.QuestSystem.check('kill', {}); // Quest Check
                 window.ui.feed("Toi",e.isBot?"Rival":(e.type==='chest'?"COFFRE":e.name),true); 
                 if(this.player.xp>=this.player.xpMax){this.player.xp=0;this.player.xpMax*=1.2;this.player.lvl++;this.player.hp=this.player.maxHp;this.state='LEVELUP';window.ui.levelUp();} 
             } 
