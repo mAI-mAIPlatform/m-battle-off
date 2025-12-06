@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.1.2 - Saison 2</title>
+    <title>mBattle v1.2.1 - Saison 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -145,7 +145,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.1.2</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.1</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -178,6 +178,7 @@
                             <button id="diff-easy" onclick="window.game.setDifficulty('easy')" style="--tw-shadow-color:#22c55e;" class="diff-btn flex-1 glass-btn py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-green-600/30 to-green-900/30 border-green-600/50 text-green-400 active:scale-95 transition">Facile</button>
                             <button id="diff-normal" onclick="window.game.setDifficulty('normal')" style="--tw-shadow-color:#3b82f6;" class="diff-btn flex-1 glass-btn py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-blue-600/30 to-blue-900/30 border-blue-600/50 text-blue-400 active:scale-95 transition">Normal</button>
                             <button id="diff-hard" onclick="window.game.setDifficulty('hard')" style="--tw-shadow-color:#ef4444;" class="diff-btn flex-1 glass-btn py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-red-600/30 to-red-900/30 border-red-600/50 text-red-400 active:scale-95 transition">Difficile</button>
+                            <button id="diff-expert" onclick="window.game.setDifficulty('expert')" style="--tw-shadow-color:#a855f7;" class="diff-btn flex-1 glass-btn py-3 rounded-xl font-bold text-sm bg-gradient-to-r from-purple-600/30 to-purple-900/30 border-purple-600/50 text-purple-400 active:scale-95 transition">Expert</button>
                         </div>
                         <div class="text-[10px] text-purple-300 font-bold mb-2 uppercase tracking-widest mt-4">MODIFICATEURS</div>
                         <div class="grid grid-cols-3 gap-2 w-full">
@@ -284,35 +285,40 @@
                     <div class="mb-6">
                         <h4 class="text-sm font-bold text-purple-400 mb-2 uppercase tracking-widest border-b border-purple-500/30 pb-1">MISSIONS</h4>
                         <div class="grid gap-2 text-xs text-gray-300">
-                            <div class="flex gap-2"><span class="text-xl">🧟</span> <div><b class="text-white">Survie :</b> Vagues infinies d'ennemis. Le classique.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🏆</span> <div><b class="text-white">Classé :</b> Plus dur, plus de points. Pour les pros.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">⚔️</span> <div><b class="text-white">Duel 1v1 :</b> Toi contre un Bot énervé.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">💎</span> <div><b class="text-white">Braquage :</b> Détruis le coffre au centre en moins de 3 min.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">👹</span> <div><b class="text-white">Boss Rush :</b> 3 Boss d'affilée. Pas de pitié.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🌋</span> <div><b class="text-white">Raid Titan :</b> 5 Boss en même temps. Suicide ? Peut-être.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🛡️</span> <div><b class="text-white">Défense :</b> Protège le cristal bleu au centre.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🚂</span> <div><b class="text-white">Train Express :</b> Le train bouge ! Protège-le des robots.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">💰</span> <div><b class="text-white">Voleur :</b> Infiltre et vole 10 sacs d'or sans mourir.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">🌀</span> <div><b class="text-white">Cyber Hack :</b> Pirate les zones (reste dedans) pour gagner.</div></div>
-                            <div class="flex gap-2"><span class="text-xl">😡</span> <div><b class="text-white">Carnage :</b> Élimine 50 ennemis le plus vite possible !</div></div>
-                            <div class="flex gap-2"><span class="text-xl">⭕</span> <div><b class="text-white">Zone :</b> Contrôle le centre de la carte à 100%.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🧟</span> <div><b class="text-white">Survie :</b> Résiste aux vagues infinies d'ennemis. Combien de temps tiendras-tu ?</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🏆</span> <div><b class="text-white">Classé :</b> Mode compétitif intense. Gagne des points de classement (RP) pour monter en grade.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">⚔️</span> <div><b class="text-white">Duel 1v1 :</b> Affronte un IA d'élite dans une arène fermée. Que le meilleur gagne.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">💎</span> <div><b class="text-white">Braquage :</b> Infiltre la base et détruis le coffre-fort avant la fin du chrono !</div></div>
+                            <div class="flex gap-2"><span class="text-xl">👹</span> <div><b class="text-white">Boss Rush :</b> Enchaîne 3 Boss majeurs sans répit. Pour les experts.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🌋</span> <div><b class="text-white">Raid Titan :</b> Survivre contre 5 Boss simultanés. Chaos total garanti.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🛡️</span> <div><b class="text-white">Défense :</b> Empêche les hordes de détruire le Cristal d'Énergie au centre.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🚂</span> <div><b class="text-white">Train Express :</b> Escorte le train de marchandises. Ne le laisse pas se faire détruire !</div></div>
+                            <div class="flex gap-2"><span class="text-xl">💰</span> <div><b class="text-white">Voleur :</b> Récupère 10 sacs d'or éparpillés sur la carte sans te faire tuer.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">🌀</span> <div><b class="text-white">Cyber Hack :</b> Reste dans la zone du terminal pour le pirater à 100%.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">😡</span> <div><b class="text-white">Carnage :</b> Mode bourrin. Élimine 50 ennemis le plus vite possible !</div></div>
+                            <div class="flex gap-2"><span class="text-xl">⭕</span> <div><b class="text-white">Zone :</b> Capture et maintiens la position centrale pour gagner.</div></div>
+                            <div class="flex gap-2"><span class="text-xl">👑</span> <div><b class="text-white">Chasse :</b> Trouve et ouvre tous les coffres cachés sur la carte.</div></div>
                         </div>
                     </div>
 
                     <div class="mb-6">
                         <h4 class="text-sm font-bold text-green-400 mb-2 uppercase tracking-widest border-b border-green-500/30 pb-1">TERRAINS</h4>
                         <div class="grid grid-cols-2 gap-2 text-xs text-gray-300">
-                            <div><b class="text-white">Neon Tokyo :</b> Ville sombre, pluie de néons.</div>
-                            <div><b class="text-white">Sandstorm :</b> Tempête de sable et vent.</div>
-                            <div><b class="text-white">Ice Age :</b> Glace, neige abondante.</div>
-                            <div><b class="text-white">Jungle :</b> Végétation, feuilles volantes.</div>
-                            <div><b class="text-white">Magma :</b> Volcan, cendres et fumée.</div>
-                            <div><b class="text-white">Ruines :</b> Vestiges, pluie acide.</div>
-                            <div><b class="text-white">Cyber City :</b> Flux de données rapides.</div>
-                            <div><b class="text-white">Nébuleuse :</b> Espace, étoiles filantes.</div>
-                            <div><b class="text-white">Mainframe :</b> Matrice, code binaire.</div>
-                            <div><b class="text-white">Moon Base :</b> Gravité faible, étoiles.</div>
-                            <div><b class="text-white">Cristal :</b> Grotte mystique scintillante.</div>
+                            <div><b class="text-white">Neon Tokyo :</b> Mégalopole cyberpunk sous une pluie éternelle et des néons aveuglants.</div>
+                            <div><b class="text-white">Sandstorm :</b> Désert aride balayé par des tempêtes de sable violentes. Visibilité réduite.</div>
+                            <div><b class="text-white">Ice Age :</b> Toundra glaciale. Le sol est glissant et le froid est mordant.</div>
+                            <div><b class="text-white">Jungle :</b> Forêt dense et sauvage. Parfait pour les embuscades.</div>
+                            <div><b class="text-white">Magma :</b> Terre brûlée par la lave en fusion. Attention aux éruptions.</div>
+                            <div><b class="text-white">Ruines :</b> Vestiges d'une ancienne civilisation, délavés par la pluie acide.</div>
+                            <div><b class="text-white">Cyber City :</b> Architecture futuriste propre et froide. Flux de données visibles.</div>
+                            <div><b class="text-white">Nébuleuse :</b> Plateforme spatiale dérivant dans le vide cosmique.</div>
+                            <div><b class="text-white">Mainframe :</b> Au cœur du système informatique. Murs de code binaire.</div>
+                            <div><b class="text-white">Moon Base :</b> Station lunaire à faible gravité et ciel étoilé.</div>
+                            <div><b class="text-white">Cristal :</b> Caverne souterraine illuminée par des cristaux géants magiques.</div>
+                            <div><b class="text-white">Solaris :</b> Surface d'une étoile mourante, chaleur extrême et vents solaires.</div>
+                            <div><b class="text-white">Marais :</b> Zone humide et toxique, brouillard verdâtre et végétation pourrie.</div>
+                            <div><b class="text-white">Usine :</b> Zone industrielle polluée, machines rouillées et fumée noire.</div>
+                            <div><b class="text-white">Néant :</b> Dimension parallèle vide et sombre. Seule la lumière des combattants existe.</div>
                         </div>
                     </div>
 
@@ -333,7 +339,7 @@
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class="patch-note"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.2.1 (Fixes)</h3><ul><li>🐛 <b>HUD :</b> Correction de l'affichage du niveau du héros en jeu.</li><li>🛠️ <b>Stabilité :</b> Corrections de bugs divers et optimisations.</li></ul></div><div class="patch-note"><h3>v1.2.0 (THE HEROIC UPDATE)</h3><ul><li>⭐️ <b>10 Nouveaux Héros :</b> Vulcan, Zephyr, Necro, Gladiator, Bouncer, Fungus, Wasp, Mirage, Juggernaut, Eclipse ! (Total 60 Héros)</li><li>🎭 <b>100 Emotes :</b> Collection massive de nouvelles emotes !</li><li>🎫 <b>mPass MAX :</b> Le Pass de Combat s'étend maintenant jusqu'au palier 100 avec une récompense ultime !</li><li>🎨 <b>Skins :</b> 5 Skins pour TOUS les nouveaux héros.</li><li>🐛 <b>Optimisation :</b> Fluidité accrue.</li></ul></div><div class="patch-note"><h3>v1.1.5 (Content Explosion)</h3><ul><li>🔥 <b>Missions & Terrains :</b> Total 20 Modes et 15 Arènes !</li><li>🎨 <b>Skins :</b> 5 Skins minimum pour CHAQUE héros !</li><li>⚙️ <b>Modificateurs :</b> Total 15 modificateurs (Nouveau: Fragile).</li><li>😀 <b>Emotes :</b> 25 Nouvelles Emotes (Total 75+).</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs corrigés.</li></ul></div><div class="patch-note"><h3>v1.1.4 (Packs Corrections)</h3><ul><li>🛠️ Corrections de bugs sur les quêtes et récompenses.</li><li>⚡ Optimisation des performances.</li><li>🐛 Fix: Orthographe Modificateurs.</li></ul></div><div class="patch-note"><h3>v1.1.3 (Update Heroes)</h3><ul><li>🦸 5 Nouveaux Héros : Cyclops, Banshee, Druid, Spartan, Hydra !</li><li>📝 Descriptions : Amélioration des textes d'Infos (Missions & Terrains).</li><li>🐛 Bugs : Corrections mineures et optimisation.</li></ul></div><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class="patch-note"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
                 </div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
@@ -352,7 +358,11 @@
                         </div>
                     </div>
                 <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
-                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">📜 QUÊTES DU JOUR <span class="text-[10px] text-gray-500 bg-black px-2 py-0.5 rounded" id="quest-timer">Reset 24h</span></h3>
+                        <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">
+                            📜 QUÊTES DU JOUR 
+                            <span class="text-[10px] text-gray-500 bg-black px-2 py-0.5 rounded" id="quest-timer">Reset 24h</span>
+                            <button onclick="window.QuestSystem.refreshDaily()" class="ml-auto bg-purple-600 hover:bg-purple-500 text-white font-bold py-1 px-3 rounded-lg text-xs shadow-lg flex items-center gap-1 active:scale-95 transition">🔄 10💎</button>
+                        </h3>
                         <div id="daily-quests-list" class="flex flex-col gap-2"></div>
                     </div>
 
@@ -398,7 +408,7 @@
                 <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20" onchange="USER.bio = this.value; Storage.save(); window.ui.renderProfile()"></textarea></div>
                 <div class="settings-grp pt-2 border-t border-white/10 mt-2"><div class="flex justify-between items-center mb-2"><label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label><div id="theme-lock-icon" class="text-[10px] text-gray-500"></div></div><div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div></div>
                 <button onclick="window.ui.closeSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
-                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.1.2</div></div>
+                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.1</div></div>
              </div>
         </div>
 
@@ -444,7 +454,7 @@
         </div>
     </div>
     <script>
-        /* mBATTLE v1.1.0 - SAISON 2 */
+        /* mBATTLE v1.1.5 - SAISON 2 */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
@@ -469,129 +479,150 @@
         const STARTERS = { 
             soldier: { name: "Soldier", rarity: 'common', icon: "🔫", hp: 130, dmg: 22, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(14 * RATE_FACTOR), ammo:3, reload:Math.ceil(40 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques.", passive: "Regen Rapide", 
                        proj: { r: 5, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#3b82f6', trailColor: '#1e3a8a' },
-                       skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000} ] }, 
+                       skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000}, {id:'veteran', name:'Vétéran', c:'#4b5563', price: 2500} ] }, 
             drone: { name: "Drone", rarity: 'common', icon: "🛸", hp: 80, dmg: 15, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo:10, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:5, dmg:2}, color: '#94a3b8', type: 'laser', desc: "Rapide et fragile.", gadget: "speed", lore: "Un drone de surveillance devenu fou.", passive: "Esquive", 
                      proj: { r: 4, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'laser', color: '#94a3b8', trailColor: '#cbd5e1' },
-                     skins: [{id:'default', name:'Drone', c:'#94a3b8'}, {id:'stealth', name:'Furtif', c:'#0f172a', price: 1000}, {id:'glow', name:'Néon Bleu', c:'#0ea5e9', price: 1500}] }, // NOUVEAUX SKINS
+                     skins: [{id:'default', name:'Drone', c:'#94a3b8'}, {id:'stealth', name:'Furtif', c:'#0f172a', price: 1000}, {id:'glow', name:'Néon Bleu', c:'#0ea5e9', price: 1500}, {id:'gold', name:'Or', c:'#fbbf24', price: 2000}, {id:'red', name:'Alerte', c:'#ef4444', price: 1000}] },
             // NOUVEAU HÉROS : COMMUN (Scout)
             scout: { name: "Scout", rarity: 'common', icon: "🏃", hp: 110, dmg: 18, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo:5, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:8, dmg:2}, color: '#94a3b8', type: 'normal', desc: "Éclaireur ultra-rapide.", gadget: "speed", lore: "Spécialiste de la reconnaissance.", passive: "Course",
                      proj: { r: 4, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#f59e0b', trailColor: '#fbbf24' },
-                     skins: [{id:'default', name:'Scout', c:'#94a3b8'}, {id:'desert', name:'Désert', c:'#d97706', price: 1500}, {id:'solaire', name:'Solaire', c:'#fef08a', price: 2000}] }, // NOUVEAUX SKINS
+                     skins: [{id:'default', name:'Scout', c:'#94a3b8'}, {id:'desert', name:'Désert', c:'#d97706', price: 1500}, {id:'solaire', name:'Solaire', c:'#fef08a', price: 2000}, {id:'forest', name:'Forêt', c:'#166534', price: 1500}, {id:'night', name:'Nuit', c:'#1e1b4b', price: 2500}] },
 
             tank: { name: "Heavy", rarity: 'rare', icon: "🛡️", hp: 320, dmg: 14, spd: 3.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo:3, reload:Math.ceil(55 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une forteresse mobile.", passive: "Armure +20%", 
                     proj: { r: 8, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#22c55e', trailColor: '#166534' },
                     skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000}, {id:'titan', name:'Titan', c:'#eab308', price: 3000} ] }, 
             bomber: { name: "Bomber", rarity: 'rare', icon: "💣", hp: 150, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo:2, reload:Math.ceil(60 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:15, dmg:5}, color: '#f59e0b', type: 'shotgun', desc: "Explosifs.", gadget: "knockback", lore: "Adore les feux d'artifice.", passive: "Dégâts Zone", 
                       proj: { r: 10, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'circle', color: '#f59e0b', trailColor: '#fed7aa' },
-                      skins: [{id:'default', name:'Bomber', c:'#f59e0b'}, {id:'nuke', name:'Nucléaire', c:'#84cc16', price: 1800}, {id:'frost', name:'Givre', c:'#0ea5e9', price: 1500}, {id:'shadow', name:'Ombre', c:'#171717', price: 2200}] },
+                      skins: [{id:'default', name:'Bomber', c:'#f59e0b'}, {id:'nuke', name:'Nucléaire', c:'#84cc16', price: 1800}, {id:'frost', name:'Givre', c:'#0ea5e9', price: 1500}, {id:'shadow', name:'Ombre', c:'#171717', price: 2200}, {id:'fire', name:'Feu', c:'#b91c1c', price: 2500}] },
             sniper: { name: "Sniper", rarity: 'rare', icon: "🦅", hp: 80, dmg: 120, spd: 5 * SPEED_FACTOR, rate: Math.ceil(65 * RATE_FACTOR), ammo:3, reload:Math.ceil(80 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite.", gadget: "knockback", lore: "Ne rate jamais sa cible.", passive: "Critique +10%", 
                       proj: { r: 6, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 100, shape: 'sniper', color: '#a855f7', trailColor: '#7c3aed' },
-                      skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}] }, 
+                      skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}, {id:'desert', name:'Désert', c:'#d97706', price: 2500}] }, 
             harpy: { name: "Harpy", rarity: 'rare', icon: "🕊️", hp: 100, dmg: 18, spd: 6.8 * SPEED_FACTOR, rate: Math.ceil(7 * RATE_FACTOR), ammo:8, reload:Math.ceil(35 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:7, dmg:3}, color: '#84cc16', type: 'normal', desc: "Rapide et agile.", gadget: "speed", lore: "Chasseur aérien.", passive: "Tir Rapide",
                      proj: { r: 4, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#84cc16', trailColor: '#a7f3d0' },
-                     skins: [{id:'default', name:'Harpy', c:'#84cc16'}, {id:'frost', name:'Givre', c:'#bae6fd', price: 1000}, {id:'fire', name:'Ardente', c:'#dc2626', price: 1500}] }, 
+                     skins: [{id:'default', name:'Harpy', c:'#84cc16'}, {id:'frost', name:'Givre', c:'#bae6fd', price: 1000}, {id:'fire', name:'Ardente', c:'#dc2626', price: 1500}, {id:'storm', name:'Tempête', c:'#6366f1', price: 2000}, {id:'dark', name:'Sombre', c:'#1f2937', price: 2500}] }, 
             // NOUVEAU HÉROS : RARE
             engineer: { name: "Engineer", rarity: 'rare', icon: "⚙️", hp: 180, dmg: 15, spd: 4.8 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo:8, reload:Math.ceil(40 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:15, dmg:2}, color: '#fbbf24', type: 'normal', desc: "Construit des tourelles de défense.", gadget: "turret", lore: "Le génie du champ de bataille.", passive: "Tourelle",
                      proj: { r: 6, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#fbbf24', trailColor: '#eab308' },
-                     skins: [{id:'default', name:'Engineer', c:'#fbbf24'}, {id:'robot', name:'Robotique', c:'#94a3b8', price: 1000}, {id:'stealth', name:'Furtif', c:'#1e293b', price: 1500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 2000}] }, // NOUVEAUX SKINS
+                     skins: [{id:'default', name:'Engineer', c:'#fbbf24'}, {id:'robot', name:'Robotique', c:'#94a3b8', price: 1000}, {id:'stealth', name:'Furtif', c:'#1e293b', price: 1500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 2000}, {id:'builder', name:'Constructeur', c:'#ea580c', price: 2500}] },
 
             assassin:{ name: "Assassin", rarity: 'epic', icon: "🗡️", hp: 90, dmg: 18, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo:4, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:4}, color: '#ef4444', desc: "Ultra rapide.", gadget: "speed", lore: "Une ombre dans la nuit.", passive: "Vitesse Kill", 
                        proj: { r: 5, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 55, shape: 'circle', color: '#ef4444', trailColor: '#991b1b' },
-                       skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}, {id:'crimson', name:'Pourpre', c:'#be185d', price: 3000}] }, 
+                       skins: [{id:'default', name:'Assassin', c:'#ef4444'}, {id:'ninja', name:'Ninja', c:'#171717', price: 2500}, {id:'void', name:'Néant', c:'#4c1d95', price: 3500}, {id:'crimson', name:'Pourpre', c:'#be185d', price: 3000}, {id:'white', name:'Blanc', c:'#e5e5e5', price: 4000}] }, 
             pyro: { name: "Pyro", rarity: 'epic', icon: "🔥", hp: 160, dmg: 7, spd: 5 * SPEED_FACTOR, rate: Math.ceil(4 * RATE_FACTOR), ammo:50, reload:Math.ceil(10 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:15, dmg:1}, color: '#f97316', type: 'flame', desc: "Zone de feu.", gadget: "dash", lore: "Adore l'odeur du napalm.", passive: "Brûlure", 
                     proj: { r: 15, speed: Math.ceil(10 * PROJ_SPEED_FACTOR), life: 30, shape: 'flame', color: '#f97316', trailColor: '#fef3c7' },
-                    skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}, {id:'inferno', name:'Inferno', c:'#7f1d1d', price: 2500}] }, 
+                    skins: [{id:'default', name:'Pyro', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 1500}, {id:'inferno', name:'Inferno', c:'#7f1d1d', price: 2500}, {id:'charcoal', name:'Charbon', c:'#262626', price: 3000}] }, 
             viper: { name: "Viper", rarity: 'epic', icon: "🐍", hp: 110, dmg: 10, spd: 6.2 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 25, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:1}, color: '#4d7c0f', type: 'flame', desc: "Tire du poison.", gadget: "speed", lore: "Mortel et silencieux.", passive: "Poison", 
                      proj: { r: 6, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 70, shape: 'snake', color: '#4d7c0f', trailColor: '#10b981' },
-                     skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}, {id:'venom', name:'Venin', c:'#10b981', price: 2500}, {id:'ice', name:'Glace', c:'#0ea5e9', price: 2200}] }, 
+                     skins: [{id:'default', name:'Viper', c:'#4d7c0f'}, {id:'cobra', name:'Cobra', c:'#eab308', price: 2000}, {id:'venom', name:'Venin', c:'#10b981', price: 2500}, {id:'ice', name:'Glace', c:'#0ea5e9', price: 2200}, {id:'purple', name:'Violet', c:'#9333ea', price: 2800}] }, 
             shaman: { name: "Shaman", rarity: 'epic', icon: "🌿", hp: 140, dmg: 15, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo:4, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:12, dmg:2}, color: '#10b981', type: 'normal', desc: "Aura toxique.", gadget: "heal", lore: "Force de la nature.", passive: "Poison Aura",
                       proj: { r: 7, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 65, shape: 'circle', color: '#10b981', trailColor: '#6ee7b7' },
-                      skins: [{id:'default', name:'Shaman', c:'#10b981'}, {id:'spirit', name:'Esprit', c:'#e5e7eb', price: 2000}, {id:'void', name:'Néant', c:'#374151', price: 3000}] }, 
+                      skins: [{id:'default', name:'Shaman', c:'#10b981'}, {id:'spirit', name:'Esprit', c:'#e5e7eb', price: 2000}, {id:'void', name:'Néant', c:'#374151', price: 3000}, {id:'fire', name:'Feu', c:'#ef4444', price: 3000}, {id:'ice', name:'Glace', c:'#3b82f6', price: 3500}] }, 
             reaper: { name: "Reaper", rarity: 'epic', icon: "💀", hp: 200, dmg: 55, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo:1, reload:Math.ceil(35 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:15, dmg:7}, color: '#171717', type: 'melee', desc: "Faux de l'ombre.", gadget: "dash", lore: "Sème la mort.", passive: "Vol de Vie",
                       proj: { r: 50, speed: 0, life: 1, shape: 'melee', color: '#171717', trailColor: '#a8a29e' },
-                      skins: [{id:'default', name:'Reaper', c:'#171717'}, {id:'blood', name:'Sanglant', c:'#b91c1c', price: 2500}, {id:'toxic', name:'Toxique', c:'#10b981', price: 3500}] }, 
+                      skins: [{id:'default', name:'Reaper', c:'#171717'}, {id:'blood', name:'Sanglant', c:'#b91c1c', price: 2500}, {id:'toxic', name:'Toxique', c:'#10b981', price: 3500}, {id:'bone', name:'Os', c:'#e5e5e5', price: 4000}, {id:'phantom', name:'Fantôme', c:'#8b5cf6', price: 4500}] }, 
             volt: { name: "Volt", rarity: 'epic', icon: "⚡", hp: 110, dmg: 18, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 4, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:3}, color: '#facc15', desc: "Tir électrique.", gadget: "speed", lore: "Énergie statique.", passive: "Etourdissement", 
                     proj: { r: 6, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#facc15', trailColor: '#fef08a' },
-                    skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}, {id:'neon', name:'Néon', c:'#22d3ee', price: 2800}] }, 
+                    skins: [{id:'default', name:'Volt', c:'#facc15'}, {id:'plasma', name:'Plasma', c:'#8b5cf6', price: 2500}, {id:'dark', name:'Sombre', c:'#1e293b', price: 2000}, {id:'neon', name:'Néon', c:'#22d3ee', price: 2800}, {id:'overload', name:'Surcharge', c:'#f87171', price: 3000}] }, 
             // NOUVEAU HÉROS : ÉPIQUE
             hex: { name: "Hex", rarity: 'epic', icon: "🔮", hp: 130, dmg: 10, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:2, reload:Math.ceil(60 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:10, dmg:1}, color: '#a855f7', type: 'normal', desc: "Malédiction.", gadget: "knockback", lore: "Jette des sorts de ralentissement.", passive: "Dégâts DOT",
                    proj: { r: 8, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 90, shape: 'hex', color: '#a855f7', trailColor: '#d8b4fe' },
-                   skins: [{id:'default', name:'Hex', c:'#a855f7'}, {id:'crimson', name:'Pourpre', c:'#be185d', price: 2000}, {id:'ombre', name:'Ombre', c:'#0f172a', price: 2500}] }, // NOUVEAUX SKINS
+                   skins: [{id:'default', name:'Hex', c:'#a855f7'}, {id:'crimson', name:'Pourpre', c:'#be185d', price: 2000}, {id:'ombre', name:'Ombre', c:'#0f172a', price: 2500}, {id:'swamp', name:'Marais', c:'#4d7c0f', price: 2800}, {id:'blood', name:'Sang', c:'#991b1b', price: 3200}] },
 
             ronin: { name: "Ronin", rarity: 'legendary', icon: "👹", hp: 180, dmg: 60, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:3, reload:Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:12, dmg:8}, color: '#be185d', type: 'melee', desc: "Katana.", gadget: "heal", lore: "Cherche la rédemption.", passive: "Vol de Vie", 
                      proj: { r: 50, speed: 0, life: 1, shape: 'melee', color: '#be185d', trailColor: '#f0f' },
-                     skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}, {id:'demon', name:'Démon', c:'#7f1d1d', price: 4000}] }, 
+                     skins: [{id:'default', name:'Ronin', c:'#be185d'}, {id:'ghost', name:'Fantôme', c:'#e5e7eb', price: 3500}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3000}, {id:'demon', name:'Démon', c:'#7f1d1d', price: 4000}, {id:'master', name:'Maître', c:'#a3e635', price: 4500}] }, 
             samurai: { name: "Samurai", rarity: 'legendary', icon: "⚔️", hp: 250, dmg: 70, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo:2, reload:Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:20, dmg:10}, color: '#1e3a8a', type: 'melee', desc: "Lame lourde.", gadget: "shield", lore: "Le protecteur de l'empereur.", passive: "Parade", 
                        proj: { r: 60, speed: 0, life: 1, shape: 'melee', color: '#1e3a8a', trailColor: '#3b82f6' },
-                       skins: [{id:'default', name:'Samurai', c:'#1e3a8a'}, {id:'gold', name:'Samurai Or', c:'#eab308', price: 3500}, {id:'shogun', name:'Shogun', c:'#7f1d1d', price: 4000}, {id:'shadow', name:'Ombre', c:'#0f172a', price: 3800}] },
+                       skins: [{id:'default', name:'Samurai', c:'#1e3a8a'}, {id:'gold', name:'Samurai Or', c:'#eab308', price: 3500}, {id:'shogun', name:'Shogun', c:'#7f1d1d', price: 4000}, {id:'shadow', name:'Ombre', c:'#0f172a', price: 3800}, {id:'jade', name:'Jade', c:'#10b981', price: 4500}] },
             cyber: { name: "Cyber", rarity: 'legendary', icon: "💻", hp: 140, dmg: 35, spd: 5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo:3, reload:Math.ceil(45 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:10, dmg:5}, color: '#06b6d4', type: 'laser', desc: "Laser.", gadget: "teleport", lore: "Fusion homme-machine.", passive: "Précision", 
                      proj: { r: 4, speed: 40, life: 80, shape: 'laser', color: '#06b6d4', trailColor: '#67e8f9' },
-                     skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}, {id:'matrix', name:'Matrix', c:'#10b981', price: 3500}] }, 
+                     skins: [{id:'default', name:'Cyber', c:'#06b6d4'}, {id:'neon', name:'Néon', c:'#d946ef', price: 4000}, {id:'proto', name:'Proto', c:'#64748b', price: 2000}, {id:'matrix', name:'Matrix', c:'#10b981', price: 3500}, {id:'gold', name:'Or', c:'#fbbf24', price: 4500}] }, 
             pulse: { name: "Pulse", rarity: 'legendary', icon: "💠", hp: 100, dmg: 25, spd: 5.8 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 4, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:8, dmg:3}, color: '#22d3ee', type: 'laser', desc: "Ondes d'énergie.", gadget: "stun", lore: "Technicien sonique.", passive: "Aura Dmg", 
                      proj: { r: 8, speed: 35, life: 60, shape: 'laser', color: '#22d3ee', trailColor: '#67e8f9' },
-                     skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}, {id:'quantum', name:'Quantique', c:'#a855f7', price: 4000}] }, 
+                     skins: [{id:'default', name:'Pulse', c:'#22d3ee'}, {id:'neon', name:'Néon', c:'#f0abfc', price: 2500}, {id:'darkmatter', name:'Matière Noire', c:'#312e81', price: 3500}, {id:'quantum', name:'Quantique', c:'#a855f7', price: 4000}, {id:'sonic', name:'Sonique', c:'#3b82f6', price: 4000}] }, 
             // NOUVEAU HÉROS : LÉGENDAIRE
             centurion: { name: "Centurion", rarity: 'legendary', icon: "🛡️", hp: 400, dmg: 25, spd: 3.2 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo:5, reload:Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:35, dmg:4}, color: '#78350f', type: 'shotgun', desc: "Lenteur. Bouclier frontal.", gadget: "shield", lore: "Le dernier rempart de l'ancienne garde.", passive: "Blocage",
                        proj: { r: 7, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#f59e0b', trailColor: '#78350f' },
-                       skins: [{id:'default', name:'Centurion', c:'#78350f'}, {id:'silver', name:'Argent', c:'#e5e7eb', price: 4000}, {id:'gold', name:'Or', c:'#eab308', price: 4500}] }, // NOUVEAUX SKINS
+                       skins: [{id:'default', name:'Centurion', c:'#78350f'}, {id:'silver', name:'Argent', c:'#e5e7eb', price: 4000}, {id:'gold', name:'Or', c:'#eab308', price: 4500}, {id:'bronze', name:'Bronze', c:'#78350f', price: 3500}, {id:'ghost', name:'Spectre', c:'#9ca3af', price: 5000}] },
 
             titan: { name: "Titan", rarity: 'mythic', icon: "🦾", hp: 600, dmg: 40, spd: 3.0 * SPEED_FACTOR, rate: Math.ceil(50 * RATE_FACTOR), ammo:2, reload:Math.ceil(70 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:50, dmg:5}, color: '#eab308', type: 'melee', desc: "SAISON 1.", gadget: "shield", lore: "Gardien légendaire.", passive: "Résistance", 
                      proj: { r: 60, speed: 0, life: 1, shape: 'melee', color: '#eab308', trailColor: '#fde047' },
-                     skins: [{id:'default', name:'Titan', c:'#eab308'}, {id:'prime', name:'Titan Prime', c:'#713f12', price: 9999}, {id:'frozen', name:'Givré', c:'#0ea5e9', price: 5000}] }, 
+                     skins: [{id:'default', name:'Titan', c:'#eab308'}, {id:'prime', name:'Titan Prime', c:'#713f12', price: 9999}, {id:'frozen', name:'Givré', c:'#0ea5e9', price: 5000}, {id:'dark', name:'Sombre', c:'#0f172a', price: 6000}, {id:'glitch', name:'Bug', c:'#10b981', price: 7000}] }, 
             goliath: { name: "Goliath", rarity: 'mythic', icon: "🗿", hp: 450, dmg: 12, spd: 3.0 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo: 2, reload: Math.ceil(60 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:40, dmg:2}, color: '#78716c', type: 'shotgun', desc: "Lance des rochers.", gadget: "shield", lore: "Géant de pierre.", passive: "Écrasement", 
                        proj: { r: 18, speed: 10, life: 120, shape: 'rock', color: '#78716c', trailColor: '#a8a29e' },
-                       skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}, {id:'crystal', name:'Cristal', c:'#67e8f9', price: 4500}] }, 
+                       skins: [{id:'default', name:'Goliath', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#166534', price: 1500}, {id:'obsidian', name:'Obsidienne', c:'#0f172a', price: 3500}, {id:'crystal', name:'Cristal', c:'#67e8f9', price: 4500}, {id:'sand', name:'Sable', c:'#d6d3d1', price: 2500}] }, 
             magma: { name: "Magma", rarity: 'mythic', icon: "🌋", hp: 380, dmg: 60, spd: 3.2 * SPEED_FACTOR, rate: Math.ceil(45 * RATE_FACTOR), ammo: 2, reload: Math.ceil(55 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:25, dmg:4}, color: '#7f1d1d', type: 'flame', desc: "SAISON 1.", gadget: "dash", lore: "Né dans un volcan.", passive: "Lave", 
                      proj: { r: 12, speed: 14, life: 40, shape: 'flame', color: '#7f1d1d', trailColor: '#f97316' },
-                     skins: [{id:'default', name:'Magma', c:'#7f1d1d'}, {id:'blue', name:'Flamme Bleue', c:'#2563eb', price: 3000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 4000}] }, 
+                     skins: [{id:'default', name:'Magma', c:'#7f1d1d'}, {id:'blue', name:'Flamme Bleue', c:'#2563eb', price: 3000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 4000}, {id:'core', name:'Noyau', c:'#fcd34d', price: 5000}, {id:'ash', name:'Cendres', c:'#52525b', price: 3500}] }, 
             chrono: { name: "Chrono", rarity: 'mythic', icon: "⏳", hp: 100, dmg: 12, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(4 * RATE_FACTOR), ammo: 30, reload: 15, price: PRICE_MYTHIC, scale:{hp:8, dmg:1}, color: '#0ea5e9', type: 'laser', desc: "Maître du temps.", gadget: "teleport", lore: "Vient du futur pour gagner.", passive: "Recharge Rapide", 
                       proj: { r: 5, speed: 32, life: 90, shape: 'laser', color: '#0ea5e9', trailColor: '#7dd3fc' },
-                      skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}, {id:'past', name:'Passé', c:'#78350f', price: 4500}, {id:'void', name:'Vide', c:'#4c1d95', price: 5200}] },
+                      skins: [{id:'default', name:'Chrono', c:'#0ea5e9'}, {id:'future', name:'Future', c:'#f472b6', price: 5000}, {id:'past', name:'Passé', c:'#78350f', price: 4500}, {id:'void', name:'Vide', c:'#4c1d95', price: 5200}, {id:'matrix', name:'Matrice', c:'#10b981', price: 6000}] },
             // NOUVEAU HÉROS : MYTHIQUE
             overlord: { name: "Overlord", rarity: 'mythic', icon: "👑", hp: 550, dmg: 35, spd: 2.8 * SPEED_FACTOR, rate: Math.ceil(45 * RATE_FACTOR), ammo:5, reload:Math.ceil(80 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale:{hp:45, dmg:4}, color: '#ef4444', type: 'shotgun', desc: "Tir en cône, très lent.", gadget: "knockback", lore: "Le chef suprême de l'invasion.", passive: "Omni-vision",
                         proj: { r: 15, speed: 15, life: 50, shape: 'circle', color: '#be185d', trailColor: '#fecaca' },
-                        skins: [{id:'default', name:'Overlord', c:'#ef4444'}] }, // NOUVEAUX SKINS
+                        skins: [{id:'default', name:'Overlord', c:'#ef4444'}, {id:'dark', name:'Seigneur Noir', c:'#000000', price: 6000}, {id:'gold', name:'Empereur', c:'#facc15', price: 7000}, {id:'ice', name:'Roi Liche', c:'#3b82f6', price: 6500}, {id:'cyber', name:'Cyber Lord', c:'#a855f7', price: 5500}] },
 
             // --- NOUVEAUX HÉROS AJOUTÉS (v1.0.1) ---
             archer: { name: "Archer", rarity: 'common', icon: "🏹", hp: 100, dmg: 25, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo:1, reload:Math.ceil(20 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:5, dmg:3}, color: '#166534', type: 'normal', desc: "Tire des flèches précises.", gadget: "speed", lore: "Chasseur de la forêt cybernétique.", passive: "Précision",
                       proj: { r: 3, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'arrow', color: '#166534', trailColor: '#86efac' },
-                      skins: [{id:'default', name:'Archer', c:'#166534'}, {id:'elf', name:'Elfe', c:'#4ade80', price: 1000}, {id:'dark', name:'Sombre', c:'#1e293b', price: 1500}] },
+                      skins: [{id:'default', name:'Archer', c:'#166534'}, {id:'elf', name:'Elfe', c:'#4ade80', price: 1000}, {id:'dark', name:'Sombre', c:'#1e293b', price: 1500}, {id:'fire', name:'Feu', c:'#ef4444', price: 2000}, {id:'ice', name:'Glace', c:'#bae6fd', price: 1800}] },
 
             brawler: { name: "Brawler", rarity: 'common', icon: "🥊", hp: 160, dmg: 12, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(6 * RATE_FACTOR), ammo:20, reload:Math.ceil(25 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:12, dmg:1}, color: '#b91c1c', type: 'melee', desc: "Combat au corps à corps.", gadget: "dash", lore: "Champion de boxe clandestin.", passive: "Rage",
                        proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#b91c1c', trailColor: '#fca5a5' },
-                       skins: [{id:'default', name:'Brawler', c:'#b91c1c'}, {id:'gold', name:'Champion', c:'#eab308', price: 2000}, {id:'street', name:'Rue', c:'#475569', price: 1000}] },
+                       skins: [{id:'default', name:'Brawler', c:'#b91c1c'}, {id:'gold', name:'Champion', c:'#eab308', price: 2000}, {id:'street', name:'Rue', c:'#475569', price: 1000}, {id:'lucha', name:'Luchador', c:'#16a34a', price: 1500}, {id:'robot', name:'Cyborg', c:'#64748b', price: 2500}] },
 
             grenadier: { name: "Grenadier", rarity: 'rare', icon: "🧨", hp: 140, dmg: 35, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:3, reload:Math.ceil(45 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:10, dmg:4}, color: '#ea580c', type: 'shotgun', desc: "Lance-grenades.", gadget: "knockback", lore: "Expert en démolition.", passive: "Explosion+",
                          proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#ea580c', trailColor: '#fdba74' },
-                         skins: [{id:'default', name:'Grenadier', c:'#ea580c'}, {id:'military', name:'Militaire', c:'#3f6212', price: 1500}, {id:'party', name:'Fête', c:'#db2777', price: 2000}] },
+                         skins: [{id:'default', name:'Grenadier', c:'#ea580c'}, {id:'military', name:'Militaire', c:'#3f6212', price: 1500}, {id:'party', name:'Fête', c:'#db2777', price: 2000}, {id:'toxic', name:'Toxique', c:'#84cc16', price: 1800}, {id:'ice', name:'Givre', c:'#bae6fd', price: 2200}] },
             vortex: { name: "Vortex", rarity: 'epic', icon: "🌀", hp: 120, dmg: 15, spd: 5.8 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo:8, reload:Math.ceil(35 * RELOAD_FACTOR), price: PRICE_EPIC, scale:{hp:8, dmg:2}, color: '#7c3aed', type: 'normal', desc: "Tirs gravitationnels.", gadget: "teleport", lore: "Manipule l'espace-temps.", passive: "Ralentissement",
                       proj: { r: 6, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#7c3aed', trailColor: '#c4b5fd' },
-                      skins: [{id:'default', name:'Vortex', c:'#7c3aed'}, {id:'galaxy', name:'Galaxie', c:'#1e1b4b', price: 3000}, {id:'blackhole', name:'Trou Noir', c:'#000000', price: 3500}] },
+                      skins: [{id:'default', name:'Vortex', c:'#7c3aed'}, {id:'galaxy', name:'Galaxie', c:'#1e1b4b', price: 3000}, {id:'blackhole', name:'Trou Noir', c:'#000000', price: 3500}, {id:'sun', name:'Solaire', c:'#facc15', price: 2500}, {id:'nebula', name:'Nébuleuse', c:'#ec4899', price: 3200}] },
 
             nova: { name: "Nova", rarity: 'legendary', icon: "🌟", hp: 130, dmg: 28, spd: 6.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo:5, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale:{hp:10, dmg:3}, color: '#fef08a', type: 'laser', desc: "Énergie stellaire.", gadget: "stun", lore: "Une étoile vivante.", passive: "Éblouissement",
                     proj: { r: 5, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'star', color: '#fef08a', trailColor: '#facc15' },
-                    skins: [{id:'default', name:'Nova', c:'#fef08a'}, {id:'supernova', name:'Supernova', c:'#f97316', price: 4000}, {id:'dwarf', name:'Naine Blanche', c:'#e2e8f0', price: 3500}] },
+                    skins: [{id:'default', name:'Nova', c:'#fef08a'}, {id:'supernova', name:'Supernova', c:'#f97316', price: 4000}, {id:'dwarf', name:'Naine Blanche', c:'#e2e8f0', price: 3500}, {id:'neutron', name:'Neutron', c:'#8b5cf6', price: 4500}, {id:'pulsar', name:'Pulsar', c:'#3b82f6', price: 4200}] },
 
             // NOUVEAUX HÉROS v1.0.3
-            rock: { name: "Rock", rarity: 'common', icon: "🪨", hp: 150, dmg: 20, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 2}, color: '#78716c', type: 'shotgun', desc: "Lance des pierres.", gadget: "shield", lore: "Un golem de pierre.", passive: "Résistance", proj: { r: 6, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'rock', color: '#78716c', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Rock', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#65a30d', price: 1000}, {id:'magma', name:'Magma', c:'#ef4444', price: 1500}] },
-            frost: { name: "Frost", rarity: 'rare', icon: "❄️", hp: 120, dmg: 15, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 5, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'normal', desc: "Gèle les ennemis.", gadget: "stun", lore: "Venu du grand nord.", passive: "Ralentissement", proj: { r: 5, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#0ea5e9', trailColor: '#7dd3fc' }, skins: [{id:'default', name:'Frost', c:'#0ea5e9'}, {id:'dark', name:'Sombre', c:'#1e3a8a', price: 1500}, {id:'polar', name:'Polaire', c:'#f0f9ff', price: 2000}] },
-            blaze: { name: "Blaze", rarity: 'epic', icon: "🔥", hp: 110, dmg: 8, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 30, reload: Math.ceil(20 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 1}, color: '#f97316', type: 'flame', desc: "Lance-flammes.", gadget: "dash", lore: "Pyromane expert.", passive: "Brûlure", proj: { r: 8, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'flame', color: '#f97316', trailColor: '#fdba74' }, skins: [{id:'default', name:'Blaze', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2500}, {id:'shadow', name:'Ombre', c:'#171717', price: 3000}] },
-            storm: { name: "Storm", rarity: 'legendary', icon: "⛈️", hp: 100, dmg: 25, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 4, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 6, dmg: 3}, color: '#6366f1', type: 'laser', desc: "Foudre en chaîne.", gadget: "teleport", lore: "Maître des orages.", passive: "Choc", proj: { r: 4, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'laser', color: '#6366f1', trailColor: '#818cf8' }, skins: [{id:'default', name:'Storm', c:'#6366f1'}, {id:'red', name:'Rouge', c:'#ef4444', price: 3500}, {id:'zeus', name:'Divin', c:'#facc15', price: 4500}] },
-            glitch: { name: "Glitch", rarity: 'mythic', icon: "👾", hp: 90, dmg: 40, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 3, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 5}, color: '#10b981', type: 'normal', desc: "Bug du système.", gadget: "teleport", lore: "Une anomalie dans le code.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'square', color: '#10b981', trailColor: '#34d399' }, skins: [{id:'default', name:'Glitch', c:'#10b981'}, {id:'error', name:'Erreur', c:'#dc2626', price: 5000}, {id:'matrix', name:'Matrice', c:'#22c55e', price: 6000}] },
+            rock: { name: "Rock", rarity: 'common', icon: "🪨", hp: 150, dmg: 20, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 2}, color: '#78716c', type: 'shotgun', desc: "Lance des pierres.", gadget: "shield", lore: "Un golem de pierre.", passive: "Résistance", proj: { r: 6, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'rock', color: '#78716c', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Rock', c:'#78716c'}, {id:'moss', name:'Mousse', c:'#65a30d', price: 1000}, {id:'magma', name:'Magma', c:'#ef4444', price: 1500}, {id:'gold', name:'Pépite', c:'#fbbf24', price: 2000}, {id:'ice', name:'Givre', c:'#bae6fd', price: 1800}] },
+            frost: { name: "Frost", rarity: 'rare', icon: "❄️", hp: 120, dmg: 15, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 5, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'normal', desc: "Gèle les ennemis.", gadget: "stun", lore: "Venu du grand nord.", passive: "Ralentissement", proj: { r: 5, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#0ea5e9', trailColor: '#7dd3fc' }, skins: [{id:'default', name:'Frost', c:'#0ea5e9'}, {id:'dark', name:'Sombre', c:'#1e3a8a', price: 1500}, {id:'polar', name:'Polaire', c:'#f0f9ff', price: 2000}, {id:'yeti', name:'Yéti', c:'#e2e8f0', price: 2500}, {id:'fire', name:'Fondu', c:'#fdba74', price: 2000}] },
+            blaze: { name: "Blaze", rarity: 'epic', icon: "🔥", hp: 110, dmg: 8, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 30, reload: Math.ceil(20 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 1}, color: '#f97316', type: 'flame', desc: "Lance-flammes.", gadget: "dash", lore: "Pyromane expert.", passive: "Brûlure", proj: { r: 8, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'flame', color: '#f97316', trailColor: '#fdba74' }, skins: [{id:'default', name:'Blaze', c:'#f97316'}, {id:'blueflame', name:'Flamme Bleue', c:'#3b82f6', price: 2500}, {id:'shadow', name:'Ombre', c:'#171717', price: 3000}, {id:'toxic', name:'Toxique', c:'#16a34a', price: 2800}, {id:'white', name:'Pur', c:'#ffffff', price: 3500}] },
+            storm: { name: "Storm", rarity: 'legendary', icon: "⛈️", hp: 100, dmg: 25, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 4, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 6, dmg: 3}, color: '#6366f1', type: 'laser', desc: "Foudre en chaîne.", gadget: "teleport", lore: "Maître des orages.", passive: "Choc", proj: { r: 4, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'laser', color: '#6366f1', trailColor: '#818cf8' }, skins: [{id:'default', name:'Storm', c:'#6366f1'}, {id:'red', name:'Rouge', c:'#ef4444', price: 3500}, {id:'zeus', name:'Divin', c:'#facc15', price: 4500}, {id:'dark', name:'Sombre', c:'#312e81', price: 4000}, {id:'neon', name:'Néon', c:'#d946ef', price: 5000}] },
+            glitch: { name: "Glitch", rarity: 'mythic', icon: "👾", hp: 90, dmg: 40, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 3, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 5}, color: '#10b981', type: 'normal', desc: "Bug du système.", gadget: "teleport", lore: "Une anomalie dans le code.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'square', color: '#10b981', trailColor: '#34d399' }, skins: [{id:'default', name:'Glitch', c:'#10b981'}, {id:'error', name:'Erreur', c:'#dc2626', price: 5000}, {id:'matrix', name:'Matrice', c:'#22c55e', price: 6000}, {id:'void', name:'Vide', c:'#000000', price: 5500}, {id:'rgb', name:'RGB', c:'#facc15', price: 6500}] },
             
             // NOUVEAUX HÉROS v1.0.4
-            grunt: { name: "Grunt", rarity: 'common', icon: "🪖", hp: 160, dmg: 18, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 10, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 10, dmg: 2}, color: '#57534e', type: 'normal', desc: "Soldat lourd.", gadget: "knockback", lore: "L'infanterie de base.", passive: "Gilet Pare-balles", proj: { r: 5, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#57534e', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Grunt', c:'#57534e'}, {id:'sand', name:'Sable', c:'#d6d3d1', price: 1000}, {id:'jungle', name:'Jungle', c:'#166534', price: 1500}] },
-            raptor: { name: "Raptor", rarity: 'rare', icon: "🦖", hp: 140, dmg: 25, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#65a30d', type: 'melee', desc: "Prédateur rapide.", gadget: "dash", lore: "Une expérience génétique échappée.", passive: "Saignement", proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#65a30d', trailColor: '#bef264' }, skins: [{id:'default', name:'Raptor', c:'#65a30d'}, {id:'blue', name:'Alpha', c:'#2563eb', price: 2000}, {id:'red', name:'Féroce', c:'#dc2626', price: 1500}] },
-            orbit: { name: "Orbit", rarity: 'epic', icon: "🪐", hp: 150, dmg: 12, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 6, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 12, dmg: 2}, color: '#ec4899', type: 'normal', desc: "Tirs orbitaux.", gadget: "shield", lore: "Contrôle des satellites tueurs.", passive: "Satellite", proj: { r: 6, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Orbit', c:'#ec4899'}, {id:'space', name:'Espace', c:'#1e3a8a', price: 2500}, {id:'sun', name:'Solaire', c:'#ea580c', price: 3000}] },
-            solar: { name: "Solar", rarity: 'legendary', icon: "☀️", hp: 160, dmg: 40, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 15, dmg: 4}, color: '#f59e0b', type: 'shotgun', desc: "Éruptions solaires.", gadget: "stun", lore: "Puissance d'une étoile.", passive: "Radiance", proj: { r: 10, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 60, shape: 'star', color: '#f59e0b', trailColor: '#fde047' }, skins: [{id:'default', name:'Solar', c:'#f59e0b'}, {id:'eclipse', name:'Éclipse', c:'#1f2937', price: 4000}, {id:'blue', name:'Géante Bleue', c:'#3b82f6', price: 4500}] },
-            spectre: { name: "Spectre", rarity: 'mythic', icon: "👻", hp: 100, dmg: 55, spd: 6.8 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 2, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 6}, color: '#64748b', type: 'normal', desc: "Tueur fantôme.", gadget: "invis", lore: "On ne le voit que trop tard.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#64748b', trailColor: '#f1f5f9' }, skins: [{id:'default', name:'Spectre', c:'#64748b'}, {id:'demon', name:'Démon', c:'#b91c1c', price: 5500}, {id:'void', name:'Néant', c:'#000000', price: 6000}] },
+            grunt: { name: "Grunt", rarity: 'common', icon: "🪖", hp: 160, dmg: 18, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 10, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 10, dmg: 2}, color: '#57534e', type: 'normal', desc: "Soldat lourd.", gadget: "knockback", lore: "L'infanterie de base.", passive: "Gilet Pare-balles", proj: { r: 5, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#57534e', trailColor: '#a8a29e' }, skins: [{id:'default', name:'Grunt', c:'#57534e'}, {id:'sand', name:'Sable', c:'#d6d3d1', price: 1000}, {id:'jungle', name:'Jungle', c:'#166534', price: 1500}, {id:'urban', name:'Urbain', c:'#94a3b8', price: 2000}, {id:'elite', name:'Elite', c:'#1e293b', price: 2500}] },
+            raptor: { name: "Raptor", rarity: 'rare', icon: "🦖", hp: 140, dmg: 25, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#65a30d', type: 'melee', desc: "Prédateur rapide.", gadget: "dash", lore: "Une expérience génétique échappée.", passive: "Saignement", proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#65a30d', trailColor: '#bef264' }, skins: [{id:'default', name:'Raptor', c:'#65a30d'}, {id:'blue', name:'Alpha', c:'#2563eb', price: 2000}, {id:'red', name:'Féroce', c:'#dc2626', price: 1500}, {id:'albino', name:'Albinos', c:'#f1f5f9', price: 2500}, {id:'gold', name:'Doré', c:'#fbbf24', price: 3000}] },
+            orbit: { name: "Orbit", rarity: 'epic', icon: "🪐", hp: 150, dmg: 12, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 6, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 12, dmg: 2}, color: '#ec4899', type: 'normal', desc: "Tirs orbitaux.", gadget: "shield", lore: "Contrôle des satellites tueurs.", passive: "Satellite", proj: { r: 6, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Orbit', c:'#ec4899'}, {id:'space', name:'Espace', c:'#1e3a8a', price: 2500}, {id:'sun', name:'Solaire', c:'#ea580c', price: 3000}, {id:'moon', name:'Lunaire', c:'#94a3b8', price: 2800}, {id:'cyber', name:'Cyber', c:'#06b6d4', price: 3500}] },
+            solar: { name: "Solar", rarity: 'legendary', icon: "☀️", hp: 160, dmg: 40, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 15, dmg: 4}, color: '#f59e0b', type: 'shotgun', desc: "Éruptions solaires.", gadget: "stun", lore: "Puissance d'une étoile.", passive: "Radiance", proj: { r: 10, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 60, shape: 'star', color: '#f59e0b', trailColor: '#fde047' }, skins: [{id:'default', name:'Solar', c:'#f59e0b'}, {id:'eclipse', name:'Éclipse', c:'#1f2937', price: 4000}, {id:'blue', name:'Géante Bleue', c:'#3b82f6', price: 4500}, {id:'red', name:'Géante Rouge', c:'#ef4444', price: 5000}, {id:'white', name:'Naine Blanche', c:'#f8fafc', price: 5500}] },
+            spectre: { name: "Spectre", rarity: 'mythic', icon: "👻", hp: 100, dmg: 55, spd: 6.8 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 2, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 5, dmg: 6}, color: '#64748b', type: 'normal', desc: "Tueur fantôme.", gadget: "invis", lore: "On ne le voit que trop tard.", passive: "Esquive", proj: { r: 6, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#64748b', trailColor: '#f1f5f9' }, skins: [{id:'default', name:'Spectre', c:'#64748b'}, {id:'demon', name:'Démon', c:'#b91c1c', price: 5500}, {id:'void', name:'Néant', c:'#000000', price: 6000}, {id:'angel', name:'Ange', c:'#fef08a', price: 7000}, {id:'pixel', name:'Pixel', c:'#22c55e', price: 6500}] },
             
             // NOUVEUX HÉROS v1.1.0 (FINAL)
-            spike: { name: "Spike", rarity: 'common', icon: "🌵", hp: 170, dmg: 25, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo: 3, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 3}, color: '#166534', type: 'shotgun', desc: "Explosion d'épines.", gadget: "knockback", lore: "La nature se défend.", passive: "Dégâts Zone", proj: { r: 5, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 50, shape: 'star', color: '#166534', trailColor: '#86efac' }, skins: [{id:'default', name:'Spike', c:'#166534'}, {id:'sakura', name:'Sakura', c:'#f9a8d4', price: 1500}, {id:'dark', name:'Sombre', c:'#0f172a', price: 1000}] },
-            tesla: { name: "Tesla", rarity: 'rare', icon: "🔋", hp: 130, dmg: 14, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 15, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'laser', desc: "Tir électrique continu.", gadget: "stun", lore: "Inventeur fou.", passive: "Recharge Rapide", proj: { r: 4, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#0ea5e9', trailColor: '#bae6fd' }, skins: [{id:'default', name:'Tesla', c:'#0ea5e9'}, {id:'gold', name:'Or', c:'#eab308', price: 2000}, {id:'coil', name:'Bobine', c:'#b91c1c', price: 1500}] },
-            siren: { name: "Siren", rarity: 'epic', icon: "🎤", hp: 120, dmg: 20, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 3}, color: '#ec4899', type: 'normal', desc: "Ondes sonores.", gadget: "knockback", lore: "Sa voix est une arme.", passive: "Précision", proj: { r: 10, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Siren', c:'#ec4899'}, {id:'pop', name:'Popstar', c:'#f472b6', price: 2500}, {id:'rock', name:'Rockstar', c:'#111827', price: 3000}] },
-            paladin: { name: "Paladin", rarity: 'legendary', icon: "🔨", hp: 300, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo: 3, reload: Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 30, dmg: 5}, color: '#facc15', type: 'melee', desc: "Marteau sacré.", gadget: "heal", lore: "Défenseur de la lumière.", passive: "Regen Rapide", proj: { r: 40, speed: 0, life: 1, shape: 'melee', color: '#facc15', trailColor: '#fef9c3' }, skins: [{id:'default', name:'Paladin', c:'#facc15'}, {id:'fallen', name:'Déchu', c:'#7f1d1d', price: 4500}, {id:'ice', name:'Givre', c:'#e0f2fe', price: 4000}] },
-            zenith: { name: "Zenith", rarity: 'mythic', icon: "🌌", hp: 200, dmg: 80, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 2, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 10}, color: '#4c1d95', type: 'sniper', desc: "Rayon cosmique.", gadget: "teleport", lore: "Au-delà de l'univers.", passive: "Précision", proj: { r: 8, speed: Math.ceil(40 * PROJ_SPEED_FACTOR), life: 100, shape: 'star', color: '#4c1d95', trailColor: '#a78bfa' }, skins: [{id:'default', name:'Zenith', c:'#4c1d95'}, {id:'infinity', name:'Infini', c:'#000000', price: 6000}, {id:'light', name:'Lumière', c:'#ffffff', price: 5500}] },
+            spike: { name: "Spike", rarity: 'common', icon: "🌵", hp: 170, dmg: 25, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo: 3, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 3}, color: '#166534', type: 'shotgun', desc: "Explosion d'épines.", gadget: "knockback", lore: "La nature se défend.", passive: "Dégâts Zone", proj: { r: 5, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 50, shape: 'star', color: '#166534', trailColor: '#86efac' }, skins: [{id:'default', name:'Spike', c:'#166534'}, {id:'sakura', name:'Sakura', c:'#f9a8d4', price: 1500}, {id:'dark', name:'Sombre', c:'#0f172a', price: 1000}, {id:'desert', name:'Désert', c:'#d97706', price: 2000}, {id:'mushroom', name:'Champignon', c:'#b91c1c', price: 2500}] },
+            tesla: { name: "Tesla", rarity: 'rare', icon: "🔋", hp: 130, dmg: 14, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 15, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#0ea5e9', type: 'laser', desc: "Tir électrique continu.", gadget: "stun", lore: "Inventeur fou.", passive: "Recharge Rapide", proj: { r: 4, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#0ea5e9', trailColor: '#bae6fd' }, skins: [{id:'default', name:'Tesla', c:'#0ea5e9'}, {id:'gold', name:'Or', c:'#eab308', price: 2000}, {id:'coil', name:'Bobine', c:'#b91c1c', price: 1500}, {id:'plasma', name:'Plasma', c:'#a855f7', price: 2500}, {id:'steampunk', name:'Vapeur', c:'#78350f', price: 3000}] },
+            siren: { name: "Siren", rarity: 'epic', icon: "🎤", hp: 120, dmg: 20, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 5, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 3}, color: '#ec4899', type: 'normal', desc: "Ondes sonores.", gadget: "knockback", lore: "Sa voix est une arme.", passive: "Précision", proj: { r: 10, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Siren', c:'#ec4899'}, {id:'pop', name:'Popstar', c:'#f472b6', price: 2500}, {id:'rock', name:'Rockstar', c:'#111827', price: 3000}, {id:'opera', name:'Opéra', c:'#fbbf24', price: 3500}, {id:'techno', name:'Techno', c:'#0ea5e9', price: 4000}] },
+            paladin: { name: "Paladin", rarity: 'legendary', icon: "🔨", hp: 300, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo: 3, reload: Math.ceil(50 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 30, dmg: 5}, color: '#facc15', type: 'melee', desc: "Marteau sacré.", gadget: "heal", lore: "Défenseur de la lumière.", passive: "Regen Rapide", proj: { r: 40, speed: 0, life: 1, shape: 'melee', color: '#facc15', trailColor: '#fef9c3' }, skins: [{id:'default', name:'Paladin', c:'#facc15'}, {id:'fallen', name:'Déchu', c:'#7f1d1d', price: 4500}, {id:'ice', name:'Givre', c:'#e0f2fe', price: 4000}, {id:'jade', name:'Jade', c:'#10b981', price: 5000}, {id:'royal', name:'Royal', c:'#4c1d95', price: 5500}] },
+            zenith: { name: "Zenith", rarity: 'mythic', icon: "🌌", hp: 200, dmg: 80, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 2, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 10}, color: '#4c1d95', type: 'sniper', desc: "Rayon cosmique.", gadget: "teleport", lore: "Au-delà de l'univers.", passive: "Précision", proj: { r: 8, speed: Math.ceil(40 * PROJ_SPEED_FACTOR), life: 100, shape: 'star', color: '#4c1d95', trailColor: '#a78bfa' }, skins: [{id:'default', name:'Zenith', c:'#4c1d95'}, {id:'infinity', name:'Infini', c:'#000000', price: 6000}, {id:'light', name:'Lumière', c:'#ffffff', price: 5500}, {id:'nebula', name:'Nébuleuse', c:'#d946ef', price: 6500}, {id:'antimatter', name:'Antimatière', c:'#ef4444', price: 7000}] },
+            
+            // NOUVEAUX HÉROS v1.1.3
+            cyclops: { name: "Cyclops", rarity: 'common', icon: "👁️", hp: 180, dmg: 40, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo: 2, reload: Math.ceil(45 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 15, dmg: 4}, color: '#991b1b', type: 'laser', desc: "Tir laser unique puissant.", gadget: "shield", lore: "Un regard qui tue.", passive: "Vision", proj: { r: 6, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 60, shape: 'laser', color: '#991b1b', trailColor: '#ef4444' }, skins: [{id:'default', name:'Cyclops', c:'#991b1b'}, {id:'robot', name:'Cyborg', c:'#94a3b8', price: 1000}, {id:'alien', name:'Alien', c:'#22c55e', price: 1500}, {id:'mutant', name:'Mutant', c:'#a3e635', price: 2000}, {id:'demon', name:'Démon', c:'#7f1d1d', price: 2500}] },
+            banshee: { name: "Banshee", rarity: 'rare', icon: "🧜‍♀️", hp: 110, dmg: 18, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 8, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 2}, color: '#8b5cf6', type: 'normal', desc: "Onde de choc sonique.", gadget: "stun", lore: "Son cri glace le sang.", passive: "Peur", proj: { r: 12, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#8b5cf6', trailColor: '#ddd6fe' }, skins: [{id:'default', name:'Banshee', c:'#8b5cf6'}, {id:'ghost', name:'Spectre', c:'#f3f4f6', price: 1500}, {id:'dark', name:'Ténèbres', c:'#111827', price: 2000}, {id:'sea', name:'Marine', c:'#0ea5e9', price: 2500}, {id:'forest', name:'Forêt', c:'#166534', price: 1800}] },
+            druid: { name: "Druid", rarity: 'epic', icon: "🦌", hp: 150, dmg: 22, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 5, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 12, dmg: 3}, color: '#15803d', type: 'normal', desc: "Magie de la nature.", gadget: "heal", lore: "Gardien de la forêt ancienne.", passive: "Racines", proj: { r: 8, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 70, shape: 'star', color: '#15803d', trailColor: '#86efac' }, skins: [{id:'default', name:'Druid', c:'#15803d'}, {id:'autumn', name:'Automne', c:'#d97706', price: 2500}, {id:'winter', name:'Hiver', c:'#e0f2fe', price: 3000}, {id:'spring', name:'Printemps', c:'#86efac', price: 2000}, {id:'corrupted', name:'Corrompu', c:'#4c1d95', price: 3500}] },
+            spartan: { name: "Spartan", rarity: 'legendary', icon: "🛡️", hp: 350, dmg: 30, spd: 4.0 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 4, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 30, dmg: 4}, color: '#b91c1c', type: 'melee', desc: "Coup de bouclier.", gadget: "knockback", lore: "CECI EST SPARTE !", passive: "Blocage", proj: { r: 35, speed: 0, life: 1, shape: 'melee', color: '#b91c1c', trailColor: '#fca5a5' }, skins: [{id:'default', name:'Spartan', c:'#b91c1c'}, {id:'gold', name:'Divin', c:'#facc15', price: 4500}, {id:'shadow', name:'Ombre', c:'#1f2937', price: 4000}, {id:'leonidas', name:'Leonidas', c:'#7f1d1d', price: 5000}, {id:'stone', name:'Pierre', c:'#78716c', price: 3500}] },
+            hydra: { name: "Hydra", rarity: 'mythic', icon: "🐉", hp: 300, dmg: 25, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(30 * RATE_FACTOR), ammo: 3, reload: Math.ceil(50 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 25, dmg: 5}, color: '#047857', type: 'shotgun', desc: "Tir triple têtes.", gadget: "speed", lore: "Coupez une tête, deux repoussent.", passive: "Regen", proj: { r: 8, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 60, shape: 'snake', color: '#047857', trailColor: '#34d399' }, skins: [{id:'default', name:'Hydra', c:'#047857'}, {id:'fire', name:'Feu', c:'#ef4444', price: 5500}, {id:'void', name:'Abysses', c:'#312e81', price: 6000}, {id:'ice', name:'Glace', c:'#bae6fd', price: 5000}, {id:'gold', name:'Hydre d\'Or', c:'#eab308', price: 7000}] },
+
+            // NOUVEAUX HÉROS v1.2.0 (Part 1)
+            vulcan: { name: "Vulcan", rarity: 'common', icon: "⚒️", hp: 200, dmg: 15, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(5 * RATE_FACTOR), ammo: 40, reload: Math.ceil(20 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 15, dmg: 1}, color: '#c2410c', type: 'flame', desc: "Forge vivante.", gadget: "shield", lore: "Il forge ses armes au combat.", passive: "Brûlure", proj: { r: 6, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 40, shape: 'flame', color: '#c2410c', trailColor: '#fb923c' }, skins: [{id:'default', name:'Vulcan', c:'#c2410c'}, {id:'steel', name:'Acier', c:'#94a3b8', price: 1000}, {id:'gold', name:'Or', c:'#facc15', price: 1500}, {id:'lava', name:'Lave', c:'#ef4444', price: 2000}, {id:'coal', name:'Charbon', c:'#171717', price: 2500}] },
+            zephyr: { name: "Zephyr", rarity: 'rare', icon: "🍃", hp: 100, dmg: 18, spd: 7.2 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 6, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 6, dmg: 2}, color: '#6ee7b7', type: 'normal', desc: "Maître des vents.", gadget: "speed", lore: "Insaisissable comme la brise.", passive: "Esquive", proj: { r: 5, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'circle', color: '#6ee7b7', trailColor: '#d1fae5' }, skins: [{id:'default', name:'Zephyr', c:'#6ee7b7'}, {id:'cloud', name:'Nuage', c:'#e0f2fe', price: 1500}, {id:'storm', name:'Tempête', c:'#6366f1', price: 2000}, {id:'autumn', name:'Automne', c:'#fb923c', price: 1800}, {id:'night', name:'Brise Nocturne', c:'#1e1b4b', price: 2500}] },
+            necro: { name: "Necro", rarity: 'epic', icon: "💀", hp: 130, dmg: 25, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 4, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 10, dmg: 3}, color: '#4c1d95', type: 'normal', desc: "Magie noire.", gadget: "invis", lore: "Commande aux esprits.", passive: "Vol de Vie", proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 60, shape: 'skull', color: '#4c1d95', trailColor: '#a78bfa' }, skins: [{id:'default', name:'Necro', c:'#4c1d95'}, {id:'green', name:'Peste', c:'#166534', price: 2500}, {id:'red', name:'Sang', c:'#991b1b', price: 3000}, {id:'white', name:'Fantôme', c:'#f8fafc', price: 3500}, {id:'gold', name:'Liche', c:'#facc15', price: 4000}] },
+            gladiator: { name: "Gladiator", rarity: 'legendary', icon: "⚔️", hp: 280, dmg: 50, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 25, dmg: 5}, color: '#b45309', type: 'melee', desc: "Champion de l'arène.", gadget: "shield", lore: "N'a jamais connu la défaite.", passive: "Rage", proj: { r: 30, speed: 0, life: 1, shape: 'melee', color: '#b45309', trailColor: '#fcba03' }, skins: [{id:'default', name:'Gladiator', c:'#b45309'}, {id:'iron', name:'Fer', c:'#64748b', price: 4000}, {id:'gold', name:'Champion Or', c:'#facc15', price: 5000}, {id:'tiger', name:'Tigre', c:'#f97316', price: 4500}, {id:'shadow', name:'Murmillo', c:'#171717', price: 5500}] },
+            bouncer: { name: "Bouncer", rarity: 'mythic', icon: "🏐", hp: 220, dmg: 30, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 4, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 4}, color: '#ec4899', type: 'shotgun', desc: "Projectiles rebondissants.", gadget: "knockback", lore: "Tout rebondit sur lui.", passive: "Rebond", proj: { r: 10, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 80, shape: 'circle', color: '#ec4899', trailColor: '#fbcfe8' }, skins: [{id:'default', name:'Bouncer', c:'#ec4899'}, {id:'slime', name:'Slime', c:'#84cc16', price: 5500}, {id:'rubber', name:'Gomme', c:'#f472b6', price: 6000}, {id:'space', name:'Anti-Gravité', c:'#6366f1', price: 6500}, {id:'bubble', name:'Bulle', c:'#0ea5e9', price: 7000}] },
+
+            // NOUVEAUX HÉROS v1.2.0 (Part 2)
+            fungus: { name: "Fungus", rarity: 'common', icon: "🍄", hp: 160, dmg: 12, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 10, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 12, dmg: 2}, color: '#a21caf', type: 'normal', desc: "Spores toxiques.", gadget: "heal", lore: "Un champignon mutant.", passive: "Poison", proj: { r: 6, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#a21caf', trailColor: '#f0abfc' }, skins: [{id:'default', name:'Fungus', c:'#a21caf'}, {id:'amanita', name:'Amanite', c:'#dc2626', price: 1000}, {id:'blue', name:'Bleu', c:'#3b82f6', price: 1500}, {id:'glow', name:'Radioactif', c:'#bef264', price: 2000}, {id:'dark', name:'Moisissure', c:'#3f3f46', price: 1800}] },
+            wasp: { name: "Wasp", rarity: 'rare', icon: "🐝", hp: 80, dmg: 20, spd: 7.5 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo: 12, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 5, dmg: 3}, color: '#facc15', type: 'normal', desc: "Rapide et piquant.", gadget: "speed", lore: "Attaque en essaim.", passive: "Saignement", proj: { r: 3, speed: Math.ceil(32 * PROJ_SPEED_FACTOR), life: 60, shape: 'arrow', color: '#facc15', trailColor: '#fef08a' }, skins: [{id:'default', name:'Wasp', c:'#facc15'}, {id:'hornet', name:'Frelon', c:'#b45309', price: 1500}, {id:'mech', name:'Méca', c:'#94a3b8', price: 2000}, {id:'killer', name:'Tueur', c:'#171717', price: 2500}, {id:'queen', name:'Reine', c:'#ef4444', price: 3000}] },
+            mirage: { name: "Mirage", rarity: 'epic', icon: "🎭", hp: 110, dmg: 22, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 5, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 3}, color: '#14b8a6', type: 'normal', desc: "Trompe l'ennemi.", gadget: "invis", lore: "Maintenant tu me vois...", passive: "Esquive", proj: { r: 6, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 70, shape: 'star', color: '#14b8a6', trailColor: '#99f6e4' }, skins: [{id:'default', name:'Mirage', c:'#14b8a6'}, {id:'sand', name:'Illusion', c:'#d6d3d1', price: 2500}, {id:'neon', name:'Hologramme', c:'#dd88e1', price: 3000}, {id:'crimson', name:'Masque Rouge', c:'#be185d', price: 3500}, {id:'shadow', name:'Ombre', c:'#1e293b', price: 4000}] },
+            juggernaut: { name: "Juggernaut", rarity: 'legendary', icon: "🚆", hp: 500, dmg: 20, spd: 2.5 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 20, reload: Math.ceil(60 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 40, dmg: 2}, color: '#1e293b', type: 'shotgun', desc: "Un tank inarrêtable.", gadget: "shield", lore: "Rien ne l'arrête.", passive: "Blocage", proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'square', color: '#1e293b', trailColor: '#64748b' }, skins: [{id:'default', name:'Juggernaut', c:'#1e293b'}, {id:'rust', name:'Rouille', c:'#78350f', price: 4000}, {id:'camo', name:'Militaire', c:'#3f6212', price: 4500}, {id:'police', name:'Anti-Émeute', c:'#1d4ed8', price: 5000}, {id:'cyber', name:'Cyber Tank', c:'#ef4444', price: 5500}] },
+            eclipse: { name: "Eclipse", rarity: 'mythic', icon: "🌑", hp: 200, dmg: 45, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(45 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 6}, color: '#171717', type: 'normal', desc: "Ténèbres pures.", gadget: "teleport", lore: "Il a éteint le soleil.", passive: "Aveuglement", proj: { r: 10, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 80, shape: 'circle', color: '#000000', trailColor: '#1e1b4b' }, skins: [{id:'default', name:'Eclipse', c:'#171717'}, {id:'blood', name:'Lune de Sang', c:'#991b1b', price: 6000}, {id:'solar', name:'Éclipse Totale', c:'#f59e0b', price: 7000}, {id:'void', name:'Néant', c:'#4c1d95', price: 6500}, {id:'white', name:'Inversion', c:'#ffffff', price: 8000}] },
         };
         
         // Fonction pour trier les héros par rareté
@@ -624,7 +655,12 @@
             escape: { name: "Cyber Escape", icon: "🛸", desc: "Rejoins l'extraction !", ranked: false, special: false },
             rampage: { name: "Carnage", icon: "😡", desc: "Tuer 50 ennemis !", ranked: false, special: false },
             zone_control: { name: "Zone", icon: "⭕", desc: "Contrôle la zone !", ranked: false, special: false },
-            treasure: { name: "Chasse", icon: "👑", desc: "Trouve les trésors !", ranked: false, special: false }
+            treasure: { name: "Chasse", icon: "👑", desc: "Trouve les trésors !", ranked: false, special: false },
+            sniper_duel: { name: "Duel Sniper", icon: "🔭", desc: "Tir de précision.", ranked: false },
+            giant_hunt: { name: "Chasse Géant", icon: "👹", desc: "Abattez le colosse.", ranked: false },
+            golden_chase: { name: "Ruée vers l'Or", icon: "💰", desc: "Collecte max !", ranked: false },
+            infection_hard: { name: "Infection +", icon: "🧟‍♂️", desc: "Survivre à l'enfer.", ranked: false },
+            speed_run: { name: "Speed Run", icon: "⚡", desc: "Extraction Rapide.", ranked: false }
         };
         const ARENAS = { 
             tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
@@ -663,7 +699,28 @@
             {id:'zipper', i:'🤐', price: 10}, {id:'melting', i:'🫠', price: 20}, {id:'salute', i:'🫡', price: 25}, {id:'peeking', i:'🫣', price: 20},
             {id:'diagonal', i:'😵‍💫', price: 25}, {id:'ninja', i:'🥷', price: 80}, {id:'king', i:'🤴', price: 50}, {id:'zombie', i:'🧟', price: 30},
             {id:'brain', i:'🧠', price: 40}, {id:'rockon', i:'🤘', price: 20}, {id:'poop', i:'💩', price: 5}, {id:'chicken', i:'🐔', price: 35},
-            {id:'dragon', i:'🐲', price: 100}, {id:'unicorn', i:'🦄', price: 90}, {id:'ufo', i:'🛸', price: 60}
+            {id:'dragon', i:'🐲', price: 100}, {id:'unicorn', i:'🦄', price: 90}, {id:'ufo', i:'🛸', price: 60},
+            // NEW 1.1.5
+            {id:'hamburger', i:'🍔', price: 20}, {id:'pizza', i:'🍕', price: 20}, {id:'fries', i:'🍟', price: 15}, {id:'hotdog', i:'🌭', price: 15},
+            {id:'popcorn', i:'🍿', price: 10}, {id:'donut', i:'🍩', price: 15}, {id:'cookie', i:'🍪', price: 10}, {id:'beer', i:'🍺', price: 30},
+            {id:'cheers', i:'🍻', price: 40}, {id:'wine', i:'🍷', price: 35}, {id:'cocktail', i:'🍹', price: 35}, {id:'tropical', i:'🏝️', price: 50},
+            {id:'sun', i:'☀️', price: 10}, {id:'cloud', i:'☁️', price: 5}, {id:'rain', i:'🌧️', price: 15}, {id:'snow', i:'❄️', price: 20},
+            {id:'umbrella', i:'☂️', price: 15}, {id:'rainbow', i:'🌈', price: 40}, {id:'soccer', i:'⚽', price: 25}, {id:'basketball', i:'🏀', price: 25},
+            {id:'tennis', i:'🎾', price: 25}, {id:'baseball', i:'⚾', price: 25}, {id:'trophy', i:'🏆', price: 100}, {id:'medal', i:'🥇', price: 50},
+            {id:'gamer', i:'🎮', price: 30}, {id:'music', i:'🎵', price: 15},
+            // NEW 1.2.0 - 100 EMOTES UPDATE
+            {id:'mouse', i:'🐭', price: 10}, {id:'hamster', i:'🐹', price: 10}, {id:'rabbit', i:'🐰', price: 15}, {id:'fox', i:'🦊', price: 20},
+            {id:'bear', i:'🐻', price: 20}, {id:'panda', i:'🐼', price: 25}, {id:'koala', i:'🐨', price: 25}, {id:'tiger', i:'🐯', price: 30},
+            {id:'lion', i:'🦁', price: 30}, {id:'cow', i:'🐮', price: 15}, {id:'pig', i:'🐷', price: 15}, {id:'frog', i:'🐸', price: 10},
+            {id:'monkey', i:'🐵', price: 20}, {id:'penguin', i:'🐧', price: 30}, {id:'bird', i:'🐦', price: 10}, {id:'chick', i:'🐥', price: 10},
+            {id:'duck', i:'🦆', price: 15}, {id:'eagle', i:'🦅', price: 40}, {id:'owl', i:'🦉', price: 30}, {id:'bat', i:'🦇', price: 20},
+            {id:'wolf', i:'🐺', price: 35}, {id:'boar', i:'🐗', price: 25}, {id:'horse', i:'🐴', price: 20}, {id:'bomb', i:'💣', price: 25},
+            {id:'dagger', i:'🗡️', price: 35}, {id:'shield', i:'🛡️', price: 20}, {id:'potion', i:'🧪', price: 15}, {id:'map', i:'🗺️', price: 10},
+            {id:'compass', i:'🧭', price: 15}, {id:'anchor', i:'⚓', price: 20}, {id:'rocket', i:'🚀', price: 50}, {id:'ship', i:'🚢', price: 40},
+            {id:'car', i:'🚗', price: 20}, {id:'bus', i:'🚌', price: 20}, {id:'police', i:'🚓', price: 25}, {id:'taxi', i:'🚕', price: 20},
+            {id:'bicycle', i:'🚲', price: 10}, {id:'broken', i:'💔', price: 5}, {id:'heartfire', i:'❤️‍🔥', price: 30}, {id:'sparkle', i:'✨', price: 25},
+            {id:'cyclone', i:'🌀', price: 35}, {id:'fog', i:'🌫️', price: 10}, {id:'zap', i:'⚡', price: 20}, {id:'extinguisher', i:'🧯', price: 15},
+            {id:'moai', i:'🗿', price: 50}, {id:'peach', i:'🍑', price: 10}, {id:'eggplant', i:'🍆', price: 10}, {id:'cherries', i:'🍒', price: 10}
         ];
         // Sort emotes by price
         EMOTE_LIST.sort((a, b) => a.price - b.price);
@@ -671,7 +728,8 @@
         const DIFFICULTY = {
             easy: { name: 'Facile', mult: 0.8, color: 'text-green-400' }, // Feature 2: Score Multiplier adjusted
             normal: { name: 'Normal', mult: 1.0, color: 'text-blue-400' },
-            hard: { name: 'Difficile', mult: 1.5, color: 'text-red-400' }
+            hard: { name: 'Difficile', mult: 1.5, color: 'text-red-400' },
+            expert: { name: 'Expert', mult: 2.0, color: 'text-purple-600' }
         };
 
         // NEW MODIFIERS
@@ -686,14 +744,15 @@
             recoil: { name: 'Recul', color: 'text-white' },
             giant: { name: 'Géant', color: 'text-purple-600' },
             low_grav: { name: 'Gravity', color: 'text-indigo-400' },
-            double_dmg: { name: 'Double Dimg', color: 'text-red-600' },
+            double_dmg: { name: 'Double Dégâts', color: 'text-red-600' },
             tiny: { name: 'Tiny', color: 'text-xs text-blue-300' },
             pluie: { name: 'Pluie Balles', color: 'text-cyan-400' },
-            no_regen: { name: 'No Regen', color: 'text-gray-500' }
+            no_regen: { name: 'No Regen', color: 'text-gray-500' },
+            fragile: { name: 'Fragile', color: 'text-red-300' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_0_6';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_1';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -707,6 +766,15 @@
             ownedSkins: [],
             quests: { daily: [], season: [], lastGenerated: 0 }
         };
+
+        const PERKS = [
+            { name: "Puissance", icon: "💪", desc: "Dégâts +10%", fn: (p) => { p.stats.dmg *= 1.1; window.ui.notif("DÉGÂTS UP!", "#ef4444"); } },
+            { name: "Vitalité", icon: "❤️", desc: "Santé +20%", fn: (p) => { const add = p.maxHp * 0.2; p.maxHp += add; p.hp += add; window.ui.notif("SANTÉ UP!", "#22c55e"); } },
+            { name: "Agilité", icon: "⚡", desc: "Vitesse +10%", fn: (p) => { p.stats.spd *= 1.1; window.ui.notif("VITESSE UP!", "#facc15"); } },
+            { name: "Recharge", icon: "🔄", desc: "Recharge -10%", fn: (p) => { p.stats.reload *= 0.9; window.ui.notif("RECHARGE UP!", "#3b82f6"); } },
+            { name: "Furie", icon: "🔫", desc: "Cadence +10%", fn: (p) => { p.stats.rate *= 0.9; window.ui.notif("CADENCE UP!", "#f97316"); } },
+            { name: "Chargeur", icon: "📦", desc: "Munitions +1", fn: (p) => { p.ammoMax += 1; p.ammo += 1; window.ui.notif("MUNITIONS UP!", "#a855f7"); } }
+        ];
 
         const QuestSystem = {
             generateDaily() {
@@ -723,20 +791,24 @@
                         const type = Math.random();
                         let q = { id: Math.random().toString(36).substr(2, 9), progress: 0, completed: false, claimed: false };
                         
-                        if (type < 0.2) { 
+                        if (type < 0.15) { 
                             const m = modeKeys[Math.floor(Math.random() * modeKeys.length)];
                             q.type = 'play'; q.mode = m; q.target = 3; q.desc = `Jouer 3 parties en ${MODES[m].name}`; q.reward = { type: 'xp', val: 150 };
-                        } else if (type < 0.35) { 
+                        } else if (type < 0.30) {
+                            const arenaKeys = Object.keys(ARENAS);
+                            const a = arenaKeys[Math.floor(Math.random() * arenaKeys.length)];
+                            q.type = 'play'; q.arena = a; q.target = 3; q.desc = `Jouer 3 parties sur ${ARENAS[a].name}`; q.reward = { type: 'xp', val: 150 };
+                        } else if (type < 0.45) { 
                             q.type = 'kill'; q.target = 50 + Math.floor(Math.random()*50); q.desc = `Éliminer ${q.target} ennemis`; q.reward = { type: 'coins', val: 200 };
-                        } else if (type < 0.5) { 
+                        } else if (type < 0.55) { 
                             q.type = 'xp'; q.target = 500 + Math.floor(Math.random()*500); q.desc = `Gagner ${q.target} XP`; q.reward = { type: 'xp', val: 150 };
-                        } else if (type < 0.65) {
+                        } else if (type < 0.70) {
                             const h = heroKeys[Math.floor(Math.random() * heroKeys.length)];
                             q.type = 'play'; q.hero = h; q.target = 2; q.desc = `Jouer 2 parties avec ${STARTERS[h].name}`; q.reward = { type: 'gems', val: 5 };
-                        } else if (type < 0.8) {
+                        } else if (type < 0.85) {
                             const amount = 5000 + Math.floor(Math.random() * 10000);
                             q.type = 'dmg'; q.target = amount; q.desc = `Infliger ${amount} dégâts`; q.reward = { type: 'coins', val: 250 };
-                        } else if (type < 0.9) {
+                        } else if (type < 0.93) {
                             q.type = 'collect'; q.target = 10; q.itemType = 'coins'; q.desc = "Ramasser 10 tas de pièces"; q.reward = { type: 'coins', val: 300 };
                         } else {
                             q.type = 'win'; q.target = 1; q.desc = "Gagner 1 partie"; q.reward = { type: 'box', val: 1 };
@@ -804,6 +876,7 @@
                                 match = true;
                             } else if (q.type === 'win') {
                                 if (q.mode && q.mode !== data.mode) return;
+                                if (q.arena && q.arena !== data.arena) return;
                                 match = true;
                             } else if (q.type === 'survive') {
                                 if (data.wave >= q.target) { q.progress = q.target; match = true; } // Direct completion for survive wave X
@@ -853,6 +926,33 @@
                     }
                     Storage.save(); window.ui.renderProfile(); window.ui.updateMenu();
                 }
+            },
+            refreshDaily() {
+                if (USER.gems >= 10) {
+                    USER.gems -= 10;
+                    USER.quests.lastGenerated = 0; // Force regen
+                    this.generateDaily();
+                    Storage.save();
+                    window.ui.renderProfile();
+                    window.ui.updateMenu();
+                    window.ui.notif("-10 💎 QUÊTES ACTUALISÉES", "#a855f7");
+                } else {
+                    window.ui.notif("PAS ASSEZ DE GEMMES (10 💎)", "#ef4444");
+                }
+            },
+            hasQuest(type, filter) {
+                if(!USER.quests) return false;
+                const all = [...USER.quests.daily, ...USER.quests.season];
+                return all.some(q => {
+                   if(q.completed || q.claimed) return false;
+                   if(q.type !== type) return false;
+                   if(filter) {
+                       for(let k in filter) {
+                           if(q[k] !== filter[k]) return false;
+                       }
+                   }
+                   return true;
+                });
             }
         };
         window.QuestSystem = QuestSystem;
@@ -866,7 +966,12 @@
             20: { free: 'box:1', pro: 'gems:100' },
             30: { free: 'box:1', pro: 'emote:mindblown' },
             40: { free: 'coins:500', pro: 'mega_caisse_loot:1' },
-            50: { free: 'box:1', pro: 'gems:300' } // Feature 7: Récompense Palier 50
+            50: { free: 'box:1', pro: 'gems:300' },
+            60: { free: 'coins:1000', pro: 'mega_caisse_loot:2' },
+            70: { free: 'box:2', pro: 'gems:150' },
+            80: { free: 'coins:2000', pro: 'mega_caisse_loot:3' },
+            90: { free: 'box:3', pro: 'emote:moai' },
+            100: { free: 'mega_caisse_loot:1', pro: 'gems:500' } // mPass Max Final Reward
         };
 
         const getPassReward = (tier, isPro) => {
@@ -914,7 +1019,7 @@
                             mPassPro: isMigration ? false : (saved.mPassPro || false), // Reset Pro status for new season
                             skins: saved.skins || {},
                             ownedSkins: saved.ownedSkins || [],
-                            quests: saved.quests || { daily: [], season: [], lastGenerated: 0 }
+                            quests: { daily: [], season: [], lastGenerated: 0, ...(saved.quests || {}) }
                         };
                         
                         // Ensure new free hero is unlocked
@@ -1113,6 +1218,9 @@
                     hpBar.classList.remove('transition-all', 'duration-75'); 
                     hpBar.style.width = (p.hp/p.maxHp*100)+'%';
                 }
+                
+                // FIX: Update HUD Hero Level dynamically
+                setText('hud-lvl', 'LVL ' + p.lvl);
 
                 setText('hud-score', window.game.score); setText('hud-sub', MODES[window.game.conf.mode].name.toUpperCase());
                 if(window.game.conf.mode !== 'survival' && window.game.conf.mode !== 'ranked' && window.game.conf.mode !== 'infection' && window.game.conf.mode !== 'duel') {
@@ -1310,7 +1418,7 @@
                     return { icon, text };
                 };
                 
-                for(let i=1; i<=50; i++) {
+                for(let i=1; i<=100; i++) {
                     const freeRwdStr = getPassReward(i, false);
                     const proRwdStr = getPassReward(i, true);
                     
@@ -1356,7 +1464,7 @@
                 if (scrollContainer) {
                     const freeRow = el('pass-track-free');
                     if (freeRow && currentTierIndex > 0) {
-                        const targetTier = Math.min(50, Math.max(1, currentTierIndex));
+                        const targetTier = Math.min(100, Math.max(1, currentTierIndex));
                         // On défile vers le palier actuel ou le dernier non réclamé si inférieur
                         // Mais généralement on veut voir où on en est
                         const targetElement = freeRow.querySelector(`#pass-free-tier-${targetTier}`);
@@ -1386,6 +1494,7 @@
                     const borderColor = active.includes('border-blue-500') ? '' : `border-color: ${rarity.color}40;`;
                     const bgStyle = active.includes('bg-blue-900') ? '' : `background: linear-gradient(135deg, ${rarity.color}10, rgba(255,255,255,0.02));`;
                     sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="${borderColor} ${bgStyle}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
+                        ${(window.QuestSystem && window.QuestSystem.hasQuest('play', {hero: k})) ? '<div class="absolute top-1 left-1 text-lg z-20 animate-bounce">📜</div>' : ''}
                         <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider text-white shadow-sm" style="background-color:${rarity.color}">${rarity.name}</div>
                         <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
                         <div class="font-black text-sm uppercase tracking-wider" style="color:${rarity.color}">${s.name}</div>
@@ -1398,14 +1507,19 @@
                     const m = MODES[k]; 
                     const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; 
                     const active = currentMode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; 
-                    ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border"><div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; 
+                    ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border relative">
+                        ${(window.QuestSystem && (window.QuestSystem.hasQuest('play', {mode: k}) || window.QuestSystem.hasQuest('win', {mode: k}))) ? '<div class="absolute top-2 right-2 text-xl animate-bounce">📜</div>' : ''}
+                        <div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; 
                 }); 
                 const al = el('list-arenas'); al.innerHTML = ''; 
                 Object.keys(ARENAS).forEach(k => { 
                     const a = ARENAS[k]; 
                     const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; 
                     const active = currentArena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; 
-                    al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest">${a.name}</div>`; 
+                al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest relative">
+                    ${a.name}
+                    ${(window.QuestSystem && window.QuestSystem.hasQuest('play', {arena: k}) || window.QuestSystem.hasQuest('win', {arena: k})) ? '<div class="absolute -top-1 -right-1 text-xs animate-bounce">📜</div>' : ''}
+                </div>`; 
                 });
             },
             openHeroDetails(k) {
@@ -2050,10 +2164,20 @@
                 this.mode='CHASE'; 
                 this.target=null; 
                 this.isStunned = 0; // Ajout du stun
-                this.hitTimer = 300; // FIX 2: Timer de régénération
+                this.hitTimer = 300; 
                 // Buff PV
                 this.hp += ENEMY_HP_BUFF;
                 this.maxHp += ENEMY_HP_BUFF;
+                
+                // Difficulty Scaling for Bots
+                const diffMult = DIFFICULTY[window.game.conf.difficulty].mult;
+                this.hp *= diffMult;
+                this.maxHp *= diffMult;
+                this.stats.dmg *= diffMult;
+                // Vitesse légèrement augmentée en difficulté supérieure
+                this.stats.spd *= (1 + (diffMult - 1) * 0.3);
+
+                if(window.game.conf.modifier === 'oneshot') { this.hp = 1; this.maxHp = 1; }
             } 
             update(){ 
                 if (this.isStunned > 0) { this.isStunned--; return; } // Stunned = skip update
@@ -2137,13 +2261,23 @@
             if(t==='train'){hp=10000;s=1.0 * SPEED_FACTOR;this.c='#3b82f6';this.r=30;this.type='train';} 
             if(t==='terminal'){hp=5000;s=0;this.c='#22d3ee';this.r=40;this.type='terminal';}
 
-            if(window.game.conf.modifier === 'giant') { this.r *= 2; hp *= 2; s *= 0.8; }
-            if(window.game.conf.modifier === 'oneshot') { hp = 1; }
-
             // AJOUT: +20PV de base aux ennemis/bots
             hp += ENEMY_HP_BUFF;
 
-            this.hp=hp * enemyMult; this.maxHp=this.hp; this.spd=s*0.85; this.baseDmg = dmg * enemyMult; 
+            if(window.game.conf.modifier === 'giant') { this.r *= 2; hp *= 2; s *= 0.8; }
+            if(window.game.conf.modifier === 'oneshot') { hp = 1; }
+
+            this.hp=hp * enemyMult; 
+            
+            // Apply Speed Scaling specifically for difficulty (since enemyMult handles HP/DMG based on diffMult)
+            // Note: enemyMult = m * diffMult. 
+            // So hp and dmg are already scaled by diffMult.
+            // But 's' (speed) was not.
+            const diffSpeedMult = 1 + (diffMult - 1) * 0.3;
+            
+            this.maxHp=this.hp; 
+            this.spd=s * 0.85 * diffSpeedMult; 
+            this.baseDmg = dmg * enemyMult; 
             // Application du facteur de tir sur le CD
             this.cd = Math.ceil((100 + Math.random() * 100) * RATE_FACTOR); 
             
@@ -2224,7 +2358,12 @@
                 for(let w of window.game.map){if(w.type===1)continue; if(w.collide({x:nx,y:this.y,r:this.r}))cx=true;if(w.collide({x:this.x,y:ny,r:this.r}))cy=true;} 
                 if(!cx)this.x=nx;if(!cy)this.y=ny; 
             } 
-            if(Math.hypot(this.x-p.x,this.y-p.y)<this.r+p.r){p.hp-=this.baseDmg; p.hitTimer = 0; window.ui.flash();if(window.game.conf.modifier === 'oneshot') p.hp = 0; if(p.hp<=0)window.game.over("Tué par "+this.name);} 
+            if(Math.hypot(this.x-p.x,this.y-p.y)<this.r+p.r){
+                let dmg = this.baseDmg;
+                if(window.game.conf.modifier === 'fragile') dmg *= 2; // Fragile = Double Dégâts subis
+                p.hp -= dmg; 
+                p.hitTimer = 0; window.ui.flash();if(window.game.conf.modifier === 'oneshot') p.hp = 0; if(p.hp<=0)window.game.over("Tué par "+this.name);
+            } 
             if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; this.hitTimer = 0; } 
             
             // FIX 2: Régénération HP après 5s sans dégâts
@@ -2319,11 +2458,16 @@
             setStarter(k){USER.selected=k; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setMode(m){this.conf.mode=m; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setArena(a){this.conf.arena=a; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
-            setDifficulty(d) { this.conf.difficulty = d; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play'); }, 
+            setDifficulty(d) { if(DIFFICULTY[d]) { this.conf.difficulty = d; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play'); } }, 
             setModifier(m) { this.conf.modifier = m; Storage.save(); window.ui.updateMenu(); }, 
             start(){ 
                 el('menu-screen').classList.add('hidden'); 
                 el('hud').classList.remove('hidden'); 
+                
+                // FIX: Update HUD Hero Info
+                setText('hud-lvl', 'LVL ' + (USER.levels[USER.selected]||1));
+                setText('hud-icon', STARTERS[USER.selected].icon);
+
                 this.player=new Player(USER.selected); 
                 this.ents=[]; this.projs=[]; this.parts=[]; this.bgParts = []; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0; this.timeLeft = 3 * 60 * 60; 
                 this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
@@ -2373,6 +2517,27 @@
                 } else if(this.conf.mode === 'zone_control') {
                     // Zone centrale
                     window.ui.notif("CONTRÔLE LA ZONE", "#a855f7");
+                } else if(this.conf.mode === 'sniper_duel') {
+                    const bot = new Bot(); bot.x = this.world/2 + 600; bot.y = this.world/2; 
+                    bot.c = '#a855f7'; // Sniper color
+                    // Force bot to simulate sniper if possible, or just standard bot
+                    this.ents.push(bot); window.ui.notif("DUEL SNIPER", "#a855f7");
+                } else if(this.conf.mode === 'giant_hunt') {
+                    const boss = new Enemy('boss', 5); // Huge HP
+                    boss.x = this.world/2; boss.y = this.world/2; boss.r = 80; boss.name = "GÉANT";
+                    this.ents.push(boss); window.ui.notif("CHASSE AU GÉANT", "#ef4444");
+                } else if(this.conf.mode === 'golden_chase') {
+                    for(let i=0; i<30; i++) this.items.push({x:Rnd(100,this.world-100), y:Rnd(100,this.world-100), type:'coins', val: 50});
+                    window.ui.notif("RUÉE VERS L'OR !", "#eab308");
+                } else if(this.conf.mode === 'infection_hard') {
+                    // Start with more enemies
+                    for(let i=0; i<20; i++) this.ents.push(new Enemy('fast', 1.5));
+                    window.ui.notif("INFECTION EXTRÊME", "#dc2626");
+                } else if(this.conf.mode === 'speed_run') {
+                    const exit = new Enemy('chest', 1); exit.type='exit'; exit.x = this.world-100; exit.y = this.world-100; exit.c='#22d3ee';
+                    this.ents.push(exit);
+                    window.ui.notif("SPEED RUN !", "#22d3ee");
+
                 } else { 
                     window.ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); 
                 } 
@@ -2863,9 +3028,10 @@
             }, 
             kill(e){ 
                 e.dead=true; 
-                this.score+=(e.isBoss||e.isBot?500:100); 
-                this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+(e.isBoss?300:20)); 
-                this.player.super=Math.min(100,this.player.super+(e.isBoss?30:10)); 
+                const diffMult = DIFFICULTY[window.game.conf.difficulty].mult;
+                this.score+=(e.isBoss||e.isBot?500:100) * diffMult; 
+                this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+(e.isBoss?300:20) * diffMult); 
+                this.player.super=Math.min(100,this.player.super+(e.isBoss?30:10));   
                 // Fix: Lifesteal passive for non-melee heroes
                 if(this.player.stats.passive === "Vol de Vie" && this.player.stats.type !== 'melee') {
                      if(window.game.conf.modifier !== 'oneshot') this.player.hp=Math.min(this.player.maxHp,this.player.hp+(e.isBoss?50:10)); // Heal on kill for ranged lifesteal
