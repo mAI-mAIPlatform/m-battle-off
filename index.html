@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.2.1 - Saison 2</title>
+    <title>mBattle v1.2.4 - Saison 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -69,6 +69,10 @@
         .pass-step.active .tier-badge { background: #22d3ee; color: black; border-color: transparent; }
         .pass-step.pro .tier-badge { background: #4c1d95; }
         .pass-step.active.pro .tier-badge { background: #a855f7; color: white; }
+        .pass-step.max { background: linear-gradient(180deg, #422006 0%, #1c1500 100%); border-color: rgba(234, 179, 8, 0.3); }
+        .pass-step.active.max { border-color: #facc15; box-shadow: 0 0 25px rgba(250, 204, 21, 0.4); }
+        .pass-step.max .tier-badge { background: #a16207; }
+        .pass-step.active.max .tier-badge { background: #facc15; color: black; }
 
         /* EMOTES */
         .emote-wheel { position: absolute; bottom: 120px; right: 20px; display: flex; flex-wrap: wrap; width: 160px; gap: 10px; z-index: 70; pointer-events: auto; }
@@ -145,7 +149,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.1</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.3</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -154,7 +158,7 @@
             </div>
             <div class="flex-1 overflow-y-auto safe-pb p-5 hide-scrollbar relative">
                 <div id="tab-play" class="tab-content flex flex-col items-center justify-center min-h-[65vh] gap-6 animate-fadeIn">
-                    <div class="w-full max-w-md glass-panel p-5 border-l-4 border-cyan-500 bg-cyan-900/10 relative overflow-hidden">
+                    <div onclick="window.ui.openTrophyRoad()" class="w-full max-w-md glass-panel p-5 border-l-4 border-cyan-500 bg-cyan-900/10 relative overflow-hidden cursor-pointer active:scale-95 transition hover:brightness-110">
                         <div class="flex items-center justify-between mb-2 relative z-10">
                             <div><div class="text-[10px] text-gray-400 uppercase font-bold">Rang Actuel</div><div class="text-2xl font-black italic text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 to-cyan-500 font-tech" id="menu-rank">BRONZE I</div></div>
                             <div class="text-center"><div class="text-2xl">🏆</div><div class="font-bold text-white text-xl" id="menu-trophies">0</div></div>
@@ -191,6 +195,9 @@
                             <button onclick="window.game.setModifier('explosive')" id="mod-explosive" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-orange-500">💥 Explosif</button>
                             <button onclick="window.game.setModifier('recoil')" id="mod-recoil" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-white">🔙 Recul</button>
                             <button onclick="window.game.setModifier('giant')" id="mod-giant" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-purple-600">🐘 Géant</button>
+                            <button onclick="window.game.setModifier('blind')" id="mod-blind" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-gray-500">🌑 Aveugle</button>
+                            <button onclick="window.game.setModifier('slow_mo')" id="mod-slow_mo" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-blue-300">🐌 Slow Mo</button>
+                            <button onclick="window.game.setModifier('chaos')" id="mod-chaos" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-purple-500">🎲 Chaos</button>
                         </div>
                     </div>
                     <button onclick="window.game.start()" class="w-full max-w-md bg-gradient-to-r from-blue-600 to-indigo-600 h-20 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-4 active:scale-95 transition transform hover:-translate-y-1 mt-4 border border-white/20">
@@ -217,6 +224,7 @@
                              <div class="pass-track-main-line"></div>
                              <div class="pass-row" id="pass-track-free"></div>
                              <div class="pass-row pro" id="pass-track-pro"></div>
+                             <div class="pass-row max" id="pass-track-max"></div>
                         </div>
                     </div>
                 </div>
@@ -245,37 +253,50 @@
                     </div>
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">COMPARATIF mPASS</h3>
-                    <div class="glass-panel p-4 mb-8 overflow-hidden">
-                        <table class="w-full text-sm text-left text-gray-300">
-                            <tr class="border-b border-gray-700 text-xs text-gray-500 uppercase">
-                                <th class="py-2 pl-2">Récompense</th>
-                                <th class="py-2 text-center text-gray-400">Gratuit</th>
-                                <th class="py-2 text-center text-yellow-400">PRO (Total)</th>
+                    <div class="glass-panel p-4 mb-8 overflow-hidden relative">
+                        <div class="absolute top-0 right-0 p-2 opacity-20 text-6xl">🎫</div>
+                        <table class="w-full text-sm text-left text-gray-300 relative z-10">
+                            <tr class="border-b border-gray-700 text-[10px] md:text-xs text-gray-500 uppercase tracking-wider">
+                                <th class="py-3 pl-2">Avantage</th>
+                                <th class="py-3 text-center text-gray-400">Gratuit</th>
+                                <th class="py-3 text-center text-purple-400">Pro</th>
+                                <th class="py-3 text-center text-yellow-400">Max</th>
                             </tr>
-                            <tr class="border-b border-gray-700/50">
-                                <td class="py-3 pl-2 font-bold">Skins Rares</td>
-                                <td class="text-center">0</td>
-                                <td class="text-center text-green-400">0</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">💰</span> Valeur Totale</td>
+                                <td class="text-center text-gray-400">Standard</td>
+                                <td class="text-center text-purple-300 font-bold">x10</td>
+                                <td class="text-center text-yellow-300 font-black">x25</td>
                             </tr>
-                            <tr class="border-b border-gray-700/50">
-                                <td class="py-3 pl-2 font-bold">Emotes Exclusives</td>
-                                <td class="text-center">1</td>
-                                <td class="text-center text-green-400">3</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">💎</span> Gemmes</td>
+                                <td class="text-center">150</td>
+                                <td class="text-center text-green-400 font-bold">2 500</td>
+                                <td class="text-center text-green-400 font-black">5 000+</td>
                             </tr>
-                            <tr class="border-b border-gray-700/50">
-                                <td class="py-3 pl-2 font-bold">Gemmes 💎</td>
-                                <td class="text-center">42</td>
-                                <td class="text-center text-green-400">302</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">🪙</span> Pièces</td>
+                                <td class="text-center">2 000</td>
+                                <td class="text-center text-green-400 font-bold">15 000</td>
+                                <td class="text-center text-green-400 font-black">30 000+</td>
                             </tr>
-                            <tr class="border-b border-gray-700/50">
-                                <td class="py-3 pl-2 font-bold">Pièces 🪙</td>
-                                <td class="text-center">1190</td>
-                                <td class="text-center text-green-400">4490</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">📦</span> Mega Caisses</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center font-bold">5</td>
+                                <td class="text-center font-black">15</td>
                             </tr>
-                            <tr>
-                                <td class="py-3 pl-2 font-bold">Mega Caisses 📦</td>
-                                <td class="text-center">4</td>
-                                <td class="text-center text-green-400">8</td>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">👕</span> Skins Exclusifs</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center font-bold">✅</td>
+                                <td class="text-center font-black">✅ + Mythique</td>
+                            </tr>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 pl-2 font-bold flex items-center gap-2"><span class="text-xl">⚡</span> Boost Progression</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center">-</td>
+                                <td class="text-center font-black text-yellow-400">+20% XP</td>
                             </tr>
                         </table>
                     </div>
@@ -332,30 +353,43 @@
                             <div><b class="text-white">♾️ Infini :</b> Munitions illimitées.</div>
                             <div><b class="text-white">💥 Explosif :</b> Les ennemis explosent à leur mort.</div>
                             <div><b class="text-white">🔙 Recul :</b> Tirer te propulse en arrière.</div>
+
                             <div><b class="text-white">🐘 Géant :</b> Tout le monde est géant (x2 taille).</div>
+                            <div><b class="text-white">🌑 Aveugle :</b> Champ de vision très réduit.</div>
+                            <div><b class="text-white">🐌 Slow Mo :</b> Le temps passe 2x moins vite.</div>
+                            <div><b class="text-white">🎲 Chaos :</b> Un modificateur aléatoire toutes les 10s !</div>
                         </div>
                     </div>
 
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.2.1 (Fixes)</h3><ul><li>🐛 <b>HUD :</b> Correction de l'affichage du niveau du héros en jeu.</li><li>🛠️ <b>Stabilité :</b> Corrections de bugs divers et optimisations.</li></ul></div><div class="patch-note"><h3>v1.2.0 (THE HEROIC UPDATE)</h3><ul><li>⭐️ <b>10 Nouveaux Héros :</b> Vulcan, Zephyr, Necro, Gladiator, Bouncer, Fungus, Wasp, Mirage, Juggernaut, Eclipse ! (Total 60 Héros)</li><li>🎭 <b>100 Emotes :</b> Collection massive de nouvelles emotes !</li><li>🎫 <b>mPass MAX :</b> Le Pass de Combat s'étend maintenant jusqu'au palier 100 avec une récompense ultime !</li><li>🎨 <b>Skins :</b> 5 Skins pour TOUS les nouveaux héros.</li><li>🐛 <b>Optimisation :</b> Fluidité accrue.</li></ul></div><div class="patch-note"><h3>v1.1.5 (Content Explosion)</h3><ul><li>🔥 <b>Missions & Terrains :</b> Total 20 Modes et 15 Arènes !</li><li>🎨 <b>Skins :</b> 5 Skins minimum pour CHAQUE héros !</li><li>⚙️ <b>Modificateurs :</b> Total 15 modificateurs (Nouveau: Fragile).</li><li>😀 <b>Emotes :</b> 25 Nouvelles Emotes (Total 75+).</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs corrigés.</li></ul></div><div class="patch-note"><h3>v1.1.4 (Packs Corrections)</h3><ul><li>🛠️ Corrections de bugs sur les quêtes et récompenses.</li><li>⚡ Optimisation des performances.</li><li>🐛 Fix: Orthographe Modificateurs.</li></ul></div><div class="patch-note"><h3>v1.1.3 (Update Heroes)</h3><ul><li>🦸 5 Nouveaux Héros : Cyclops, Banshee, Druid, Spartan, Hydra !</li><li>📝 Descriptions : Amélioration des textes d'Infos (Missions & Terrains).</li><li>🐛 Bugs : Corrections mineures et optimisation.</li></ul></div><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class="patch-note"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.2.3 (Trophy Road Update)</h3><ul><li>🏆 <b>Voie des Trophées :</b> Gagnez 1000 🪙 et 25 💎 à chaque palier de trophées !</li><li>📈 <b>Progression :</b> Cliquez sur votre rang dans le menu pour voir les récompenses.</li><li>🛠️ <b>Correctifs :</b> Optimisation et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.2.2 (CONTENT UPDATE)</h3><ul><li>💎 <b>Skins Diamant :</b> Nouveaux skins de prestige pour Soldier, Heavy et Sniper (5000 🪙).</li><li>🌊 <b>Nouveau Terrain :</b> Atlantis ! Combattez sous l'océan.</li><li>🎲 <b>3 Nouveaux Modificateurs :</b> Aveugle, Slow Mo et Chaos !</li><li>🐛 <b>Correctifs :</b> Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.2.1 (Fixes)</h3><ul><li>🐛 <b>HUD :</b> Correction de l'affichage du niveau du héros en jeu.</li><li>🛠️ <b>Stabilité :</b> Corrections de bugs divers et optimisations.</li></ul></div><div class="patch-note"><h3>v1.2.0 (THE HEROIC UPDATE)</h3><ul><li>⭐️ <b>10 Nouveaux Héros :</b> Vulcan, Zephyr, Necro, Gladiator, Bouncer, Fungus, Wasp, Mirage, Juggernaut, Eclipse ! (Total 60 Héros)</li><li>🎭 <b>100 Emotes :</b> Collection massive de nouvelles emotes !</li><li>🎫 <b>mPass MAX :</b> Le Pass de Combat s'étend maintenant jusqu'au palier 100 avec une récompense ultime !</li><li>🎨 <b>Skins :</b> 5 Skins pour TOUS les nouveaux héros.</li><li>🐛 <b>Optimisation :</b> Fluidité accrue.</li></ul></div><div class="patch-note"><h3>v1.1.5 (Content Explosion)</h3><ul><li>🔥 <b>Missions & Terrains :</b> Total 20 Modes et 15 Arènes !</li><li>🎨 <b>Skins :</b> 5 Skins minimum pour CHAQUE héros !</li><li>⚙️ <b>Modificateurs :</b> Total 15 modificateurs (Nouveau: Fragile).</li><li>😀 <b>Emotes :</b> 25 Nouvelles Emotes (Total 75+).</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs corrigés.</li></ul></div><div class="patch-note"><h3>v1.1.4 (Packs Corrections)</h3><ul><li>🛠️ Corrections de bugs sur les quêtes et récompenses.</li><li>⚡ Optimisation des performances.</li><li>🐛 Fix: Orthographe Modificateurs.</li></ul></div><div class="patch-note"><h3>v1.1.3 (Update Heroes)</h3><ul><li>🦸 5 Nouveaux Héros : Cyclops, Banshee, Druid, Spartan, Hydra !</li><li>📝 Descriptions : Amélioration des textes d'Infos (Missions & Terrains).</li><li>🐛 Bugs : Corrections mineures et optimisation.</li></ul></div><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class=\"patch-note\"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
                 </div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
-                    <div class="glass-panel p-6 mb-6 flex items-center gap-6 bg-blue-900/10 border-blue-500/30">
-                        <div class="relative group cursor-pointer" onclick="window.ui.openAvatarSelector()">
-                            <div class="w-20 h-20 rounded-full bg-gray-800 border-2 border-white/20 flex items-center justify-center text-4xl shadow-lg overflow-hidden hover:border-blue-500 transition" id="profile-avatar">👤</div>
-                            <div class="absolute bottom-0 right-0 bg-blue-600 border border-white text-[10px] p-1 rounded-full text-white shadow-sm">✏️</div>
-                        </div>
-                        <div class="flex-1">
-                            <div class="text-xs text-gray-400 font-bold uppercase mb-1">Pseudonyme</div>
-                            <input type="text" id="profile-name" class="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-white font-bold w-full mb-2 focus:outline-none focus:border-blue-500 transition" onchange="USER.name = this.value; Storage.save();" value="Player">
-                            <div class="flex justify-between items-center">
-                                <div class="text-xs text-blue-400 font-tech tracking-widest" id="profile-tag">#TAG</div>
-                                <div class="bg-black border border-gray-600 text-[9px] px-2 rounded text-yellow-400 font-bold" id="profile-lvl">LVL 1</div>
+                    <div id="profile-main-card" class="glass-panel p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/30">
+                        <div class="absolute top-0 right-0 p-4 opacity-50"><button onclick="window.ui.openSettings()" class="text-xl hover:scale-110 transition md:text-2xl bg-black/40 p-2 rounded-xl backdrop-blur-md border border-white/10">⚙️</button></div>
+                        <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
+                            <div class="relative group cursor-pointer" onclick="window.ui.openAvatarSelector()">
+                                <div class="w-24 h-24 rounded-full bg-gray-800 border-4 border-blue-500/30 flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(59,130,246,0.3)] overflow-hidden hover:border-blue-400 transition" id="profile-avatar">👤</div>
+                                <div class="absolute bottom-1 right-1 bg-blue-600 border border-white text-xs p-1.5 rounded-full text-white shadow-lg">✏️</div>
+                            </div>
+                            <div class="flex-1 text-center md:text-left w-full">
+                                <div class="text-[10px] text-blue-300 font-bold uppercase tracking-widest mb-1">IDENTITÉ</div>
+                                <div class="flex justify-center md:justify-start items-center gap-2 mb-2">
+                                     <h3 class="text-3xl font-black text-white tracking-tight" id="profile-display-name">Player</h3>
+                                     <div class="bg-blue-600/20 text-blue-300 text-[10px] font-mono px-2 py-0.5 rounded border border-blue-500/30" id="profile-tag">#TAG</div>
+                                </div>
+                                <div class="text-sm text-gray-300 italic mb-3 min-h-[1.25em]" id="profile-bio">"Aucune bio définie..."</div>
+                                
+                                <div class="flex justify-center md:justify-start gap-4">
+                                     <div class="px-3 py-1 rounded bg-black/40 border border-white/10 text-xs font-bold text-yellow-400 flex items-center gap-2"><span class="text-lg">⚡</span> <span id="profile-lvl">LVL 1</span></div>
+                                     <div class="px-3 py-1 rounded bg-black/40 border border-white/10 text-xs font-bold text-purple-400 flex items-center gap-2"><span class="text-lg">🏆</span> <span id="profile-trophies">0</span></div>
+                                </div>
                             </div>
                         </div>
+                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.2.4</div>
                     </div>
                 <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
                         <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">
@@ -396,6 +430,14 @@
             </div>
         </div>
 
+        <!-- TROPHY ROAD MODAL -->
+        <div id="trophy-road-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="this.classList.add('hidden')">
+             <div class="glass-panel p-6 max-w-lg w-full mx-4 flex flex-col gap-4 max-h-[80vh] overflow-y-auto hide-scrollbar" onclick="event.stopPropagation()">
+                <div class="flex justify-between items-center border-b border-white/10 pb-4"><h3 class="text-xl font-black text-yellow-400">VOIE DES TROPHÉES 🏆</h3><button onclick="document.getElementById('trophy-road-modal').classList.add('hidden')" class="text-2xl text-gray-400 hover:text-white">×</button></div>
+                <div id="trophy-list" class="flex flex-col gap-3"></div>
+             </div>
+        </div>
+
         <!-- SETTINGS MODAL -->
         <div id="settings-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="window.ui.closeSettings()">
              <div class="glass-panel p-6 max-w-sm w-full mx-4 flex flex-col gap-4 max-h-[80vh] overflow-y-auto hide-scrollbar" onclick="event.stopPropagation()">
@@ -408,7 +450,7 @@
                 <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20" onchange="USER.bio = this.value; Storage.save(); window.ui.renderProfile()"></textarea></div>
                 <div class="settings-grp pt-2 border-t border-white/10 mt-2"><div class="flex justify-between items-center mb-2"><label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label><div id="theme-lock-icon" class="text-[10px] text-gray-500"></div></div><div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div></div>
                 <button onclick="window.ui.closeSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
-                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.1</div></div>
+                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.3</div></div>
              </div>
         </div>
 
@@ -479,7 +521,7 @@
         const STARTERS = { 
             soldier: { name: "Soldier", rarity: 'common', icon: "🔫", hp: 130, dmg: 22, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(14 * RATE_FACTOR), ammo:3, reload:Math.ceil(40 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:10, dmg:2}, color: '#3b82f6', desc: "Polyvalent.", gadget: "heal", lore: "Vétéran des guerres galactiques.", passive: "Regen Rapide", 
                        proj: { r: 5, speed: Math.ceil(20 * PROJ_SPEED_FACTOR), life: 60, shape: 'circle', color: '#3b82f6', trailColor: '#1e3a8a' },
-                       skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000}, {id:'veteran', name:'Vétéran', c:'#4b5563', price: 2500} ] }, 
+                       skins: [ {id:'default', name:'Soldat', c:'#3b82f6'}, {id:'gold', name:'Soldat Or', c:'#fbbf24', price: 2000}, {id:'commando', name:'Commando', c:'#166534', price: 1500}, {id:'pixel', name:'Pixel', c:'#60a5fa', price: 1000}, {id:'veteran', name:'Vétéran', c:'#4b5563', price: 2500}, {id:'diamond', name:'Diamant', c:'#b9f2ff', price: 5000} ] }, 
             drone: { name: "Drone", rarity: 'common', icon: "🛸", hp: 80, dmg: 15, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(8 * RATE_FACTOR), ammo:10, reload:Math.ceil(30 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:5, dmg:2}, color: '#94a3b8', type: 'laser', desc: "Rapide et fragile.", gadget: "speed", lore: "Un drone de surveillance devenu fou.", passive: "Esquive", 
                      proj: { r: 4, speed: Math.ceil(30 * PROJ_SPEED_FACTOR), life: 70, shape: 'laser', color: '#94a3b8', trailColor: '#cbd5e1' },
                      skins: [{id:'default', name:'Drone', c:'#94a3b8'}, {id:'stealth', name:'Furtif', c:'#0f172a', price: 1000}, {id:'glow', name:'Néon Bleu', c:'#0ea5e9', price: 1500}, {id:'gold', name:'Or', c:'#fbbf24', price: 2000}, {id:'red', name:'Alerte', c:'#ef4444', price: 1000}] },
@@ -490,13 +532,13 @@
 
             tank: { name: "Heavy", rarity: 'rare', icon: "🛡️", hp: 320, dmg: 14, spd: 3.5 * SPEED_FACTOR, rate: Math.ceil(35 * RATE_FACTOR), ammo:3, reload:Math.ceil(55 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:30, dmg:1}, color: '#22c55e', type: 'shotgun', desc: "Sac à PV.", gadget: "shield", lore: "Une forteresse mobile.", passive: "Armure +20%", 
                     proj: { r: 8, speed: Math.ceil(15 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#22c55e', trailColor: '#166534' },
-                    skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000}, {id:'titan', name:'Titan', c:'#eab308', price: 3000} ] }, 
+                    skins: [ {id:'default', name:'Heavy', c:'#22c55e'}, {id:'toxic', name:'Toxic', c:'#a3e635', price: 1500}, {id:'mecha', name:'Mecha', c:'#f3f4f6', price: 2500}, {id:'rusty', name:'Rouillé', c:'#78350f', price: 1000}, {id:'titan', name:'Titan', c:'#eab308', price: 3000}, {id:'diamond', name:'Diamant', c:'#b9f2ff', price: 5000} ] }, 
             bomber: { name: "Bomber", rarity: 'rare', icon: "💣", hp: 150, dmg: 45, spd: 4.5 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo:2, reload:Math.ceil(60 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:15, dmg:5}, color: '#f59e0b', type: 'shotgun', desc: "Explosifs.", gadget: "knockback", lore: "Adore les feux d'artifice.", passive: "Dégâts Zone", 
                       proj: { r: 10, speed: Math.ceil(12 * PROJ_SPEED_FACTOR), life: 40, shape: 'circle', color: '#f59e0b', trailColor: '#fed7aa' },
                       skins: [{id:'default', name:'Bomber', c:'#f59e0b'}, {id:'nuke', name:'Nucléaire', c:'#84cc16', price: 1800}, {id:'frost', name:'Givre', c:'#0ea5e9', price: 1500}, {id:'shadow', name:'Ombre', c:'#171717', price: 2200}, {id:'fire', name:'Feu', c:'#b91c1c', price: 2500}] },
             sniper: { name: "Sniper", rarity: 'rare', icon: "🦅", hp: 80, dmg: 120, spd: 5 * SPEED_FACTOR, rate: Math.ceil(65 * RATE_FACTOR), ammo:3, reload:Math.ceil(80 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:5, dmg:15}, color: '#a855f7', type: 'sniper', desc: "Tireur d'élite.", gadget: "knockback", lore: "Ne rate jamais sa cible.", passive: "Critique +10%", 
                       proj: { r: 6, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 100, shape: 'sniper', color: '#a855f7', trailColor: '#7c3aed' },
-                      skins: [{id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}, {id:'desert', name:'Désert', c:'#d97706', price: 2500}] }, 
+                      skins: [ {id:'default', name:'Sniper', c:'#a855f7'}, {id:'elite', name:'Elite', c:'#1e1b4b', price: 3000}, {id:'camo', name:'Camo', c:'#3f6212', price: 1500}, {id:'ghillie', name:'Ghillie', c:'#14532d', price: 2000}, {id:'desert', name:'Désert', c:'#d97706', price: 2500}, {id:'diamond', name:'Diamant', c:'#b9f2ff', price: 5000} ] }, 
             harpy: { name: "Harpy", rarity: 'rare', icon: "🕊️", hp: 100, dmg: 18, spd: 6.8 * SPEED_FACTOR, rate: Math.ceil(7 * RATE_FACTOR), ammo:8, reload:Math.ceil(35 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:7, dmg:3}, color: '#84cc16', type: 'normal', desc: "Rapide et agile.", gadget: "speed", lore: "Chasseur aérien.", passive: "Tir Rapide",
                      proj: { r: 4, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#84cc16', trailColor: '#a7f3d0' },
                      skins: [{id:'default', name:'Harpy', c:'#84cc16'}, {id:'frost', name:'Givre', c:'#bae6fd', price: 1000}, {id:'fire', name:'Ardente', c:'#dc2626', price: 1500}, {id:'storm', name:'Tempête', c:'#6366f1', price: 2000}, {id:'dark', name:'Sombre', c:'#1f2937', price: 2500}] }, 
@@ -677,7 +719,9 @@
             solaris: { name: "Solaris", color: '#451a03', grid: 'rgba(251, 146, 60, 0.2)', wall: '#7c2d12', special: false },
             swamp: { name: "Marais", color: '#222d1d', grid: 'rgba(132, 204, 22, 0.2)', wall: '#1a1f16' },
             factory: { name: "Usine", color: '#332e2b', grid: 'rgba(249, 115, 22, 0.2)', wall: '#292524' },
-            void: { name: "Néant", color: '#000000', grid: 'rgba(255, 255, 255, 0.05)', wall: '#171717', special: false }
+            factory: { name: "Usine", color: '#332e2b', grid: 'rgba(249, 115, 22, 0.2)', wall: '#292524' },
+            void: { name: "Néant", color: '#000000', grid: 'rgba(255, 255, 255, 0.05)', wall: '#171717', special: false },
+            atlantis: { name: "Atlantis", color: '#083344', grid: 'rgba(6, 182, 212, 0.2)', wall: '#155e75', special: false }
         };
 
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
@@ -748,15 +792,18 @@
             tiny: { name: 'Tiny', color: 'text-xs text-blue-300' },
             pluie: { name: 'Pluie Balles', color: 'text-cyan-400' },
             no_regen: { name: 'No Regen', color: 'text-gray-500' },
-            fragile: { name: 'Fragile', color: 'text-red-300' }
+            fragile: { name: 'Fragile', color: 'text-red-300' },
+            blind: { name: 'Aveugle', color: 'text-gray-500' },
+            slow_mo: { name: 'Slow Mo', color: 'text-blue-300' },
+            chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_1';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_2';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
-            stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0, losses: 0, maxPassTier: 1 }, // Ajout des nouvelles stats
+            stats: { kills: 0, maxWave: 0, games: 0, wins: 0, dmg: 0, losses: 0, maxPassTier: 1 },
             lastDaily: 0,
             pass: { tier: 1, xp: 0, claimed: [], claimedPro: [] },
             shop: { lastRefresh: 0, items: [] },
@@ -764,7 +811,10 @@
             mPassPro: false,
             skins: {}, 
             ownedSkins: [],
-            quests: { daily: [], season: [], lastGenerated: 0 }
+            quests: { daily: [], season: [], lastGenerated: 0 },
+            // NOUVEAUX CHAMPS DE PROFIL
+            bio: "Aucune bio définie...", email: "", phone: "", dob: "", theme: "blue",
+            claimedRanks: []
         };
 
         const PERKS = [
@@ -959,32 +1009,27 @@
 
         // MISE À JOUR : Remplacement des skins mPass par des caisses
         const PASS_REWARDS = {
-            1: { free: 'coins:100', pro: 'mega_caisse_loot:1' },
-            5: { free: 'emote:hacker', pro: 'gems:50' },
-            10: { free: 'box:1', pro: 'mega_caisse_loot:1' },
-            15: { free: 'coins:200', pro: 'emote:alien' },
-            20: { free: 'box:1', pro: 'gems:100' },
-            30: { free: 'box:1', pro: 'emote:mindblown' },
-            40: { free: 'coins:500', pro: 'mega_caisse_loot:1' },
-            50: { free: 'box:1', pro: 'gems:300' },
-            60: { free: 'coins:1000', pro: 'mega_caisse_loot:2' },
-            70: { free: 'box:2', pro: 'gems:150' },
-            80: { free: 'coins:2000', pro: 'mega_caisse_loot:3' },
-            90: { free: 'box:3', pro: 'emote:moai' },
-            100: { free: 'mega_caisse_loot:1', pro: 'gems:500' } // mPass Max Final Reward
+            1: { free: 'coins:100', pro: 'mega_caisse_loot:1', max: 'gems:50' },
+            5: { free: 'emote:hacker', pro: 'gems:50', max: 'box:3' },
+            10: { free: 'box:1', pro: 'mega_caisse_loot:1', max: 'gems:100' },
+            15: { free: 'coins:200', pro: 'emote:alien', max: 'coins:2000' },
+            20: { free: 'box:1', pro: 'gems:100', max: 'mega_caisse_loot:1' },
+            30: { free: 'box:1', pro: 'emote:mindblown', max: 'gems:150' },
+            40: { free: 'coins:500', pro: 'coins:1000', max: 'mega_caisse_loot:2' },
+            50: { free: 'box:1', pro: 'gems:300', max: 'gems:400' },
+            60: { free: 'coins:1000', pro: 'coins:2000', max: 'mega_caisse_loot:3' },
+            70: { free: 'box:2', pro: 'gems:150', max: 'gems:250' },
+            80: { free: 'coins:2000', pro: 'coins:4000', max: 'mega_caisse_loot:4' },
+            90: { free: 'box:3', pro: 'emote:moai', max: 'gems:500' },
+            100: { free: 'mega_caisse_loot:1', pro: 'gems:500', max: 'mega_caisse_loot:10' } 
         };
 
-        const getPassReward = (tier, isPro) => {
-            if (PASS_REWARDS[tier]) {
-                const rewardString = isPro ? PASS_REWARDS[tier].pro : PASS_REWARDS[tier].free;
-                if (rewardString && rewardString.includes(':')) return rewardString;
-            }
-            if (isPro) {
-                // Remplacer les récompenses par défaut des paliers non spécifiés par des caisses/gemmes
-                return (tier % 5 === 0) ? 'mega_caisse_loot:1' : 'gems:15';
-            } else {
-                return (tier % 3 === 0) ? 'gems:5' : 'coins:50';
-            }
+        const getPassReward = (tier, type) => { 
+            const r = PASS_REWARDS[tier];
+            if (r && r[type]) return r[type];
+            if (type === 'max') return (tier % 5 === 0) ? 'gems:30' : 'coins:200';
+            if (type === 'pro') return (tier % 5 === 0) ? 'mega_caisse_loot:1' : 'gems:15';
+            return (tier % 3 === 0) ? 'gems:5' : 'coins:50';
         };
 
         const Storage = {
@@ -1011,15 +1056,16 @@
                         const saved = JSON.parse(d);
                         USER = { ...USER, ...saved,
                             stats: { ...USER.stats, ...(saved.stats||{}), losses: saved.stats?.losses || 0, maxPassTier: saved.stats?.maxPassTier || 1 },
-                            pass: isMigration ? { tier: 1, xp: 0, claimed: [], claimedPro: [] } : { ...USER.pass, ...(saved.pass||{}) },
+                            pass: isMigration ? { tier: 1, xp: 0, claimed: [], claimedPro: [], claimedMax: [] } : { ...USER.pass, ...(saved.pass||{}) },
                             shop: { ...USER.shop, ...(saved.shop||{}) },
                             levels: { ...USER.levels, ...(saved.levels||{}) },
                             emotes: saved.emotes || ['happy', 'angry', 'gg', 'rip'],
                             equippedEmotes: saved.equippedEmotes || ['happy', 'angry', 'gg', 'rip'],
-                            mPassPro: isMigration ? false : (saved.mPassPro || false), // Reset Pro status for new season
+                            mPassPro: saved.mPassPro || false, mPassMax: saved.mPassMax || false,
                             skins: saved.skins || {},
                             ownedSkins: saved.ownedSkins || [],
-                            quests: { daily: [], season: [], lastGenerated: 0, ...(saved.quests || {}) }
+                            quests: { daily: [], season: [], lastGenerated: 0, ...(saved.quests || {}) },
+                            claimedRanks: saved.claimedRanks || []
                         };
                         
                         // Ensure new free hero is unlocked
@@ -1175,10 +1221,10 @@
                 try { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } catch(e){}
                 success = true;
             } else if (type === 'box') {
-                window.ui.buy('box', 0, 'free');
+                for(let i=0; i<val; i++) window.ui.buy('box', 0, 'free');
                 success = true;
             } else if (type === 'mega_caisse_loot') { // NOUVEAU TYPE DE BUTIN
-                openLootCrate();
+                for(let i=0; i<val; i++) openLootCrate();
                 success = true;
             } else if (type.startsWith('emote')) {
                 const emoteId = type.split(':')[1];
@@ -1268,17 +1314,68 @@
                     else { bar.classList.add('bg-gradient-to-r', 'from-red-600', 'to-red-500'); bar.style.backgroundColor = ''; }
                 } else if(bui) bui.classList.add('hidden');
                 setStyle('gas-overlay', 'opacity', 0);
+                
+                // Blind Modifier Effect
+                const mod = window.game.activeModifier || window.game.conf.modifier;
+                if(mod === 'blind') {
+                    const v = el('vignette'); if (v) v.style.background = 'radial-gradient(circle, transparent 15%, #000 70%)';
+                } else {
+                    const v = el('vignette'); if (v) v.style.background = '';
+                }
             },
             notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
             flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
             feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
             levelUp() { const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ const b=document.createElement('button'); b.className='glass-panel p-4 text-left flex items-center gap-4 active:scale-95 transition bg-blue-900/40 border border-blue-500/30'; b.innerHTML=`<div class="text-3xl">${p.icon}</div><div><div class="font-bold text-yellow-400 text-lg">${p.name}</div><div class="text-xs text-gray-300">${p.desc}</div></div>`; b.onclick=()=>{p.fn(window.game.player); s.classList.add('hidden'); window.game.state='PLAYING';}; c.appendChild(b); }); },
-            drawMinimap() {
-                const cvs = document.getElementById('minimap'); if(!cvs) return; const ctx = cvs.getContext('2d'); ctx.clearRect(0, 0, 100, 100); const scale = 100 / window.game.world;
-                if (window.game.player) { ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.arc(window.game.player.x * scale, window.game.player.y * scale, 4, 0, Math.PI * 2); ctx.fill(); }
-                // Added 'terminal' to the list of objective entities to display correctly on the minimap
+            drawMinimap() { const cvs = el('minimap'); if(!cvs) return; const ctx = cvs.getContext('2d'); const scale = cvs.width / window.game.world; ctx.clearRect(0, 0, cvs.width, cvs.height);
                 (window.game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : (e.type==='core'||e.type==='train'||e.type==='terminal'?'#3b82f6':'#f87171'); const r = (e.isBoss || e.isBot || e.type==='core' || e.type==='train' || e.type==='terminal') ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
                 (window.game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.8)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
+            },
+            openTrophyRoad() {
+                el('trophy-road-modal').classList.remove('hidden');
+                const c = el('trophy-list'); c.innerHTML = '';
+                const maxTrophies = RANKS[RANKS.length-1].t;
+                const pct = Math.min(100, (USER.trophies / maxTrophies) * 100);    
+                c.innerHTML += `<div class="glass-panel p-4 mb-2 bg-gradient-to-r from-cyan-900/50 to-purple-900/50">
+                    <div class="flex justify-between mb-1 text-xs font-bold text-gray-300"><span>PROGRESSION</span><span>${USER.trophies} / ${maxTrophies} 🏆</span></div>
+                    <div class="h-4 bg-black/50 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style="width:${pct}%"></div></div>
+                </div>`;
+                RANKS.forEach((r, i) => {
+                    if (i === 0) return;
+                    const reached = USER.trophies >= r.t;
+                    const claimed = USER.claimedRanks && USER.claimedRanks.includes(i);
+                    let btn = '';
+                    if(claimed) btn = `<div class="text-green-400 font-bold text-[10px] flex items-center gap-1 bg-green-900/30 px-2 py-1 rounded">✅ RÉCUPÉRÉ</div>`;
+                    else if(reached) btn = `<button onclick="window.ui.claimRankReward(${i})" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-3 rounded animate-pulse text-xs shadow-lg shadow-yellow-500/50">RÉCUPÉRER</button>`;
+                    else btn = `<div class="text-gray-500 font-bold text-[10px] bg-black/30 px-2 py-1 rounded">🔒 ${r.t} 🏆</div>`;
+                    c.innerHTML += `<div class="glass-panel p-3 flex items-center justify-between border-l-4 ${reached ? 'bg-white/5' : 'opacity-60 grayscale'}" style="border-color:${r.c}">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded bg-black/40 flex items-center justify-center text-lg shadow-inner">🏆</div>
+                            <div>
+                                <div class="font-bold text-sm" style="color:${r.c}">${r.n}</div>
+                                <div class="text-[10px] text-gray-400 flex gap-2">
+                                    <span class="text-yellow-400">+1000 🪙</span>
+                                    <span class="text-purple-400">+25 💎</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>${btn}</div>
+                    </div>`;
+                });
+            },
+            claimRankReward(i) {
+                if(USER.trophies >= RANKS[i].t && (!USER.claimedRanks || !USER.claimedRanks.includes(i))) {
+                    if(!USER.claimedRanks) USER.claimedRanks = [];
+                    USER.claimedRanks.push(i);
+                    USER.coins += 1000;
+                    USER.gems += 25;
+                    this.notif("RÉCOMPENSE DE RANG RÉCUPÉRÉE !", "#facc15");
+                    try { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } catch(e){}
+                    try { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } catch(e){}
+                    Storage.save();
+                    this.openTrophyRoad();
+                    this.updateMenu();
+                }
             },
             showTab(id) { 
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
@@ -1397,14 +1494,24 @@
                 setText('pass-lvl', USER.pass.tier); setText('pass-xp-txt', `${USER.pass.xp}/100 XP`); setStyle('pass-bar', 'width', `${USER.pass.xp}%`);
                 const status = el('pass-pro-status');
                 if(status) {
-                    if(USER.mPassPro) { status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">PRO ACTIVÉ</span>'; }
-                    else { status.innerHTML = `<button onclick="window.ui.buyPassPro()" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">ACHETER PASS PRO (159 💎)</button>`; }
+                    if(USER.mPassMax) { 
+                        status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">mPASS MAX ACTIVÉ</span>'; 
+                    } else if(USER.mPassPro) {
+                        status.innerHTML = `<div class="flex gap-2 items-center"><span class="text-purple-400 font-bold">PRO ACTIVÉ</span> <button onclick="window.ui.buyPass('upgrade')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition animate-pulse">UPGRADE MAX (40💎)</button></div>`;
+                    } else { 
+                        status.innerHTML = `<div class="flex gap-2">
+                            <button onclick="window.ui.buyPass('pro')" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">mPASS PRO (159💎)</button>
+                            <button onclick="window.ui.buyPass('max')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-3 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition border border-white/20">mPASS MAX (199💎)</button>
+                        </div>`; 
+                    }
                 }
                 const tr = el('pass-track-free');
                 const trPro = el('pass-track-pro');
-                if (!tr || !trPro) return;
+                const trMax = el('pass-track-max');
+                if (!tr || !trPro || !trMax) return;
                 let freeHtml = '';
                 let proHtml = '';
+                let maxHtml = '';
                 
                 const getRewardDisplay = (rewardString) => {
                     const [type, value] = rewardString.split(':');
@@ -1419,22 +1526,29 @@
                 };
                 
                 for(let i=1; i<=100; i++) {
-                    const freeRwdStr = getPassReward(i, false);
-                    const proRwdStr = getPassReward(i, true);
+                    const freeRwdStr = getPassReward(i, 'free');
+                    const proRwdStr = getPassReward(i, 'pro');
+                    const maxRwdStr = getPassReward(i, 'max');
                     
                     const displayF = getRewardDisplay(freeRwdStr);
                     const displayP = getRewardDisplay(proRwdStr);
+                    const displayM = getRewardDisplay(maxRwdStr);
                     
                     let claimedF = USER.pass.claimed.includes(i);
                     let claimedP = USER.pass.claimedPro.includes(i);
+                    let claimedM = USER.pass.claimedMax && USER.pass.claimedMax.includes(i);
                     let unlocked = USER.pass.tier >= i;
-                    let proLocked = !USER.mPassPro;
+                    
+                    let proLocked = !USER.mPassPro && !USER.mPassMax;
+                    let maxLocked = !USER.mPassMax;
                     
                     let freeState = claimedF ? 'claimed' : (unlocked ? 'active cursor-pointer' : 'locked');
                     let proState = claimedP ? 'claimed' : ((unlocked && !proLocked) ? 'active cursor-pointer pro' : 'locked pro');
+                    let maxState = claimedM ? 'claimed' : ((unlocked && !maxLocked) ? 'active cursor-pointer max' : 'locked max');
                     
-                    let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, false, '${freeRwdStr}')"` : '';
-                    let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, true, '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE PASS PRO !', '#a855f7')"` : '');
+                    let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, 'free', '${freeRwdStr}')"` : '';
+                    let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, 'pro', '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE mPASS PRO !', '#a855f7')"` : '');
+                    let fnM = (unlocked && !claimedM && !maxLocked) ? `onclick="window.ui.claimPass(${i}, 'max', '${maxRwdStr}')"` : (maxLocked ? `onclick="window.ui.notif('ACHÈTE LE mPASS MAX !', '#facc15')"` : '');
                     
                     let contentF = claimedF ? `<div class="check-mark">✅</div>` : '';
                     contentF += `<div class="text-3xl mb-1 ${claimedF ? 'opacity-20' : ''}">${displayF.icon}</div>
@@ -1443,6 +1557,10 @@
                     let contentP = claimedP ? `<div class="check-mark">✅</div>` : '';
                     contentP += `<div class="text-3xl mb-1 ${claimedP ? 'opacity-20' : ''}">${displayP.icon}</div>
                                  <div class="text-[9px] font-bold ${claimedP ? 'opacity-50' : ''} text-center leading-tight px-1">${displayP.text}</div>`;
+
+                    let contentM = claimedM ? `<div class="check-mark">✅</div>` : '';
+                    contentM += `<div class="text-3xl mb-1 ${claimedM ? 'opacity-20' : ''}">${displayM.icon}</div>
+                                 <div class="text-[9px] font-bold ${claimedM ? 'opacity-50' : ''} text-center leading-tight px-1">${displayM.text}</div>`;
 
                     freeHtml += `
                         <div id="pass-free-tier-${i}" class="pass-step ${freeState} shrink-0" ${fnF}>
@@ -1454,9 +1572,15 @@
                             <div class="tier-badge">PALIER ${i}</div>
                             ${contentP}
                         </div>`;
+                    maxHtml += `
+                        <div id="pass-max-tier-${i}" class="pass-step ${maxState} shrink-0" ${fnM}>
+                            <div class="tier-badge">MAX ${i}</div>
+                            ${contentM}
+                        </div>`;
                 }
                 tr.innerHTML = freeHtml;
                 trPro.innerHTML = proHtml;
+                trMax.innerHTML = maxHtml;
 
                 const scrollContainer = el('pass-scroll-container');
                 const currentTierIndex = USER.pass.tier;
@@ -1465,13 +1589,10 @@
                     const freeRow = el('pass-track-free');
                     if (freeRow && currentTierIndex > 0) {
                         const targetTier = Math.min(100, Math.max(1, currentTierIndex));
-                        // On défile vers le palier actuel ou le dernier non réclamé si inférieur
-                        // Mais généralement on veut voir où on en est
                         const targetElement = freeRow.querySelector(`#pass-free-tier-${targetTier}`);
                         
                         if (targetElement) {
                             const centerOffset = targetElement.offsetLeft - (scrollContainer.offsetWidth / 2) + (targetElement.offsetWidth / 2);
-                            // Petit delai pour que le rendu soit effectif
                             setTimeout(() => { scrollContainer.scrollLeft = centerOffset; }, 50);
                         }
                     }
@@ -1604,9 +1725,26 @@
             equipSkin(heroId, skinId) { if(!USER.skins) USER.skins = {}; USER.skins[heroId] = skinId; Storage.save(); this.openHeroDetails(heroId); },
             buySkin(heroId, skinId, price) { if(USER.coins >= price) { USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
             renderProfile() { 
-                el('profile-name').value = USER.name; 
-                setText('profile-tag', USER.tag); 
+                setText('profile-display-name', USER.name); 
+                setText('profile-tag', USER.tag);
+                setText('profile-bio', USER.bio ? `"${USER.bio}"` : '"Aucune bio définie..."');
+                setText('profile-trophies', USER.trophies + " Trophées");
                 
+                // Theme Update
+                const theme = USER.theme || 'blue';
+                const themeClasses = {
+                    blue: 'from-blue-900/20 to-purple-900/20 border-blue-500/30',
+                    purple: 'from-purple-900/20 to-pink-900/20 border-purple-500/30',
+                    green: 'from-green-900/20 to-teal-900/20 border-green-500/30',
+                    red: 'from-red-900/20 to-orange-900/20 border-red-500/30',
+                    yellow: 'from-yellow-900/20 to-amber-900/20 border-yellow-500/30'
+                };
+                const card = el('profile-main-card');
+                if(card) {
+                    // Reset basic classes and apply new
+                    card.className = `glass-panel p-6 mb-6 relative overflow-hidden bg-gradient-to-br ${themeClasses[theme]} transition-colors duration-500`;
+                }
+
                 // HANDLE CUSTOM IMAGE OR EMOJI
                 const avatarContainer = el('profile-avatar');
                 avatarContainer.innerHTML = ''; // Clear existing content
@@ -1830,21 +1968,84 @@
                     this.notif("PAS ASSEZ!", "#ef4444");
                 }
             },
-            buyPassPro() { 
-                // NOUVEAU PRIX PASS PRO (159)
-                if(USER.gems >= 159) { 
-                    USER.gems -= 159; 
-                    USER.mPassPro = true; 
-                    this.notif("PASS PRO ACTIVÉ !", "#facc15"); 
+            buyPass(type) { 
+                let cost = 0;
+                let name = "";
+                
+                if (type === 'pro') { cost = 159; name = "mPASS PRO"; }
+                else if (type === 'max') { cost = 199; name = "mPASS MAX"; }
+                else if (type === 'upgrade') { cost = 40; name = "UPGRADE MAX"; }
+                
+                if(USER.gems >= cost) { 
+                    USER.gems -= cost; 
+                    if (type === 'pro') { USER.mPassPro = true; }
+                    else if (type === 'max') { USER.mPassMax = true; USER.mPassPro = true; }
+                    else if (type === 'upgrade') { USER.mPassMax = true; }
+                    
+                    this.notif(`${name} ACTIVÉ !`, "#facc15"); 
                     el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300);
                     Storage.save(); 
                     this.updateMenu(); 
                     this.renderPass(); 
                 } else { 
-                    this.notif("PAS ASSEZ DE GEMMES ! (159 💎)", "#ef4444"); 
+                    this.notif(`PAS ASSEZ DE GEMMES ! (${cost} 💎)`, "#ef4444"); 
                 } 
             },
-            claimPass(tier, isPro, rewardString) { const hasPass = isPro ? USER.mPassPro : true; const alreadyClaimed = isPro ? USER.pass.claimedPro.includes(tier) : USER.pass.claimed.includes(tier); if(USER.pass.tier >= tier && hasPass && !alreadyClaimed) { if (processPassReward(rewardString)) { if(isPro) USER.pass.claimedPro.push(tier); else USER.pass.claimed.push(tier); Storage.save(); this.renderPass(); this.updateMenu(); } else { this.notif("Erreur Récompense", "#ff0000"); } } },
+            claimPass(tier, type, rewardString) { 
+                let allowed = false;
+                let alreadyClaimed = false;
+                
+                if (type === 'free') { allowed = true; alreadyClaimed = USER.pass.claimed.includes(tier); }
+                else if (type === 'pro') { allowed = USER.mPassPro || USER.mPassMax; alreadyClaimed = USER.pass.claimedPro.includes(tier); }
+                else if (type === 'max') { allowed = USER.mPassMax; alreadyClaimed = USER.pass.claimedMax && USER.pass.claimedMax.includes(tier); }
+                
+                if(USER.pass.tier >= tier && allowed && !alreadyClaimed) { 
+                    if (processPassReward(rewardString)) { 
+                        if(type === 'free') USER.pass.claimed.push(tier);
+                        else if(type === 'pro') USER.pass.claimedPro.push(tier);
+                        else if(type === 'max') {
+                             if(!USER.pass.claimedMax) USER.pass.claimedMax = [];
+                             USER.pass.claimedMax.push(tier);
+                        }
+                        Storage.save(); 
+                        this.renderPass(); 
+                        this.updateMenu(); 
+                    } else { 
+                        this.notif("Erreur Récompense", "#ff0000"); 
+                    } 
+                } 
+            },
+            openSettings() {
+                el('settings-modal').classList.remove('hidden');
+                el('setting-name').value = USER.name || '';
+                el('setting-email').value = USER.email || '';
+                el('setting-phone').value = USER.phone || '';
+                el('setting-dob').value = USER.dob || '';
+                el('setting-bio').value = USER.bio || '';
+                
+                // Render Theme Selector in Settings
+                const themeContainer = el('profile-theme-selector');
+                themeContainer.innerHTML = '';
+                const themes = ['blue', 'purple', 'green', 'red', 'yellow'];
+                const themeColors = { blue: '#3b82f6', purple: '#a855f7', green: '#22c55e', red: '#ef4444', yellow: '#eab308' };
+                
+                themes.forEach(t => {
+                     const isSelected = USER.theme === t;
+                     const activeClass = isSelected ? 'ring-2 ring-white scale-110' : 'opacity-50 hover:opacity-100';
+                     const locked = !USER.mPassPro && t !== 'blue'; // Example: Only Blue is free, others require Pro
+                     const lockIcon = locked ? '<span class="absolute inset-0 flex items-center justify-center text-[8px]">🔒</span>' : '';
+                     
+                     themeContainer.innerHTML += `<div onclick="${locked ? "window.ui.notif('Réservé mPASS PRO', '#a855f7')" : `USER.theme='${t}'; Storage.save(); window.ui.openSettings(); window.ui.renderProfile()`}" 
+                     class="w-6 h-6 rounded-full cursor-pointer relative transition ${activeClass}" style="background-color: ${themeColors[t]}">${lockIcon}</div>`;
+                });
+                
+                if (USER.mPassPro) el('theme-lock-icon').innerText = "DÉBLOQUÉ";
+                else el('theme-lock-icon').innerText = "Requis : mPass Pro";
+            },
+            closeSettings() {
+                el('settings-modal').classList.add('hidden');
+                this.renderProfile();
+            },
             exportSave() { const data = btoa(JSON.stringify(USER)); navigator.clipboard.writeText(data).then(() => this.notif("CODE COPIÉ !", "#22c55e")); },
             importSave() { 
                 const code = prompt("Colle ton code de sauvegarde ici:"); 
@@ -1996,12 +2197,16 @@
             if (this.isStunned > 0) { this.isStunned--; return; } // Stunned = skip update
             this.hitTimer++; // Incrémenter le timer de non-hit
             
+            // Slow Mo Logic
+            const mod = window.game.activeModifier || window.game.conf.modifier;
+            const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
+
             let speedMult = 1; 
             if(this.activeEffects.speed > 0) { speedMult = 1.5; this.activeEffects.speed--; } 
-            if(window.game.conf.modifier === 'speed') speedMult *= 2; 
+            if(mod === 'speed') speedMult *= 2; 
 
             // FIX 2: Régénération HP après 5s sans dégâts (hitTimer > 300 frames)
-            if(this.stats.passive === "Regen Rapide" && window.game.frame % 60 === 0 && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot') {
+            if(this.stats.passive === "Regen Rapide" && window.game.frame % 60 === 0 && this.hitTimer > 300 && mod !== 'oneshot') {
                 this.hp = Math.min(this.maxHp, this.hp + 50); 
             }
             
@@ -2009,7 +2214,7 @@
             if(Input.jL.a){dx=Input.jL.x;dy=Input.jL.y;} else {if(Input.k['KeyW'])dy=-1;if(Input.k['KeyS'])dy=1;if(Input.k['KeyA'])dx=-1;if(Input.k['KeyD'])dx=1;} 
             const l=Math.hypot(dx,dy); 
             // Vitesse de base ajustée (base 5.5, ici *1.1 pour un meilleur feeling global)
-            const actualSpd = this.stats.spd * speedMult * 1.1; 
+            const actualSpd = this.stats.spd * speedMult * 1.1 * timeScale; 
 
             if(l>0.1){if(l>1){dx/=l;dy/=l;} this.move(dx*actualSpd, dy*actualSpd); 
                 // Nouvelle fonctionnalité: Traînée de mouvement (Particules)
@@ -2092,8 +2297,8 @@
                 window.game.projs.push({
                     x: this.x + Math.cos(this.angle) * 25,
                     y: this.y + Math.sin(this.angle) * 25,
-                    vx: Math.cos(a) * pStats.speed,
-                    vy: Math.sin(a) * pStats.speed,
+                    vx: Math.cos(a) * pStats.speed * timeScale,
+                    vy: Math.sin(a) * pStats.speed * timeScale,
                     dmg: dmg,
                     life: pStats.life,
                     r: pStats.r,
@@ -2232,8 +2437,10 @@
                     tx=this.target.x; ty=this.target.y; 
                 } 
                 const a=Math.atan2(ty-this.y, tx-this.x); 
-                let speed = this.stats.spd * 0.96; 
-                if(window.game.conf.modifier === 'speed') speed *= 2; 
+                let speed = this.stats.spd * 0.96;
+                const mod = window.game.activeModifier || window.game.conf.modifier; 
+                if(mod === 'speed') speed *= 2;
+                if(mod === 'slow_mo') speed *= 0.5;
                 
                 this.move(Math.cos(a)*speed, Math.sin(a)*speed); 
                 if(Math.random()<0.01) this.dash(); 
@@ -2349,8 +2556,10 @@
                     tx=p.x; ty=p.y; 
                 } 
                 const a=Math.atan2(ty-this.y, tx-this.x); 
-                let speed = this.spd; 
-                if(window.game.conf.modifier === 'speed') speed *= 2; 
+                let speed = this.spd;
+                const mod = window.game.activeModifier || window.game.conf.modifier;
+                if(mod === 'speed') speed *= 2;
+                if(mod === 'slow_mo') speed *= 0.5; 
                 let mx = Math.cos(a)*speed + sepX*0.5; 
                 let my = Math.sin(a)*speed + sepY*0.5; 
                 const nx=this.x+mx, ny=this.y+my; 
@@ -2437,7 +2646,7 @@
             ctx:document.getElementById('gameCanvas').getContext('2d'), 
             conf:{mode:'survival', arena:'tokyo', difficulty: 'normal', modifier: 'normal'}, 
             state:'MENU', frame:0, world:2000, cam:{x:0,y:0}, shake:0, gasRadius:0, timeLeft: 0, 
-            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0, killCount: 0, zoneProgress: 0,
+            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0, killCount: 0, zoneProgress: 0, activeModifier: null, chaosTimer: 0,
             init() { 
                 this.resize(); 
                 window.onresize=()=>this.resize(); 
@@ -2585,7 +2794,21 @@
                         } 
                     } 
                 } 
+                
+                // New Rank Detection
+                let oldR = 0;
+                for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) oldR = i; }
+
                 USER.trophies+=gt; USER.coins+=gc; 
+                
+                let newR = 0;
+                for(let i=0; i<RANKS.length; i++) { if(USER.trophies >= RANKS[i].t) newR = i; }
+
+                if (newR > oldR) {
+                   const newRank = RANKS[newR];
+                   setTimeout(() => window.ui.notif(`RANG ATTEINT : ${newRank.n} !`, newRank.c), 500);
+                }
+
                 USER.stats.maxWave=Math.max(USER.stats.maxWave,this.wave); 
                 USER.stats.games++; 
                 USER.stats.maxPassTier = Math.max(USER.stats.maxPassTier || 1, USER.pass.tier); // Mise à jour de la stat de Palier Max
@@ -2618,6 +2841,7 @@
                 else if(arena === 'moon') { spawnRate = 0.2; color = 'rgba(255, 255, 255, 0.8)'; vy = -0.5; size=1; } // Stars
                 else if(arena === 'crystal') { spawnRate = 0.6; color = 'rgba(192, 132, 252, 0.6)'; vy = -1; vx = 0; size = 4; } // Glitter
                 else if(arena === 'solaris') { spawnRate = 0.5; color = 'rgba(253, 186, 116, 0.6)'; vy = -4; size = 5; } // Sparks
+                else if(arena === 'atlantis') { spawnRate = 0.7; color = 'rgba(147, 197, 253, 0.4)'; vy = -2; size = 6; } // Bubbles
                 
                 if(Math.random() < spawnRate) { 
                     this.bgParts.push({ 
@@ -2645,6 +2869,18 @@
                 this.frame++; 
                 const ctx=this.ctx; 
                 if(this.state==='PLAYING'){ 
+                    
+                    // Chaos Modifier Logic
+                    if(this.conf.modifier === 'chaos') {
+                        if(this.frame % 600 === 0) { // Every 10 seconds
+                            const mods = Object.keys(MODIFIERS).filter(k => k !== 'chaos' && k !== 'normal');
+                            this.activeModifier = mods[Math.floor(Math.random() * mods.length)];
+                            window.ui.notif("CHAOS: " + MODIFIERS[this.activeModifier].name.toUpperCase(), MODIFIERS[this.activeModifier].color.replace('text-', '#').replace('text-xs ', '').replace('-300','-400').replace('-400','-400').replace('-500','-500').replace('-600','-600').split(' ')[0]);
+                        }
+                    } else {
+                        this.activeModifier = null;
+                    }
+
                     if(this.conf.mode === 'heist' || this.conf.mode === 'boss_rush' || this.conf.mode === 'titan_raid' || this.conf.mode === 'train_defense' || this.conf.mode === 'cyber_hack') { 
                         this.timeLeft--; 
                         if(this.timeLeft <= 0) { 
@@ -2799,7 +3035,9 @@
                         } 
                         
                         // Ranged attacks move
-                        b.x+=b.vx; b.y+=b.vy; b.life--; 
+                        const mod = window.game.activeModifier || window.game.conf.modifier;
+                        const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
+                        b.x+=b.vx * timeScale; b.y+=b.vy * timeScale; b.life--; 
                         if(b.life<=0){this.projs.splice(i,1);continue;} 
                         let wh=false; 
                         for(let k=this.map.length-1; k>=0; k--) { 
@@ -3044,7 +3282,7 @@
                 }
 
                 // EXPLOSIVE MOD
-                if (window.game.conf.modifier === 'explosif') {
+                if (window.game.conf.modifier === 'explosif' || window.game.activeModifier === 'explosif') {
                     for(let i=0; i<8; i++) {
                         window.game.parts.push({x:e.x, y:e.y, vx:Rnd(-5,5), vy:Rnd(-5,5), life:30, c:'#f97316', r:6});
                     }
