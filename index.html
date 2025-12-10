@@ -1,7 +1,7 @@
-<!DOCTYPE html><html lang="fr"><head>
+ <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.2.9 - Saison 2</title>
+    <title>mBattle v1.3.0 - Cyber Future</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -192,6 +192,23 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fadeIn { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
+        @keyframes shine { 
+            0% { left: -100%; opacity: 0; } 
+            50% { opacity: 0.5; } 
+            100% { left: 100%; opacity: 0; } 
+        }
+        .btn-shine { position: relative; overflow: hidden; }
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-20deg);
+            animation: shine 3s infinite;
+            pointer-events: none;
+        }
+
         /* --- VFX LAYERS --- */
         #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.95) 130%); z-index: 5; }
         #gas-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 30%, rgba(34, 197, 94, 0.2) 90%); z-index: 4; transition: opacity 0.5s; mix-blend-mode: hard-light; }
@@ -298,6 +315,45 @@
         /* Rank Progress Fill */
         .rank-progress-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; overflow: hidden; margin-top: 5px; }
         .rank-progress-fill { height: 100%; transition: width 0.5s ease-out; box-shadow: 0 0 10px currentColor; }
+
+        /* --- PATCH NOTES --- */
+        .patch-note { 
+            margin-bottom: 40px; 
+            padding-bottom: 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.1); 
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .patch-note:hover {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03), transparent);
+            padding-left: 15px;
+            border-left: 2px solid #22d3ee;
+        }
+        .patch-note:last-child { border-bottom: none; margin-bottom: 0; }
+        .patch-note h3 {
+            color: #22d3ee;
+            font-family: 'Orbitron'; 
+            margin-bottom: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .patch-note h3::before { content: '💠'; font-size: 10px; }
+        .patch-note ul { list-style: none; padding: 0; }
+        .patch-note li { 
+            margin-bottom: 4px; 
+            padding-left: 14px; 
+            position: relative;
+            color: #ccc;
+        }
+        .patch-note li::before {
+            content: '•';
+            color: #a855f7;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
     </style>
 </head><body>
     <canvas id="gameCanvas"></canvas>
@@ -363,7 +419,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.9</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.3.2</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -414,7 +470,7 @@
                             <button onclick="window.game.setModifier('chaos')" id="mod-chaos" class="mod-btn glass-btn py-2 rounded-lg font-bold text-[10px] text-purple-500">🎲 Chaos</button>
                         </div>
                     </div>
-                    <button onclick="window.game.start()" class="w-full max-w-md bg-gradient-to-r from-blue-600 to-indigo-600 h-20 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-4 active:scale-95 transition transform hover:-translate-y-1 mt-4 border border-white/20">
+                    <button onclick="window.game.start()" class="btn-shine w-full max-w-md bg-gradient-to-r from-blue-600 to-indigo-600 h-20 rounded-2xl shadow-[0_0_40px_rgba(37,99,235,0.4)] flex items-center justify-center gap-4 active:scale-95 transition transform hover:-translate-y-1 mt-4 border border-white/20">
                         <span class="text-3xl font-black italic tracking-tighter">JOUER</span><span class="text-2xl animate-pulse">🚀</span>
                     </button>
                 </div>
@@ -579,6 +635,10 @@
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
                     <div class="glass-panel p-6 text-sm text-gray-300">
+                        <div class="patch-note relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded-bl-lg z-10 animate-pulse shadow-lg">NOUVEAU</div><h3>v1.3.2 (SMART UPDATE)</h3><ul><li>🧠 <b>IA Intelligente :</b> Les bots jouent les objectifs (CTF, Wagon) !</li><li>🛒 <b>Wagon :</b> Les alliés aident à pousser.</li><li>🛠️ <b>Optimisation :</b> Nettoyage du code.</li></ul></div>
+                        <div class="patch-note"><h3>v1.3.1 (VISUAL UPDATE)</h3><ul><li>🔥 <b>Kill Streaks :</b> Enchaînez les kills pour des effets spéciaux !</li><li>✨ <b>Effets :</b> Nouveaux VFX et animations d'UI.</li><li>🐛 <b>Fixes :</b> Corrections de bugs (Bio, Score).</li></ul></div>
+                        <div class="patch-note"><h3>v1.3 (CYBER FUTURE)</h3><ul><li>🚃 <b>Nouveau Mode :</b> Payload (Convoi) ! Poussez le wagon jusqu'à la fin.</li><li>☄️ <b>Nouveaux Héros :</b> Cosmo (Mythique) et Brick (Commun).</li><li>⚡ <b>Nouvelle Arène :</b> Réacteur.</li><li>💰 <b>Golden Chase :</b> Plus de pièces !</li></ul></div>
                         <div class="patch-note"><h3>v1.2.9 (Crash Fix)</h3><ul><li>🛠️ <b>CRITIQUE :</b> Correction du crash "timeScale" (Slow Mo).</li><li>⚡ <b>Optimisation :</b> Stabilité améliorée.</li></ul></div>
                         <div class="patch-note"><h3>v1.2.8 (Hotfix Update)</h3><ul><li>🤖 <b>IA Bots :</b> Les bots alliés n'attaquent plus le joueur.</li><li>💰 <b>Golden Chase :</b> Correction de la collecte des pièces.</li><li>🛠️ <b>Stabilité :</b> Corrections de crashs majeurs (match error).</li></ul></div>
                         <div class="patch-note"><h3>v1.2.7 (Bug Fix Update)</h3><ul><li>🛠️ <b>Modes de Jeu :</b> Victoire/Défaite corrigée pour tous les modes.</li><li>💎 <b>Defense :</b> Ajout du Cristal à protéger.</li><li>👾 <b>Spawns :</b> Ennemis corrigés pour tous les modes.</li></ul></div>
@@ -893,6 +953,10 @@
             mirage: { name: "Mirage", rarity: 'epic', icon: "🎭", hp: 110, dmg: 22, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 5, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 8, dmg: 3}, color: '#14b8a6', type: 'normal', desc: "Trompe l'ennemi.", gadget: "invis", lore: "Maintenant tu me vois...", passive: "Esquive", proj: { r: 6, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 70, shape: 'star', color: '#14b8a6', trailColor: '#99f6e4' }, skins: [{id:'default', name:'Mirage', c:'#14b8a6'}, {id:'sand', name:'Illusion', c:'#d6d3d1', price: 2500}, {id:'neon', name:'Hologramme', c:'#dd88e1', price: 3000}, {id:'crimson', name:'Masque Rouge', c:'#be185d', price: 3500}, {id:'shadow', name:'Ombre', c:'#1e293b', price: 4000}] },
             juggernaut: { name: "Juggernaut", rarity: 'legendary', icon: "🚆", hp: 500, dmg: 20, spd: 2.5 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 20, reload: Math.ceil(60 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 40, dmg: 2}, color: '#1e293b', type: 'shotgun', desc: "Un tank inarrêtable.", gadget: "shield", lore: "Rien ne l'arrête.", passive: "Blocage", proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'square', color: '#1e293b', trailColor: '#64748b' }, skins: [{id:'default', name:'Juggernaut', c:'#1e293b'}, {id:'rust', name:'Rouille', c:'#78350f', price: 4000}, {id:'camo', name:'Militaire', c:'#3f6212', price: 4500}, {id:'police', name:'Anti-Émeute', c:'#1d4ed8', price: 5000}, {id:'cyber', name:'Cyber Tank', c:'#ef4444', price: 5500}] },
             eclipse: { name: "Eclipse", rarity: 'mythic', icon: "🌑", hp: 200, dmg: 45, spd: 5.5 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(45 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 6}, color: '#171717', type: 'normal', desc: "Ténèbres pures.", gadget: "teleport", lore: "Il a éteint le soleil.", passive: "Aveuglement", proj: { r: 10, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 80, shape: 'circle', color: '#000000', trailColor: '#1e1b4b' }, skins: [{id:'default', name:'Eclipse', c:'#171717'}, {id:'blood', name:'Lune de Sang', c:'#991b1b', price: 6000}, {id:'solar', name:'Éclipse Totale', c:'#f59e0b', price: 7000}, {id:'void', name:'Néant', c:'#4c1d95', price: 6500}, {id:'white', name:'Inversion', c:'#ffffff', price: 8000}] },
+            
+            // NOUVEUX HÉROS v1.3
+            cosmo: { name: "Cosmo", rarity: 'mythic', icon: "☄️", hp: 180, dmg: 35, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(20 * RATE_FACTOR), ammo: 4, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 12, dmg: 5}, color: '#8b5cf6', type: 'normal', desc: "Comètes rebondissantes.", gadget: "teleport", lore: "Venu d'une autre galaxie.", passive: "Rebond", proj: { r: 8, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 80, shape: 'star', color: '#8b5cf6', trailColor: '#c4b5fd' }, skins: [{id:'default', name:'Cosmo', c:'#8b5cf6'}, {id:'ice', name:'Comète Glacée', c:'#bae6fd', price: 6000}, {id:'fire', name:'Météore', c:'#f97316', price: 6500}, {id:'gold', name:'Poussière d\'Or', c:'#facc15', price: 7000}, {id:'void', name:'Trou Noir', c:'#000000', price: 8000}] },
+            brick: { name: "Brick", rarity: 'common', icon: "🧱", hp: 250, dmg: 20, spd: 4.8 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 3, reload: Math.ceil(45 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 20, dmg: 3}, color: '#7c2d12', type: 'shotgun', desc: "Lance des briques.", gadget: "shield", lore: "Solide comme un mur.", passive: "Résistance", proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'square', color: '#7c2d12', trailColor: '#ea580c' }, skins: [{id:'default', name:'Brick', c:'#7c2d12'}, {id:'cement', name:'Ciment', c:'#9ca3af', price: 1000}, {id:'red', name:'Brique Rouge', c:'#ef4444', price: 1500}, {id:'blue', name:'Brique Bleue', c:'#3b82f6', price: 2000}, {id:'obsidian', name:'Obsidienne', c:'#171717', price: 2500}] },
         };
         
         // Fonction pour trier les héros par rareté
@@ -932,7 +996,8 @@
             infection_hard: { name: "Infection +", icon: "🧟‍♂️", desc: "Survivre à l'enfer.", ranked: false },
             speed_run: { name: "Speed Run", icon: "⚡", desc: "Extraction Rapide.", ranked: false },
             team_battle: { name: "Team Battle", icon: "🛡️", desc: "4 vs 4 !", ranked: false },
-            ctf: { name: "Capture Drapeau", icon: "🚩", desc: "Vole le drapeau !", ranked: false }
+            ctf: { name: "Capture Drapeau", icon: "🚩", desc: "Vole le drapeau !", ranked: false },
+            payload: { name: "Convoi", icon: "🚃", desc: "Pousse le wagon !", ranked: false }
         };
         const ARENAS = { 
             tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
@@ -951,7 +1016,8 @@
             factory: { name: "Usine", color: '#332e2b', grid: 'rgba(249, 115, 22, 0.2)', wall: '#292524' },
             void: { name: "Néant", color: '#000000', grid: 'rgba(255, 255, 255, 0.05)', wall: '#171717', special: false },
             atlantis: { name: "Atlantis", color: '#083344', grid: 'rgba(6, 182, 212, 0.2)', wall: '#155e75', special: false },
-            dungeon: { name: "Donjon", color: '#1c1917', grid: 'rgba(120, 113, 108, 0.2)', wall: '#292524', special: false }
+            dungeon: { name: "Donjon", color: '#1c1917', grid: 'rgba(120, 113, 108, 0.2)', wall: '#292524', special: false },
+            reactor: { name: "Réacteur", color: '#1a202c', grid: 'rgba(132, 204, 22, 0.2)', wall: '#365314', special: false }
         };
 
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
@@ -1028,8 +1094,8 @@
             chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_8';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_3';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -1166,7 +1232,7 @@
                             if (type === 'xp' || type === 'dmg' || type === 'collect') q.progress += data.amount || 1; 
                             else if(type !== 'survive') q.progress++;
                             
-                            if (q.progress >= q.target) { q.progress = q.target; q.completed = true; window.ui.notif("QUÊTE TERMINÉE !", "#22c55e"); }
+                            if (q.progress >= q.target) { q.progress = q.target; q.completed = true; window.ui.notif("QUÊTE TERMINÉE !", "#22c55e", "quest"); }
                             changed = true;
                         }
                     });
@@ -1209,6 +1275,7 @@
             },
             refreshDaily() {
                 if (USER.gems >= 10) {
+                    console.log("[SECURE] Daily Quests Refresh (-10 gems)");
                     USER.gems -= 10;
                     USER.quests.lastGenerated = 0; // Force regen
                     this.generateDaily();
@@ -1438,19 +1505,22 @@
             const [type, value] = rewardString.split(':');
             const val = parseInt(value) || 1;
             let success = false;
+            
+            // SECURITY CHECK
+            console.log(`[SECURE] Processing Reward: ${type} x${val}`);
 
             if (type === 'coins') {
                 USER.coins += val;
                 Storage.save();
                 window.ui.updateMenu();
-                window.ui.notif(`+${val} 🪙`, "#eab308");
+                window.ui.notif(`+${val} 🪙`, "#eab308", "reward");
                 try { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } catch(e){}
                 success = true;
             } else if (type === 'gems') {
                 USER.gems += val;
                 Storage.save();
                 window.ui.updateMenu();
-                window.ui.notif(`+${val} 💎`, "#a855f7");
+                window.ui.notif(`+${val} 💎`, "#a855f7", "reward");
                 try { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } catch(e){}
                 success = true;
             } else if (type === 'box') {
@@ -1566,7 +1636,58 @@
                     const v = el('vignette'); if (v) v.style.background = '';
                 }
             },
-            notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
+            notif(m,c, type='default') { 
+                const d=document.createElement('div'); 
+                let classes = 'text-sm font-bold backdrop-blur-md shadow-xl border px-4 py-2 rounded-lg transform transition-all duration-500 translate-y-4 opacity-0 flex items-center gap-3';
+                
+                if(type==='quest') {
+                    classes += ' bg-gradient-to-r from-green-900/90 to-emerald-900/90 border-emerald-500/50 text-white font-tech tracking-wider uppercase pr-6';
+                    d.innerHTML = `<div class="text-2xl animate-bounce">✨</div><div><div class="text-[10px] text-green-300">MISSION ACCOMPLIE</div><div class="text-lg text-white font-black italic">${m}</div></div>`;
+                } else if(type==='reward') {
+                    classes += ' bg-gradient-to-r from-yellow-600/90 to-amber-800/90 border-yellow-300 text-white font-black tracking-widest uppercase py-3 px-8 text-lg shadow-[0_0_40px_rgba(234,179,8,0.5)] border-2 backdrop-blur-xl scale-110 flex-col gap-0 min-w-[200px] justify-center';
+                    d.innerHTML = `<div class="text-3xl animate-bounce filter drop-shadow-lg mb-1">🎁</div><div class="text-yellow-100 drop-shadow-md">${m}</div>`;
+                } else if(type==='streak') {
+                    classes += ' bg-gradient-to-r from-purple-600/90 to-pink-600/90 border-purple-400 text-white font-black italic tracking-widest uppercase py-4 px-10 text-2xl shadow-[0_0_50px_rgba(168,85,247,0.8)] border-y-4 backdrop-blur-xl scale-125 z-50';
+                    d.innerHTML = `<div class="animate-pulse filter drop-shadow-[0_0_10px_white]">${m}</div>`;
+                } else if(type==='warn') {
+                    classes += ' bg-red-900/80 border-red-500 text-white';
+                    d.innerText = m;
+                } else {
+                    classes += ' bg-black/70 border-white/20 text-white';
+                    d.style.color = c || 'white';
+                    d.innerText = m;
+                }
+                
+                d.className = classes; 
+                el('notif-area').appendChild(d); 
+                
+                requestAnimationFrame(()=>{ d.classList.remove('translate-y-4', 'opacity-0'); });
+                
+                setTimeout(()=>{
+                    d.classList.add('opacity-0', '-translate-y-4');
+                    setTimeout(()=>d.remove(), 500);
+                }, type==='quest' ? 4000 : (type==='streak' ? 2500 : 2000)); 
+            },
+            showStreak(n) {
+                const streaks = {
+                    2: "DOUBLE KILL !",
+                    3: "TRIPLE KILL !",
+                    4: "QUADRA KILL !",
+                    5: "PENTA KILL !",
+                    6: "HEXA KILL !",
+                    7: "RAMPAGE !",
+                    8: "UNSTOPPABLE !",
+                    9: "DOMINATING !",
+                    10: "GODLIKE !"
+                };
+                if(streaks[n] || n > 10) {
+                    const msg = streaks[n] || `X${n} STREAK !`;
+                    this.notif(msg, null, 'streak');
+                    // Add screen shake and flash
+                    window.game.shake = 5 + n;
+                    window.ui.flash();
+                }
+            },
             flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
             feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
             levelUp() { 
@@ -1621,6 +1742,7 @@
             },
             claimRankReward(i) {
                 if(USER.trophies >= RANKS[i].t && (!USER.claimedRanks || !USER.claimedRanks.includes(i))) {
+                    console.log(`[SECURE] Claim Rank Reward: ${i}`);
                     if(!USER.claimedRanks) USER.claimedRanks = [];
                     USER.claimedRanks.push(i);
                     USER.coins += 1000;
@@ -1652,14 +1774,14 @@
             },
             updateDifficultyButtons() {
                 if(!window.game || !window.game.conf) return; 
-                document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('selected', 'active'));
                 const activeBtn = el(`diff-${window.game.conf.difficulty}`);
-                if (activeBtn) activeBtn.classList.add('active');
+                if (activeBtn) activeBtn.classList.add('selected');
                 
                 // Also update modifier buttons
-                document.querySelectorAll('.mod-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.mod-btn').forEach(btn => btn.classList.remove('selected', 'active'));
                 const modBtn = el(`mod-${window.game.conf.modifier}`);
-                if(modBtn) modBtn.classList.add('active');
+                if(modBtn) modBtn.classList.add('selected');
             },
             renderBotSelector() {
                  let c = el('bot-selector');
@@ -1687,6 +1809,7 @@
             refreshShop(force = false) {
                 if (force) {
                     if (USER.gems >= 10) {
+                        console.log("[SECURE] Market Refresh (-10 gems)");
                         USER.gems -= 10;
                         this.notif("-10 💎 REROLL", "#a855f7");
                         this.updateMenu();
@@ -2005,11 +2128,11 @@
                 el('hero-details-modal').classList.remove('hidden');
             },
             equipSkin(heroId, skinId) { if(!USER.skins) USER.skins = {}; USER.skins[heroId] = skinId; Storage.save(); this.openHeroDetails(heroId); },
-            buySkin(heroId, skinId, price) { if(USER.coins >= price) { USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
+            buySkin(heroId, skinId, price) { if(USER.coins >= price) { console.log(`[SECURE] Buy Skin: ${heroId}_${skinId} (-${price} coins)`); USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
             renderProfile() { 
                 setText('profile-display-name', USER.name); 
                 setText('profile-tag', USER.tag);
-                setText('profile-bio', USER.bio ? `"${USER.bio}"` : '"Aucune bio définie..."');
+                setText('profile-bio', USER.bio || "Aucune bio définie...");
                 setText('profile-trophies', USER.trophies + " Trophées");
                 
                 // Theme Update
@@ -2144,7 +2267,7 @@
                 } 
                 Storage.save(); this.renderEmotes(); 
             },
-            buyEmote(id, price) { if(USER.gems >= price) { USER.gems -= price; USER.emotes.push(id); Storage.save(); this.notif("EMOTE DÉBLOQUÉE!", "#a855f7"); this.renderEmotes(); this.updateMenu(); } else { this.notif("PAS ASSEZ DE GEMMES!", "#ef4444"); } },
+            buyEmote(id, price) { if(USER.gems >= price) { console.log(`[SECURE] Buy Emote: ${id} (-${price} gems)`); USER.gems -= price; USER.emotes.push(id); Storage.save(); this.notif("EMOTE DÉBLOQUÉE!", "#a855f7"); this.renderEmotes(); this.updateMenu(); } else { this.notif("PAS ASSEZ DE GEMMES!", "#ef4444"); } },
             toggleEmoteWheel() { const wheel = el('emote-wheel'); if(wheel.classList.contains('hidden')) { wheel.innerHTML = ''; USER.equippedEmotes.forEach(id => { const e = EMOTE_LIST.find(em => em.id === id); wheel.innerHTML += `<div onclick="window.ui.triggerEmote('${e.i}'); window.ui.toggleEmoteWheel()" class="emote-btn">${e.i}</div>`; }); wheel.classList.remove('hidden'); } else { wheel.classList.add('hidden'); } },
             triggerEmote(emoji) { window.game.player.emote = emoji; window.game.player.emoteTimer = 120; },
             updateMenu() {
@@ -2185,9 +2308,10 @@
                 setText('stat-unlocked', `${USER.unlocked.length}/${Object.keys(STARTERS).length}`); // Héros débloqués (mis à jour à 25)
                 setText('stat-pass-tier', USER.stats.maxPassTier || 1); // Palier Pass Max
             },
-            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
+            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { console.log(`[SECURE] Unlock Hero: ${k} (-${s.price} coins)`); USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
+            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { console.log(`[SECURE] Upgrade Hero: ${k} (-${cost} coins)`); USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
             claimDaily() { 
+                console.log("[SECURE] Claim Daily Reward");
                 USER.coins += 200; 
                 USER.lastDaily = Date.now(); 
                 Storage.save(); 
@@ -2211,11 +2335,12 @@
                 
                 // 1. Vérification du coût et soustraction
                 if(item.curr === 'free') {
+                    console.log(`[SECURE] Buy Special Free: ${item.name}`);
                     ok = true;
                 } else if(item.curr === 'coins') { 
-                    if (USER.coins >= actualCost) { USER.coins -= actualCost; ok = true; }
+                    if (USER.coins >= actualCost) { console.log(`[SECURE] Buy Special: ${item.name} (-${actualCost} coins)`); USER.coins -= actualCost; ok = true; }
                 } else if(item.curr === 'gems') { 
-                    if (USER.gems >= actualCost) { USER.gems -= actualCost; ok = true; } 
+                    if (USER.gems >= actualCost) { console.log(`[SECURE] Buy Special: ${item.name} (-${actualCost} gems)`); USER.gems -= actualCost; ok = true; } 
                 } 
 
                 if(ok) { 
@@ -2259,6 +2384,7 @@
                 else if (type === 'upgrade') { cost = 40; name = "UPGRADE MAX"; }
                 
                 if(USER.gems >= cost) { 
+                    console.log(`[SECURE] Buy Pass: ${type} (-${cost} gems)`);
                     USER.gems -= cost; 
                     if (type === 'pro') { USER.mPassPro = true; }
                     else if (type === 'max') { USER.mPassMax = true; USER.mPassPro = true; }
@@ -2809,6 +2935,35 @@
                         }
                     }
                 }
+
+                // AI OBJECTIVE OVERRIDE
+                if (window.game.conf.mode === 'ctf' && window.game.flags) {
+                     const myTeam = this.friend ? 'blue' : 'red';
+                     const enemyTeam = this.friend ? 'red' : 'blue';
+                     const myFlag = window.game.flags.find(f => f.team === myTeam);
+                     const enemyFlag = window.game.flags.find(f => f.team === enemyTeam);
+                     
+                     if (enemyFlag && enemyFlag.carrier === this) {
+                         // I have the flag! Return to base! Target is my flag base (implicit via start pos)
+                         // Blue Base ~ (100,100), Red Base ~ (World-100, World-100)
+                         target = {x: (this.friend ? 200 : window.game.world-200), y: (this.friend ? 200 : window.game.world-200), r: 10}; 
+                     } else if (myFlag && myFlag.carrier) {
+                         // Enemy has my flag! Chase him! priority over other targets
+                         target = myFlag.carrier;
+                     } else if (enemyFlag && !enemyFlag.carrier) {
+                         // Enemy flag is available! Go get it!
+                         // Only switch if we don't have a critical target close by
+                         if (!target || Dist(this, target) > 300) target = enemyFlag;
+                     } else if (myFlag && !myFlag.isHome && !myFlag.carrier) {
+                         // My flag is dropped! Go return it!
+                         target = myFlag;
+                     }
+                } else if (window.game.conf.mode === 'payload' && window.game.train) {
+                     // Stay near payload
+                     if (Dist(this, window.game.train) > 200) {
+                         target = window.game.train;
+                     }
+                }
                 
                 if (!target) return; // No target, do nothing (or wander)
 
@@ -3127,6 +3282,70 @@
                 ctx.restore();
             }
         }
+        class Payload extends Entity {
+            constructor() {
+                super(150, window.game.world/2, 40, '#f97316');
+                this.hp = 10000; this.maxHp = 10000; this.type = 'payload';
+                this.angle = 0;
+            }
+            update() {
+                // Move if player or friendly bot is near
+                let pushing = false;
+                if(Dist(this, window.game.player) < 250) pushing = true;
+                else {
+                    for(let e of window.game.ents) {
+                        if(e.friend && e.isBot && Dist(this, e) < 250) { pushing = true; break; }
+                    }
+                }
+
+                if(pushing) {
+                     this.x += 1.5 * SPEED_FACTOR;
+                     if(window.game.frame % 20 === 0) window.game.parts.push({x:this.x-30,y:this.y+20,vx:-2,vy:0,life:20,c:'#555',r:4});
+                }
+                
+                if(this.x > window.game.world - 150) {
+                    window.game.over("VICTOIRE");
+                }
+            }
+            draw(ctx) {
+                super.draw(ctx);
+                // Health bar
+                const pct=this.hp/this.maxHp;
+                ctx.save();
+                ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(this.x-30,this.y-this.r-25,60,8);
+                ctx.fillStyle='#f97316';ctx.fillRect(this.x-29,this.y-this.r-24,58*pct,6);
+                
+                // Draw Wagon
+                ctx.translate(this.x, this.y);
+                ctx.fillStyle = '#7c2d12';
+                ctx.fillRect(-25, -20, 50, 40);
+                ctx.fillStyle = '#fdba74'; // Gold/Cargo
+                ctx.fillRect(-20, -15, 40, 30);
+                // Wheels
+                ctx.fillStyle = '#000';
+                ctx.beginPath(); ctx.arc(-20, 20, 10, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(20, 20, 10, 0, Math.PI*2); ctx.fill();
+                
+                // Radius circle
+                let inRange = Dist(this, window.game.player) < 250;
+                if (!inRange) {
+                     for(let e of window.game.ents) { if(e.friend && e.isBot && Dist(this, e) < 250) { inRange = true; break; } }
+                }
+
+                if(!inRange) {
+                     ctx.strokeStyle = 'rgba(249, 115, 22, 0.3)';
+                     ctx.lineWidth = 2;
+                     ctx.setLineDash([10, 10]);
+                     ctx.beginPath(); ctx.arc(0, 0, 250, 0, Math.PI*2); ctx.stroke();
+                     ctx.setLineDash([]);
+                } else {
+                     ctx.strokeStyle = 'rgba(34, 197, 94, 0.5)'; // Green when pushing
+                     ctx.lineWidth = 4;
+                     ctx.beginPath(); ctx.arc(0, 0, 250, 0, Math.PI*2); ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
         
         window.game = { 
             cvs:document.getElementById('gameCanvas'), 
@@ -3157,7 +3376,7 @@
             setMode(m){this.conf.mode=m; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setArena(a){this.conf.arena=a; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setDifficulty(d) { if(DIFFICULTY[d]) { this.conf.difficulty = d; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play'); } }, 
-            setModifier(m) { this.conf.modifier = m; Storage.save(); window.ui.updateMenu(); }, 
+            setModifier(m) { this.conf.modifier = m; Storage.save(); window.ui.updateMenu(); window.ui.updateDifficultyButtons(); }, 
             start(){ 
                 el('menu-screen').classList.add('hidden'); 
                 el('hud').classList.remove('hidden'); 
@@ -3169,8 +3388,8 @@
                 this.player=new Player(USER.selected); 
                 this.ents=[]; this.projs=[]; this.parts=[]; this.bgParts = []; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0; this.timeLeft = 3 * 60 * 60; 
                 this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
-                this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
                 this.teamScore = 0; this.enemyScore = 0; this.bossKills = 0;
+                this.killStreak = 0; this.lastKillTime = 0;
                 
                 // Objective Notification
                 setTimeout(() => {
@@ -3185,6 +3404,7 @@
                     else if(this.conf.mode === 'escape') obj = "ATTEINS L'EXTRACTION";
                     else if(this.conf.mode === 'zone_control') obj = "CAPTURE LA ZONE";
                     else if(this.conf.mode === 'thief') obj = "VOLE 10 SACS";
+                    else if(this.conf.mode === 'payload') obj = "POUSSE LE WAGON";
                     
                     window.ui.notif("OBJECTIF : " + obj, "#22d3ee");
                 }, 1000);
@@ -3301,6 +3521,11 @@
                     this.flags.push(blueFlag, redFlag);
                     this.ents.push(blueFlag, redFlag);
                     window.ui.notif("CAPTURE LE DRAPEAU !", "#facc15");
+                } else if(this.conf.mode === 'payload') {
+                    this.train = new Payload(); // Reuse this.train variable for simplicity/compatibility since logic is similar
+                    this.ents.push(this.train);
+                    this.map = this.map.filter(w => Math.abs(w.y - this.world/2) > 150); // Clear wider path
+                    window.ui.notif("POUSSE LE WAGON !", "#f97316");
                 } else { 
                     window.ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); 
                 } 
@@ -3462,8 +3687,8 @@
                     if(!this.ents) this.ents = []; if(!this.map) this.map = []; 
                     
                     // SPAWN LOGIC
-                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control' || this.conf.mode === 'golden_chase' || this.conf.mode === 'infection' || this.conf.mode === 'infection_hard' || this.conf.mode === 'heist' || this.conf.mode === 'defense' || this.conf.mode === 'treasure' || this.conf.mode === 'gungame'){ 
-                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit' && e.type !== 'core' && e.type !== 'chest')){ 
+                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control' || this.conf.mode === 'golden_chase' || this.conf.mode === 'infection' || this.conf.mode === 'infection_hard' || this.conf.mode === 'heist' || this.conf.mode === 'defense' || this.conf.mode === 'treasure' || this.conf.mode === 'gungame' || this.conf.mode === 'payload'){ 
+                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit' && e.type !== 'core' && e.type !== 'chest' && e.type !== 'payload')){ 
                             let max=5+Math.floor(this.wave*1.5); 
                             if(this.conf.mode === 'rampage') max *= 2; // Double spawn for rampage
                             const enemyWaveMult = 1+(this.conf.mode==='ranked'?0.2:0.1)*this.wave; 
@@ -3471,10 +3696,10 @@
                             // Feature 1: Mini-Boss Spawn (Vague 3 & 6)
                             if(this.frame%1800===0){
                                 this.wave++;
-                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase'){
+                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase' && this.conf.mode !== 'payload'){
                                     this.ents.push(new Enemy('boss', enemyWaveMult * 2));
                                     window.ui.notif("BOSS !!!","#ef4444");
-                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase') {
+                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase' && this.conf.mode !== 'payload') {
                                     this.ents.push(new Enemy('mini_boss', enemyWaveMult * 1.5));
                                     window.ui.notif("MINI BOSS !","#facc15");
                                 } else {
@@ -3490,6 +3715,12 @@
                                 if(this.conf.mode === 'train_defense' && this.train && Math.random() < 0.5) {
                                     en.x = this.train.x + Rnd(-300, 300);
                                     en.y = this.train.y + Rnd(-300, 300); 
+                                }
+                                // For Payload mode, spawn ahead of payload
+                                if(this.conf.mode === 'payload' && this.train) {
+                                     en.x = this.train.x + 400 + Rnd(-200, 200);
+                                     en.y = this.train.y + Rnd(-300, 300);
+                                     en.x = Math.min(this.world-50, Math.max(50, en.x)); // Clamp
                                 }
                                 // Escape mode: spawn near player (chose)
                                 if(this.conf.mode === 'escape') {
@@ -3520,7 +3751,7 @@
                     this.player.update(); 
                     if(this.train) {
                         this.train.update();
-                        if(this.train.hp <= 0) this.over("TRAIN DÉTRUIT");
+                        if(this.train.hp <= 0) this.over(this.conf.mode === 'payload' ? "CONVOI DÉTRUIT" : "TRAIN DÉTRUIT");
                     }
                     if(this.conf.mode === 'cyber_hack') {
                         const term = this.ents.find(e => e.type === 'terminal');
@@ -3749,6 +3980,11 @@
                         ctx.save(); ctx.translate(this.player.x, this.player.y); ctx.rotate(angle);
                         ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.moveTo(60, 0); ctx.lineTo(50, -10); ctx.lineTo(50, 10); ctx.fill();
                         ctx.restore();
+                    } else if(this.conf.mode === 'payload' && this.train) {
+                        const angle = Math.atan2(this.train.y - this.player.y, this.train.x - this.player.x);
+                        ctx.save(); ctx.translate(this.player.x, this.player.y); ctx.rotate(angle);
+                        ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.moveTo(60, 0); ctx.lineTo(50, -10); ctx.lineTo(50, 10); ctx.fill();
+                        ctx.restore();
                     } else if(this.conf.mode === 'cyber_hack') {
                         const term = this.ents.find(e => e.type === 'terminal');
                         if(term) {
@@ -3865,6 +4101,20 @@
             }, 
             kill(e){ 
                 e.dead=true; 
+                
+                // STREAK LOGIC
+                const now = Date.now();
+                if (now - (this.lastKillTime || 0) < 4000) { // 4 seconds window for streak
+                    this.killStreak++;
+                } else {
+                    this.killStreak = 1;
+                }
+                this.lastKillTime = now;
+                
+                if (this.killStreak >= 2) {
+                     window.ui.showStreak(this.killStreak);
+                }
+
                 const diffMult = DIFFICULTY[window.game.conf.difficulty].mult;
                 this.score+=(e.isBoss||e.isBot?500:100) * diffMult; 
                 this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+(e.isBoss?300:20) * diffMult); 
@@ -3881,7 +4131,7 @@
                 }
 
                 // EXPLOSIVE MOD
-                if (window.game.conf.modifier === 'explosif' || window.game.activeModifier === 'explosif') {
+                if (window.game.conf.modifier === 'explosive' || window.game.activeModifier === 'explosive') {
                     for(let i=0; i<8; i++) {
                         window.game.parts.push({x:e.x, y:e.y, vx:Rnd(-5,5), vy:Rnd(-5,5), life:30, c:'#f97316', r:6});
                     }
