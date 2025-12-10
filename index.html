@@ -1,94 +1,303 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.2.4 - Saison 2</title>
+    <title>mBattle v1.2.9 - Saison 2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
-        /* --- CORE --- */
-        body { margin: 0; overflow: hidden; background-color: #020617; font-family: 'Rajdhani', sans-serif; color: white; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
-        canvas { display: block; }
-        /* --- UI & GLASS --- */
-        .glass-panel { background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px rgba(0,0,0,0.6); border-radius: 24px; }
-        .glass-nav { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(30px); border-top: 1px solid rgba(255,255,255,0.1); }
-        .glass-btn { position: relative; overflow: hidden; background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid rgba(255,255,255,0.15); transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1); }
-        .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
-        .glass-btn.selected { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.25) inset; }
-        /* SAISON 2 THEME: CYAN/PURPLE */
-        .season-gold { border-color: #22d3ee !important; background: linear-gradient(145deg, rgba(34, 211, 238, 0.1), rgba(0,0,0,0.6)) !important; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2) !important; animation: pulse-cyan-border 3s infinite; }
-        .season-gold .icon-box { background: rgba(34, 211, 238, 0.2) !important; border: 1px solid rgba(34, 211, 238, 0.4); }
-        
-        .locked { opacity: 0.8; filter: grayscale(0.8); cursor: pointer; position: relative; } 
-        .locked::after { content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; opacity: 0.5; }
-        
-        .font-tech { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        .currency-badge { background: rgba(0,0,0,0.8); padding: 6px 14px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.15); font-family: 'Orbitron'; font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        /* ANIMATION GAIN MONNAIE */
-        @keyframes gainFlash { 0% { transform: scale(1.0); opacity: 1; filter: brightness(1); } 50% { transform: scale(1.15); opacity: 1; filter: brightness(1.5); text-shadow: 0 0 10px white; } 100% { transform: scale(1.0); opacity: 1; filter: brightness(1); } }
-        .currency-badge.flash-coins { animation: gainFlash 0.3s ease-out; }
-        .currency-badge.flash-gems { animation: gainFlash 0.3s ease-out; }
+        /* --- CORE & VARIABLES --- */
+        :root {
+            --primary: #22d3ee;
+            --secondary: #a855f7;
+            --accent: #f472b6;
+            --bg-dark: #020617;
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(10, 15, 30, 0.75);
+            --neon-blue: #00f3ff;
+            --neon-purple: #bc13fe;
+        }
 
-        /* --- NAV ICONS --- */
-        .nav-item { color: #64748b; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .nav-item.active { color: #22d3ee; transform: translateY(-4px) scale(1.05); text-shadow: 0 0 15px rgba(34, 211, 238, 0.6); }
-        .nav-item.active .icon { transform: scale(1.1); }
-        /* --- VFX --- */
-        #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle, transparent 50%, #000 120%); z-index: 5; }
-        #gas-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 30%, rgba(34, 197, 94, 0.4) 80%); z-index: 4; transition: opacity 0.5s; }
-        #flash-layer { position: absolute; inset: 0; pointer-events: none; background: #ef4444; opacity: 0; transition: opacity 0.1s; z-index: 6; mix-blend-mode: overlay; }
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            background: radial-gradient(circle at 50% 120%, #1e1b4b 0%, #020617 60%, #000000 100%);
+            font-family: 'Rajdhani', sans-serif; 
+            color: white; 
+            touch-action: none; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            -webkit-tap-highlight-color: transparent;
+            height: 100vh;
+        }
+
+        /* Subtle animated background grid */
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        canvas { display: block; position: relative; z-index: 1; }
+
+        /* --- TYPOGRAPHY --- */
+        .font-tech { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; text-transform: uppercase; }
+        
+        /* --- PREMIUM GLASS UI --- */
+        .glass-panel { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.65) 100%);
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.02); 
+            border-radius: 20px; 
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        /* Subtle shine effect on panels */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            pointer-events: none;
+            transition: 0.5s;
+        }
+        .glass-panel:hover::before { left: 100%; transition: 0.7s; }
+
+        .glass-nav { 
+            background: rgba(2, 6, 23, 0.9); 
+            backdrop-filter: blur(30px); 
+            border-top: 1px solid rgba(255,255,255,0.08); 
+            box-shadow: 0 -4px 30px rgba(0,0,0,0.6);
+        }
+
+        /* --- BUTTONS & INTERACTIVE --- */
+        .glass-btn { 
+            position: relative; 
+            overflow: hidden; 
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%); 
+            border: 1px solid rgba(255,255,255,0.12); 
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        
+        .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
+        .glass-btn:hover { 
+            border-color: rgba(255,255,255,0.4); 
+            background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%); 
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        
+        .glass-btn.selected { 
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.1)); 
+            border-color: #22d3ee; 
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.25) inset, 0 0 10px rgba(34, 211, 238, 0.3); 
+            color: #fff;
+            text-shadow: 0 0 5px rgba(34, 211, 238, 0.8);
+        }
+
+        /* --- NAVIGATION --- */
+        .nav-item { 
+            color: #64748b; 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            opacity: 0.7;
+        }
+        
+        .nav-item:hover { opacity: 1; color: #94a3b8; }
+
+        .nav-item.active { 
+            color: #22d3ee; 
+            opacity: 1;
+            transform: translateY(-8px); 
+            text-shadow: 0 0 15px rgba(34, 211, 238, 0.8); 
+        }
+        
+        .nav-item.active .icon { 
+            transform: scale(1.25); 
+            filter: drop-shadow(0 0 8px rgba(34,211,238,0.6));
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px; height: 5px;
+            background: #22d3ee;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22d3ee, 0 0 20px #22d3ee;
+        }
+
+        /* --- BADGES & TAGS --- */
+        .currency-badge { 
+            background: rgba(0,0,0,0.6); 
+            padding: 5px 12px; 
+            border-radius: 14px; 
+            border: 1px solid rgba(255,255,255,0.15); 
+            font-family: 'Orbitron'; 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-size: 13px; 
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .rarity-badge { 
+            position: absolute; top: 6px; right: 6px; 
+            padding: 4px 8px; border-radius: 6px; 
+            font-size: 9px; font-weight: 900; 
+            text-transform: uppercase; z-index: 10; 
+            border: 1px solid rgba(255,255,255,0.3); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+            text-shadow: 0 1px 2px black;
+        }
+        
+        /* SAISON 2 THEME: CYAN/PURPLE GLOW */
+        .season-gold { 
+            border-color: #22d3ee !important; 
+            background: linear-gradient(145deg, rgba(34, 211, 238, 0.15), rgba(168, 85, 247, 0.1)) !important; 
+            box-shadow: 0 0 25px rgba(34, 211, 238, 0.2) !important; 
+            animation: pulse-border 4s infinite ease-in-out; 
+        }
+        @keyframes pulse-border { 0%, 100% { border-color: rgba(34,211,238,0.5); box-shadow: 0 0 20px rgba(34,211,238,0.2); } 50% { border-color: rgba(168,85,247,0.7); box-shadow: 0 0 30px rgba(168,85,247,0.3); } }
+
+        .locked { opacity: 0.6; filter: grayscale(1) brightness(0.6); cursor: not-allowed; position: relative; } 
+        .locked::after { content: '🔒'; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; opacity: 0.8; filter: drop-shadow(0 0 5px black); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes gainFlash { 0% { transform: scale(1.0); filter: brightness(1); } 50% { transform: scale(1.2); filter: brightness(1.7); text-shadow: 0 0 20px currentColor; } 100% { transform: scale(1.0); } }
+        .currency-badge.flash-coins { animation: gainFlash 0.4s ease-out; color: #fbbf24; border-color: #fbbf24; }
+        .currency-badge.flash-gems { animation: gainFlash 0.4s ease-out; color: #a855f7; border-color: #a855f7; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fadeIn { animation: fadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* --- VFX LAYERS --- */
+        #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.95) 130%); z-index: 5; }
+        #gas-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; background: radial-gradient(circle, transparent 30%, rgba(34, 197, 94, 0.2) 90%); z-index: 4; transition: opacity 0.5s; mix-blend-mode: hard-light; }
+        #flash-layer { position: absolute; inset: 0; pointer-events: none; background: white; opacity: 0; transition: opacity 0.05s; z-index: 100; mix-blend-mode: overlay; }
+
         /* --- CONTROLS --- */
         .joystick-zone { position: absolute; width: 140px; height: 140px; pointer-events: auto; z-index: 50; opacity: 0; transition: opacity 0.2s; }
         .joystick-zone.active { opacity: 1; }
-        .stick-base { width: 130px; height: 130px; border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.3) 70%); border: 2px solid rgba(255,255,255,0.1); position: absolute; bottom: 50px; pointer-events: auto; display: block !important; transition: border-color 0.2s; }
-        .stick-base.active { border-color: rgba(34, 211, 238, 0.5); background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, rgba(0,0,0,0.4) 70%); }
-        #stick-left-base { left: 40px; }
-        #stick-right-base { right: 40px; }
-        .stick-knob { width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.9); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 0 20px rgba(255,255,255,0.3); transition: transform 0.05s linear; }
-        .action-btn { position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 60; pointer-events: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.5); transition: transform 0.1s; }
-        .action-btn:active { transform: scale(0.9); }
-        /* --- ANIM --- */
-        .kill-msg { font-size: 12px; font-weight: 800; text-shadow: 0 2px 4px black; animation: slideIn 0.3s ease-out; margin-bottom: 6px; background: linear-gradient(90deg, rgba(0,0,0,0.9) 0%, transparent 100%); padding: 6px 12px; border-left: 4px solid #3b82f6; border-radius: 0 4px 4px 0; }
-        .kill-msg.red { border-color: #ef4444; }
-        @keyframes slideIn { from { opacity:0; transform:translateX(-30px); } to { opacity:1; transform:translateX(0); } }
-        .menu-anim { background: radial-gradient(circle at center, #0f172a 0%, #020617 100%); }
-        .safe-pb { padding-bottom: max(90px, env(safe-area-inset-bottom) + 90px); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        /* --- PASS --- */
+        .stick-base { 
+            width: 120px; height: 120px; border-radius: 50%; 
+            background: rgba(255,255,255,0.03); 
+            border: 2px solid rgba(255,255,255,0.08); 
+            position: absolute; bottom: 50px; pointer-events: auto; 
+            backdrop-filter: blur(4px);
+            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        .stick-base.active { border-color: rgba(34, 211, 238, 0.5); background: radial-gradient(circle, rgba(34, 211, 238, 0.15) 0%, transparent 70%); box-shadow: 0 0 25px rgba(34, 211, 238, 0.2); }
+        .stick-knob { width: 50px; height: 50px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #fff, #cbd5e1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        
+        .action-btn { 
+            position: absolute; border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            z-index: 60; pointer-events: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); 
+            transition: all 0.1s; border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(12px);
+        }
+        .action-btn:active { transform: scale(0.9); box-shadow: 0 2px 10px rgba(0,0,0,0.5); margin-top: 5px;}
+
+        /* --- PASS TRACK --- */
         .pass-track-container { overflow-x: auto; padding: 40px 20px; scroll-behavior: smooth; position: relative; white-space: nowrap; -webkit-overflow-scrolling: touch; width: 100%; mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent); }
         .pass-wrapper { display: inline-flex; flex-direction: column; min-width: 100%; position: relative; gap: 30px; padding: 0 40px; }
-        .pass-track-main-line { position: absolute; left: 0; right: 0; top: 50%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; z-index: 0; transform: translateY(-50%); }
+        .pass-track-main-line { position: absolute; left: 0; right: 0; top: 50%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; z-index: 0; transform: translateY(-50%); border: 1px solid rgba(255,255,255,0.05); }
         .pass-row { display: flex; gap: 40px; align-items: center; position: relative; z-index: 10; padding: 10px 0; }
-        .pass-step { width: 100px; height: 120px; background: #0f172a; border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px rgba(0,0,0,0.3); overflow: visible; }
-        .pass-step.pro { background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border-color: rgba(99, 102, 241, 0.3); }
-        .pass-step.locked { opacity: 0.5; filter: grayscale(1); transform: scale(0.95); }
-        .pass-step.active { transform: scale(1.1) translateY(-5px); border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.2); z-index: 20; }
-        .pass-step.active.pro { border-color: #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.4); }
-        .pass-step.claimed { opacity: 0.8; border-color: #22c55e; background: rgba(34, 197, 94, 0.1); }
-        .check-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 30px; color: #22c55e; background: rgba(0,0,0,0.6); border-radius: 16px; backdrop-filter: blur(2px); animation: popIn 0.3s; z-index: 25; }
-        .tier-badge { position: absolute; top: -10px; background: #334155; border: 1px solid rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 12px; font-size: 9px; font-weight: 800; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.3); z-index: 30; white-space: nowrap; }
-        .pass-step.active .tier-badge { background: #22d3ee; color: black; border-color: transparent; }
-        .pass-step.pro .tier-badge { background: #4c1d95; }
-        .pass-step.active.pro .tier-badge { background: #a855f7; color: white; }
-        .pass-step.max { background: linear-gradient(180deg, #422006 0%, #1c1500 100%); border-color: rgba(234, 179, 8, 0.3); }
-        .pass-step.active.max { border-color: #facc15; box-shadow: 0 0 25px rgba(250, 204, 21, 0.4); }
-        .pass-step.max .tier-badge { background: #a16207; }
-        .pass-step.active.max .tier-badge { background: #facc15; color: black; }
+        
+        .pass-step { 
+            width: 90px; height: 110px; 
+            background: #1e293b; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 16px; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            position: relative; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+        }
+        
+        .pass-step.active { transform: scale(1.15) translateY(-5px); border-color: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.2); z-index: 20; background: #334155; }
+        .pass-step.claimed { opacity: 0.6; border-color: #22c55e; background: rgba(34, 197, 94, 0.05); filter: grayscale(0.5); }
+        .pass-step.pro { background: radial-gradient(circle at top right, #312e81, #0f172a); border-color: rgba(168, 85, 247, 0.3); }
+        .pass-step.active.pro { border-color: #d8b4fe; box-shadow: 0 0 30px rgba(168, 85, 247, 0.4); }
+        
+        .check-mark { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 32px; color: #22c55e; background: rgba(0,0,0,0.8); border-radius: 16px; backdrop-filter: blur(2px); animation: popIn 0.3s; z-index: 25; }
+        
+        /* --- INTRO & UTILS --- */
+        #intro-screen { position: absolute; inset: 0; background: #000; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; transition: opacity 0.8s; }
+        .intro-logo { font-size: 70px; font-weight: 900; background: linear-gradient(to right, #22d3ee, #a855f7); -webkit-background-clip: text; color: transparent; animation: introLogo 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards; letter-spacing: -3px; filter: drop-shadow(0 0 25px rgba(168, 85, 247, 0.5)); }
+        .intro-sub { font-size: 14px; color: #94a3b8; margin-top: 15px; opacity: 0; animation: introSub 2s 0.5s forwards; font-family: 'Orbitron'; letter-spacing: 6px; text-transform: uppercase; }
 
-        /* EMOTES */
-        .emote-wheel { position: absolute; bottom: 120px; right: 20px; display: flex; flex-wrap: wrap; width: 160px; gap: 10px; z-index: 70; pointer-events: auto; }
-        .emote-btn { width: 60px; height: 60px; background: rgba(0,0,0,0.8); border-radius: 50%; border: 2px solid white; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s; cursor: pointer; }
-        .emote-grid-item { aspect-ratio: 1; background: rgba(255,255,255,0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 2px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
-        .emote-grid-item.selected { border-color: #22d3ee; background: rgba(34, 211, 238, 0.1); }
-        .emote-remove-btn { position: absolute; top: -5px; right: -5px; background: #ef4444; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; border: 2px solid #0f172a; }
+        .kill-msg { font-size: 13px; font-weight: 800; text-shadow: 0 2px 4px black; animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); margin-bottom: 6px; background: linear-gradient(90deg, rgba(0,0,0,0.8) 0%, transparent 100%); padding: 6px 14px; border-left: 4px solid #3b82f6; border-radius: 0 4px 4px 0; pointer-events: none; backdrop-filter: blur(2px); }
+        .kill-msg.red { border-color: #ef4444; }
+
+        @keyframes introLogo { 0% { opacity: 0; transform: scale(0.8) translateY(20px); filter: blur(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
+        @keyframes introSub { 0% { opacity: 0; transform: translateY(10px); } 100% { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity:0; transform:translateX(-50px); } to { opacity:1; transform:translateX(0); } }
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
         
-        /* MODIFIERS & DIFF BTNS */
-        .diff-btn.active { background: linear-gradient(45deg, var(--tw-gradient-stops)) !important; border-color: rgba(255,255,255,0.5) !important; box-shadow: 0 0 15px var(--tw-shadow-color) !important; }
-        .mod-btn.active { background: #22d3ee !important; border-color: white !important; color: white !important; box-shadow: 0 0 15px #22d3ee !important; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .safe-pb { padding-bottom: max(90px, env(safe-area-inset-bottom) + 90px); }
+        .menu-anim { background: radial-gradient(circle at 50% 30%, #172554 0%, #020617 60%); }
+
+        /* --- FORMS --- */
+        .profile-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: white;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            outline: none;
+            backdrop-filter: blur(10px);
+        }
+        .profile-input:focus {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: #22d3ee;
+            box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+        }
+        .profile-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
+        }
+
+        /* --- CUSTOM SCROLLBAR FOR DESKTOP --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+        /* --- SETTINGS & EXTRAS --- */
+        .settings-grp { margin-bottom: 12px; }
+        .settings-label { display: block; font-size: 11px; font-weight: bold; color: #94a3b8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .diff-btn { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+        .mod-btn { font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .rarity-badge { position: absolute; top: 4px; right: 4px; padding: 2px 6px; border-radius: 6px; font-size: 8px; font-weight: 900; text-transform: uppercase; z-index: 10; border: 1px solid rgba(255,255,255,0.2); }
-        
-        /* Profile Avatar Image */
-        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        /* Rank Progress Fill */
+        .rank-progress-bg { width: 100%; height: 6px; background: rgba(0,0,0,0.5); border-radius: 3px; overflow: hidden; margin-top: 5px; }
+        .rank-progress-fill { height: 100%; transition: width 0.5s ease-out; box-shadow: 0 0 10px currentColor; }
     </style>
 </head><body>
     <canvas id="gameCanvas"></canvas>
@@ -145,11 +354,16 @@
             </div>
         </div>
         
+        <div id="intro-screen">
+            <div class="intro-logo font-tech">mBATTLE</div>
+            <div class="intro-sub">SEASON 2 - CYBER STORM</div>
+        </div>
+
         <div id="menu-screen" class="absolute inset-0 menu-anim pointer-events-auto z-50 flex flex-col">
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.3</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.2.9</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -364,12 +578,19 @@
                     <div class="glass-panel p-6 mb-6 hidden md:block"><h3 class="text-xl font-bold text-blue-400 mb-4">COMMANDES PC</h3><table class="w-full text-sm text-left text-gray-300"><tr class="border-b border-gray-700"><th class="py-2">Action</th><th class="py-2">Touche</th></tr><tr><td class="py-2">Déplacement</td><td class="font-mono text-yellow-400">Z Q S D</td></tr><tr><td class="py-2">Viser</td><td class="font-mono text-yellow-400">Souris</td></tr><tr><td class="py-2">Tirer</td><td class="font-mono text-yellow-400">Clic Gauche</td></tr><tr><td class="py-2">Dash</td><td class="font-mono text-yellow-400">Espace</td></tr><tr><td class="py-2">Gadget</td><td class="font-mono text-yellow-400">E</td></tr><tr><td class="py-2">Emote</td><td class="font-mono text-yellow-400">V</td></tr></table></div>
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
-                    <div class="glass-panel p-6 text-sm text-gray-300"><div class="patch-note"><h3>v1.2.3 (Trophy Road Update)</h3><ul><li>🏆 <b>Voie des Trophées :</b> Gagnez 1000 🪙 et 25 💎 à chaque palier de trophées !</li><li>📈 <b>Progression :</b> Cliquez sur votre rang dans le menu pour voir les récompenses.</li><li>🛠️ <b>Correctifs :</b> Optimisation et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.2.2 (CONTENT UPDATE)</h3><ul><li>💎 <b>Skins Diamant :</b> Nouveaux skins de prestige pour Soldier, Heavy et Sniper (5000 🪙).</li><li>🌊 <b>Nouveau Terrain :</b> Atlantis ! Combattez sous l'océan.</li><li>🎲 <b>3 Nouveaux Modificateurs :</b> Aveugle, Slow Mo et Chaos !</li><li>🐛 <b>Correctifs :</b> Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.2.1 (Fixes)</h3><ul><li>🐛 <b>HUD :</b> Correction de l'affichage du niveau du héros en jeu.</li><li>🛠️ <b>Stabilité :</b> Corrections de bugs divers et optimisations.</li></ul></div><div class="patch-note"><h3>v1.2.0 (THE HEROIC UPDATE)</h3><ul><li>⭐️ <b>10 Nouveaux Héros :</b> Vulcan, Zephyr, Necro, Gladiator, Bouncer, Fungus, Wasp, Mirage, Juggernaut, Eclipse ! (Total 60 Héros)</li><li>🎭 <b>100 Emotes :</b> Collection massive de nouvelles emotes !</li><li>🎫 <b>mPass MAX :</b> Le Pass de Combat s'étend maintenant jusqu'au palier 100 avec une récompense ultime !</li><li>🎨 <b>Skins :</b> 5 Skins pour TOUS les nouveaux héros.</li><li>🐛 <b>Optimisation :</b> Fluidité accrue.</li></ul></div><div class="patch-note"><h3>v1.1.5 (Content Explosion)</h3><ul><li>🔥 <b>Missions & Terrains :</b> Total 20 Modes et 15 Arènes !</li><li>🎨 <b>Skins :</b> 5 Skins minimum pour CHAQUE héros !</li><li>⚙️ <b>Modificateurs :</b> Total 15 modificateurs (Nouveau: Fragile).</li><li>😀 <b>Emotes :</b> 25 Nouvelles Emotes (Total 75+).</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs corrigés.</li></ul></div><div class="patch-note"><h3>v1.1.4 (Packs Corrections)</h3><ul><li>🛠️ Corrections de bugs sur les quêtes et récompenses.</li><li>⚡ Optimisation des performances.</li><li>🐛 Fix: Orthographe Modificateurs.</li></ul></div><div class="patch-note"><h3>v1.1.3 (Update Heroes)</h3><ul><li>🦸 5 Nouveaux Héros : Cyclops, Banshee, Druid, Spartan, Hydra !</li><li>📝 Descriptions : Amélioration des textes d'Infos (Missions & Terrains).</li><li>🐛 Bugs : Corrections mineures et optimisation.</li></ul></div><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class=\"patch-note\"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
+                    <div class="glass-panel p-6 text-sm text-gray-300">
+                        <div class="patch-note"><h3>v1.2.9 (Crash Fix)</h3><ul><li>🛠️ <b>CRITIQUE :</b> Correction du crash "timeScale" (Slow Mo).</li><li>⚡ <b>Optimisation :</b> Stabilité améliorée.</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.8 (Hotfix Update)</h3><ul><li>🤖 <b>IA Bots :</b> Les bots alliés n'attaquent plus le joueur.</li><li>💰 <b>Golden Chase :</b> Correction de la collecte des pièces.</li><li>🛠️ <b>Stabilité :</b> Corrections de crashs majeurs (match error).</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.7 (Bug Fix Update)</h3><ul><li>🛠️ <b>Modes de Jeu :</b> Victoire/Défaite corrigée pour tous les modes.</li><li>💎 <b>Defense :</b> Ajout du Cristal à protéger.</li><li>👾 <b>Spawns :</b> Ennemis corrigés pour tous les modes.</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.6 (Feature Update)</h3><ul><li>🚩 <b>Capture le Drapeau :</b> Nouveau mode stratégique en 4v4 ! Volez le drapeau ennemi et protégez le vôtre.</li><li>✨ <b>Améliorations :</b> Meilleur HUD pour les modes d'équipe.</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs.</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.5 (Polish & Fixes)</h3><ul><li>💰 <b>Golden Chase :</b> Mode survie haute-récompense (2 min). Collectez l'or !</li><li>🛡️ <b>Team Battle :</b> Score d'équipe corrigé. Premier à 40 Kills !</li><li>✨ <b>Visuel :</b> Effets améliorés pour Marais, Usine et Néant.</li><li>🐛 <b>Correctifs :</b> Bugs de spawn et munitions résolus.</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.4 (WILD UPDATE)</h3><ul><li>🐾 <b>5 Nouveaux Héros "SAUVAGES" :</b> Bear, Wolf, Eagle, Rhino, Shark !</li><li>🌿 <b>Thème Nature :</b> La nature reprend ses droits dans mBattle.</li><li>⚡ <b>Équilibrage :</b> Ajustements divers sur les héros.</li></ul></div>
+                        <div class="patch-note"><h3>v1.2.3 (Trophy Road Update)</h3><ul><li>🏆 <b>Voie des Trophées :</b> Gagnez 1000 🪙 et 25 💎 à chaque palier de trophées !</li><li>📈 <b>Progression :</b> Cliquez sur votre rang dans le menu pour voir les récompenses.</li><li>🛠️ <b>Correctifs :</b> Optimisation et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.2.2 (CONTENT UPDATE)</h3><ul><li>💎 <b>Skins Diamant :</b> Nouveaux skins de prestige pour Soldier, Heavy et Sniper (5000 🪙).</li><li>🌊 <b>Nouveau Terrain :</b> Atlantis ! Combattez sous l'océan.</li><li>🎲 <b>3 Nouveaux Modificateurs :</b> Aveugle, Slow Mo et Chaos !</li><li>🐛 <b>Correctifs :</b> Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.2.1 (Fixes)</h3><ul><li>🐛 <b>HUD :</b> Correction de l'affichage du niveau du héros en jeu.</li><li>🛠️ <b>Stabilité :</b> Corrections de bugs divers et optimisations.</li></ul></div><div class="patch-note"><h3>v1.2.0 (THE HEROIC UPDATE)</h3><ul><li>⭐️ <b>10 Nouveaux Héros :</b> Vulcan, Zephyr, Necro, Gladiator, Bouncer, Fungus, Wasp, Mirage, Juggernaut, Eclipse ! (Total 60 Héros)</li><li>🎭 <b>100 Emotes :</b> Collection massive de nouvelles emotes !</li><li>🎫 <b>mPass MAX :</b> Le Pass de Combat s'étend maintenant jusqu'au palier 100 avec une récompense ultime !</li><li>🎨 <b>Skins :</b> 5 Skins pour TOUS les nouveaux héros.</li><li>🐛 <b>Optimisation :</b> Fluidité accrue.</li></ul></div><div class="patch-note"><h3>v1.1.5 (Content Explosion)</h3><ul><li>🔥 <b>Missions & Terrains :</b> Total 20 Modes et 15 Arènes !</li><li>🎨 <b>Skins :</b> 5 Skins minimum pour CHAQUE héros !</li><li>⚙️ <b>Modificateurs :</b> Total 15 modificateurs (Nouveau: Fragile).</li><li>😀 <b>Emotes :</b> 25 Nouvelles Emotes (Total 75+).</li><li>🐛 <b>Correctifs :</b> Stabilité et bugs mineurs corrigés.</li></ul></div><div class="patch-note"><h3>v1.1.4 (Packs Corrections)</h3><ul><li>🛠️ Corrections de bugs sur les quêtes et récompenses.</li><li>⚡ Optimisation des performances.</li><li>🐛 Fix: Orthographe Modificateurs.</li></ul></div><div class="patch-note"><h3>v1.1.3 (Update Heroes)</h3><ul><li>🦸 5 Nouveaux Héros : Cyclops, Banshee, Druid, Spartan, Hydra !</li><li>📝 Descriptions : Amélioration des textes d'Infos (Missions & Terrains).</li><li>🐛 Bugs : Corrections mineures et optimisation.</li></ul></div><div class="patch-note"><h3>v1.1.2 (Big Content Update)</h3><ul><li>🔥 5 Nouveaux Héros : Vulcan, Zephyr, Necro, Gladiator, Bouncer !</li><li>👕 SKINS : Tous les héros ont maintenant 5 skins minimum !</li><li>⚙️ 5 Nouveaux Modificateurs : Low Gravity, Double Dégâts, Tiny, Pluie de Balles, No Regen.</li><li>🏰 3 Nouveaux Terrains : Marais, Usine, Néant.</li><li>☠️ Nouvelle Mission : Chasse au Trésor.</li><li>😀 Emotes : Collection étendue à 50 emotes !</li></ul></div><div class="patch-note"><h3>v1.1.1 (Patch mPass)</h3><ul><li>🎨 mPASS 2.0 : Refonte complète du design du Pass de Combat !</li><li>🌋 Nouveau Terrain : Solaris (Ambiance volcanique et cendres).</li><li>🛠️ Bugs Corrigés : Fiabilisation de la boutique et du changement d'onglets.</li></ul></div><div class="patch-note"><h3>v1.1.0</h3><ul><li>🦸 5 Nouveaux Héros (FINAL) : Spike, Tesla, Siren, Paladin, Zenith !</li><li>📜 Système de Quêtes : Quêtes Quotidiennes (Reset 24h) et de Saison.</li><li>🎯 Nouvelles Missions de quêtes : Dégâts, Collecte, Survie...</li><li>💸 Drops : Les ennemis lâchent parfois des Pièces et Gemmes !</li><li>🔥 Level 45+ Héros total !</li></ul></div><div class="patch-note"><h3>v1.0.6</h3><ul><li>🚀 2 Nouvelles Missions : Carnage (Tuer 50 ennemis) & Zone (Contrôle de zone).</li><li>💎 Nouveau Terrain : Grotte de Cristal.</li><li>✨ Amélioration visuelle : Plus d'effets sur tous les terrains !</li><li>🛠️ Correction de bugs : Gestion de la caméra et spawns.</li></ul></div><div class="patch-note"><h3>v1.0.5</h3><ul><li>🛠️ CRITIQUE : Réparation de l'IA (Vision des bots).</li><li>⚡ Optimisation du code.</li></ul></div><div class="patch-note"><h3>v1.0.4</h3><ul><li>🦸 5 Nouveaux Héros : Spectre, Solar, Orbit, Raptor, Grunt !</li><li>🚀 Nouvelle Mission : Cyber Escape. Rejoins la zone d'extraction !</li><li>🛠️ Bugs corrigés : Soin impossible en One Shot, IA améliorée vs Invisibilité.</li></ul></div><div class="patch-note"><h3>v1.0.3</h3><ul><li>🦸 5 Nouveaux Héros : Rock, Frost, Blaze, Storm, Glitch !</li><li>🛠️ Corrections de bugs (Régénération Bots).</li><li>⚡ Améliorations diverses.</li></ul></div><div class="patch-note"><h3>v1.0.2</h3><ul><li>🛠️ Corrections de bugs : Refresh Shop et Affichage des récompenses.</li><li>💎 Optimisation de l'interface.</li></ul></div><div class=\"patch-note\"><h3>v1.0.1</h3><ul><li>🦸 5 Nouveaux Héros : Archer, Brawler, Grenadier, Vortex, Nova !</li><li>🔫 Nouveau Mode : Jeu d'Armes (Gun Game).</li><li>🌑 Nouvelle Arène : Moon Base.</li><li>👕 Nouveaux Skins : Ajout de 5 nouveaux skins pour Chrono, Viper, Bomber, Samurai et Cyber.</li><li>🎁 Offres Gratuites : Nouvelles récompenses temporaires gratuites dans la boutique !</li><li>⚡ Optimisations diverses et corrections mineures.</li></ul></div><div class="patch-note"><h3>v1.0.0 (Saison 2)</h3><ul><li>2️⃣ Ajout du contenu de saison 2</li><li>🚫 Correction de bugs majeurs principalement.</li><li>👕 Nouveaux Skins : Ajout de skins pour Drone, Harpy, Shaman et Reaper.</li><li> 👕 Nouveaux héros : ajout pour 30 au total</li><li>⏳ Améliorations divers (profil, shop...)</li><li>🦾 PV Bots : Augmentation des PV de base des bots (+20 PV) et amélioration de l'intelligence des bots.</li></ul></div></div>
                 </div>
                 <div id="tab-profile" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-white">///</span> COMPTE</h2>
                     <div id="profile-main-card" class="glass-panel p-6 mb-6 relative overflow-hidden bg-gradient-to-br from-blue-900/20 to-purple-900/20 border-blue-500/30">
-                        <div class="absolute top-0 right-0 p-4 opacity-50"><button onclick="window.ui.openSettings()" class="text-xl hover:scale-110 transition md:text-2xl bg-black/40 p-2 rounded-xl backdrop-blur-md border border-white/10">⚙️</button></div>
+                        <div class="absolute top-0 right-0 p-4 opacity-50 z-20"><button onclick="window.ui.openSettings()" class="text-xl hover:scale-110 transition md:text-2xl bg-black/40 p-2 rounded-xl backdrop-blur-md border border-white/10">⚙️</button></div>
                         <div class="flex flex-col md:flex-row items-center gap-6 relative z-10">
                             <div class="relative group cursor-pointer" onclick="window.ui.openAvatarSelector()">
                                 <div class="w-24 h-24 rounded-full bg-gray-800 border-4 border-blue-500/30 flex items-center justify-center text-5xl shadow-[0_0_30px_rgba(59,130,246,0.3)] overflow-hidden hover:border-blue-400 transition" id="profile-avatar">👤</div>
@@ -389,7 +610,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.2.4</div>
+                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.2.9</div>
                     </div>
                 <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
                         <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">
@@ -442,15 +663,15 @@
         <div id="settings-modal" class="hidden absolute inset-0 bg-black/95 backdrop-blur-xl flex items-center justify-center z-[60] pointer-events-auto animate-fadeIn" onclick="window.ui.closeSettings()">
              <div class="glass-panel p-6 max-w-sm w-full mx-4 flex flex-col gap-4 max-h-[80vh] overflow-y-auto hide-scrollbar" onclick="event.stopPropagation()">
                 <div class="flex justify-between items-center border-b border-white/10 pb-4"><h3 class="text-xl font-black">PARAMÈTRES ⚙️</h3><button onclick="window.ui.closeSettings()" class="text-2xl text-gray-400 hover:text-white">×</button></div>
-                <div class="settings-grp"><label class="settings-label">Pseudonyme</label><input type="text" id="setting-name" class="profile-input" onchange="USER.name = this.value; Storage.save(); window.ui.renderProfile()"></div>
+                <div class="settings-grp"><label class="settings-label">Pseudonyme</label><input type="text" id="setting-name" class="profile-input" placeholder="Ton pseudo..."></div>
                 <div class="settings-grp"><label class="settings-label">Avatar</label><button onclick="window.ui.openAvatarSelector()" class="w-full bg-white/10 hover:bg-white/20 border border-white/20 py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-2">CHANGER D'AVATAR 👤</button></div>
-                <div class="settings-grp"><label class="settings-label">Email</label><input type="email" id="setting-email" placeholder="email@exemple.com" class="profile-input" onchange="USER.email = this.value; Storage.save();"></div>
-                <div class="settings-grp"><label class="settings-label">Téléphone</label><input type="tel" id="setting-phone" placeholder="+33 6..." class="profile-input" onchange="USER.phone = this.value; Storage.save();"></div>
-                <div class="settings-grp"><label class="settings-label">Date de Naissance</label><input type="date" id="setting-dob" class="profile-input" onchange="USER.dob = this.value; Storage.save();"></div>
-                <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20" onchange="USER.bio = this.value; Storage.save(); window.ui.renderProfile()"></textarea></div>
+                <div class="settings-grp"><label class="settings-label">Email</label><input type="email" id="setting-email" placeholder="email@exemple.com" class="profile-input"></div>
+                <div class="settings-grp"><label class="settings-label">Téléphone</label><input type="tel" id="setting-phone" placeholder="+33 6..." class="profile-input"></div>
+                <div class="settings-grp"><label class="settings-label">Date de Naissance</label><input type="date" id="setting-dob" class="profile-input"></div>
+                <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20"></textarea></div>
                 <div class="settings-grp pt-2 border-t border-white/10 mt-2"><div class="flex justify-between items-center mb-2"><label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label><div id="theme-lock-icon" class="text-[10px] text-gray-500"></div></div><div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div></div>
-                <button onclick="window.ui.closeSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
-                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.3</div></div>
+                <button onclick="window.ui.saveSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
+                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.9</div></div>
              </div>
         </div>
 
@@ -491,12 +712,12 @@
                     <div><div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Score</div><div id="go-score" class="text-2xl font-black text-white font-tech">0</div></div>
                     <div><div class="text-[10px] text-gray-500 uppercase font-bold mb-1">Gains</div><div class="text-xl font-bold text-yellow-400" id="go-rewards"></div></div>
                 </div>
-                <button onclick="game.toMenu()" class="w-full bg-white text-black font-black py-4 rounded-xl active:scale-95 transition shadow-xl text-lg">RETOUR MENU 🏠</button>
+                <button onclick="game.toMenu()" class="w-full bg-gradient-to-r from-gray-100 to-gray-300 hover:from-white hover:to-gray-100 text-black font-black py-4 rounded-xl active:scale-95 transition shadow-[0_0_20px_rgba(255,255,255,0.3)] text-lg uppercase tracking-widest border border-white/50">RETOUR MENU 🏠</button>
             </div>
         </div>
     </div>
     <script>
-        /* mBATTLE v1.1.5 - SAISON 2 */
+        /* mBATTLE v1.2.9 - SAISON 2 */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
@@ -604,6 +825,13 @@
                         proj: { r: 15, speed: 15, life: 50, shape: 'circle', color: '#be185d', trailColor: '#fecaca' },
                         skins: [{id:'default', name:'Overlord', c:'#ef4444'}, {id:'dark', name:'Seigneur Noir', c:'#000000', price: 6000}, {id:'gold', name:'Empereur', c:'#facc15', price: 7000}, {id:'ice', name:'Roi Liche', c:'#3b82f6', price: 6500}, {id:'cyber', name:'Cyber Lord', c:'#a855f7', price: 5500}] },
 
+            // NOUVEAUX HÉROS v1.2.4 (WILD UPDATE)
+            bear: { name: "Bear", rarity: 'common', icon: "🐻", hp: 190, dmg: 20, spd: 4.8 * SPEED_FACTOR, rate: Math.ceil(18 * RATE_FACTOR), ammo: 3, reload: Math.ceil(35 * RELOAD_FACTOR), price: PRICE_COMMON, scale: {hp: 15, dmg: 2}, color: '#78350f', type: 'melee', desc: "Gros et costaud.", gadget: "heal", lore: "La force de la forêt.", passive: "Résistance", proj: { r: 20, speed: 0, life: 1, shape: 'melee', color: '#78350f', trailColor: '#92400e' }, skins: [{id:'default', name:'Bear', c:'#78350f'}, {id:'polar', name:'Polaire', c:'#f1f5f9', price: 1000}, {id:'panda', name:'Panda', c:'#171717', price: 1500}, {id:'cyber', name:'Cyber Ours', c:'#0ea5e9', price: 2000}, {id:'teddy', name:'Peluche', c:'#f472b6', price: 2500}] },
+            wolf: { name: "Wolf", rarity: 'rare', icon: "🐺", hp: 120, dmg: 18, spd: 7.0 * SPEED_FACTOR, rate: Math.ceil(10 * RATE_FACTOR), ammo: 6, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 8, dmg: 3}, color: '#64748b', type: 'normal', desc: "Chasseur en meute.", gadget: "speed", lore: "Le prédateur alpha.", passive: "Rage", proj: { r: 5, speed: Math.ceil(28 * PROJ_SPEED_FACTOR), life: 60, shape: 'paw', color: '#64748b', trailColor: '#94a3b8' }, skins: [{id:'default', name:'Wolf', c:'#64748b'}, {id:'black', name:'Noir', c:'#171717', price: 1500}, {id:'fire', name:'Fenrir', c:'#ef4444', price: 2000}, {id:'ice', name:'Loup des Glaces', c:'#bae6fd', price: 2500}, {id:'mecha', name:'Robo-Loup', c:'#eab308', price: 3000}] },
+            eagle: { name: "Eagle", rarity: 'epic', icon: "🦅", hp: 90, dmg: 60, spd: 6.5 * SPEED_FACTOR, rate: Math.ceil(40 * RATE_FACTOR), ammo: 2, reload: Math.ceil(50 * RELOAD_FACTOR), price: PRICE_EPIC, scale: {hp: 5, dmg: 8}, color: '#b45309', type: 'sniper', desc: "Vue perçante.", gadget: "teleport", lore: "Roi des cieux.", passive: "Vision", proj: { r: 6, speed: Math.ceil(40 * PROJ_SPEED_FACTOR), life: 100, shape: 'sniper', color: '#b45309', trailColor: '#d97706' }, skins: [{id:'default', name:'Eagle', c:'#b45309'}, {id:'usa', name:'Patriote', c:'#3b82f6', price: 3000}, {id:'phoenix', name:'Phénix', c:'#f97316', price: 3500}, {id:'golden', name:'Aigle Royal', c:'#facc15', price: 4000}, {id:'harpy', name:'Harpie', c:'#10b981', price: 3500}] },
+            rhino: { name: "Rhino", rarity: 'legendary', icon: "🦏", hp: 350, dmg: 35, spd: 4.2 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo: 4, reload: Math.ceil(40 * RELOAD_FACTOR), price: PRICE_LEGENDARY, scale: {hp: 25, dmg: 5}, color: '#52525b', type: 'melee', desc: "Charge dévastatrice.", gadget: "knockback", lore: "Rien ne l'arrête.", passive: "Blocage", proj: { r: 25, speed: 0, life: 1, shape: 'melee', color: '#52525b', trailColor: '#71717a' }, skins: [{id:'default', name:'Rhino', c:'#52525b'}, {id:'armored', name:'Blindé', c:'#1e293b', price: 4500}, {id:'red', name:'Fureur', c:'#b91c1c', price: 5000}, {id:'jade', name:'Jade', c:'#10b981', price: 5500}, {id:'gold', name:'Lingot', c:'#facc15', price: 6000}] },
+            shark: { name: "Shark", rarity: 'mythic', icon: "🦈", hp: 220, dmg: 28, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(12 * RATE_FACTOR), ammo: 8, reload: Math.ceil(30 * RELOAD_FACTOR), price: PRICE_MYTHIC, scale: {hp: 15, dmg: 4}, color: '#0ea5e9', type: 'shotgun', desc: "Mâchoires d'acier.", gadget: "speed", lore: "Terreur des océans.", passive: "Saignement", proj: { r: 8, speed: Math.ceil(22 * PROJ_SPEED_FACTOR), life: 50, shape: 'shark', color: '#0ea5e9', trailColor: '#7dd3fc' }, skins: [{id:'default', name:'Shark', c:'#0ea5e9'}, {id:'greatwhite', name:'Grand Blanc', c:'#e2e8f0', price: 6000}, {id:'hammer', name:'Marteau', c:'#64748b', price: 6500}, {id:'lava', name:'Magma Shark', c:'#ef4444', price: 7000}, {id:'void', name:'Abyssal', c:'#1e1b4b', price: 8000}] },
+
             // --- NOUVEAUX HÉROS AJOUTÉS (v1.0.1) ---
             archer: { name: "Archer", rarity: 'common', icon: "🏹", hp: 100, dmg: 25, spd: 6.0 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo:1, reload:Math.ceil(20 * RELOAD_FACTOR), price: PRICE_COMMON, scale:{hp:5, dmg:3}, color: '#166534', type: 'normal', desc: "Tire des flèches précises.", gadget: "speed", lore: "Chasseur de la forêt cybernétique.", passive: "Précision",
                       proj: { r: 3, speed: Math.ceil(35 * PROJ_SPEED_FACTOR), life: 80, shape: 'arrow', color: '#166534', trailColor: '#86efac' },
@@ -702,7 +930,9 @@
             giant_hunt: { name: "Chasse Géant", icon: "👹", desc: "Abattez le colosse.", ranked: false },
             golden_chase: { name: "Ruée vers l'Or", icon: "💰", desc: "Collecte max !", ranked: false },
             infection_hard: { name: "Infection +", icon: "🧟‍♂️", desc: "Survivre à l'enfer.", ranked: false },
-            speed_run: { name: "Speed Run", icon: "⚡", desc: "Extraction Rapide.", ranked: false }
+            speed_run: { name: "Speed Run", icon: "⚡", desc: "Extraction Rapide.", ranked: false },
+            team_battle: { name: "Team Battle", icon: "🛡️", desc: "4 vs 4 !", ranked: false },
+            ctf: { name: "Capture Drapeau", icon: "🚩", desc: "Vole le drapeau !", ranked: false }
         };
         const ARENAS = { 
             tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
@@ -719,9 +949,9 @@
             solaris: { name: "Solaris", color: '#451a03', grid: 'rgba(251, 146, 60, 0.2)', wall: '#7c2d12', special: false },
             swamp: { name: "Marais", color: '#222d1d', grid: 'rgba(132, 204, 22, 0.2)', wall: '#1a1f16' },
             factory: { name: "Usine", color: '#332e2b', grid: 'rgba(249, 115, 22, 0.2)', wall: '#292524' },
-            factory: { name: "Usine", color: '#332e2b', grid: 'rgba(249, 115, 22, 0.2)', wall: '#292524' },
             void: { name: "Néant", color: '#000000', grid: 'rgba(255, 255, 255, 0.05)', wall: '#171717', special: false },
-            atlantis: { name: "Atlantis", color: '#083344', grid: 'rgba(6, 182, 212, 0.2)', wall: '#155e75', special: false }
+            atlantis: { name: "Atlantis", color: '#083344', grid: 'rgba(6, 182, 212, 0.2)', wall: '#155e75', special: false },
+            dungeon: { name: "Donjon", color: '#1c1917', grid: 'rgba(120, 113, 108, 0.2)', wall: '#292524', special: false }
         };
 
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
@@ -798,8 +1028,8 @@
             chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_2';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_2_8';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -1077,6 +1307,8 @@
                             else window.game.conf.difficulty = saved.conf.difficulty;
                             if(!saved.conf || !saved.conf.modifier) window.game.conf.modifier = 'normal';
                             else window.game.conf.modifier = saved.conf.modifier;
+                            if(!saved.conf || typeof saved.conf.bots === 'undefined') window.game.conf.bots = 0;
+                            else window.game.conf.bots = saved.conf.bots;
                         }
                         
                         this.save();
@@ -1126,15 +1358,16 @@
                 else if (!isStatic1 && isStatic2) { ratio1 = 1; ratio2 = 0; }
                 else if (isStatic1 && isStatic2) { return; } 
 
-                // FIX ANTI-PUSH: Si e2 est un joueur et e1 est un bot, on donne la priorité au joueur.
-                // Si e1 est le joueur, il prend 100% de la correction (si e2 n'est pas statique).
-                if (e1 === window.game.player && !isStatic2) { ratio1 = 1; ratio2 = 0; } 
-                // Si e2 est le joueur, il prend 100% de la correction (si e1 n'est pas statique).
-                else if (e2 === window.game.player && !isStatic1) { ratio1 = 0; ratio2 = 1; }
-                // Si la collision est joueur-bot, le joueur ne devrait pas bouger si le bot pousse.
-                // Logique pour s'assurer que si le joueur est contre un mur (statique), le bot ne puisse pas le pousser davantage (bug anti-push)
-                if (e1 === window.game.player && isStatic2) { ratio1 = 0; } 
-                else if (e2 === window.game.player && isStatic1) { ratio2 = 0; }
+                // FIX ANTI-PUSH REWORK: Player Heavy, Bots Light
+                const isPlayer1 = e1 === window.game.player;
+                const isPlayer2 = e2 === window.game.player;
+                
+                if (isPlayer1 && !isStatic2 && (e2.isBot || (!e2.isBoss && e2.type !== 'train'))) { 
+                    ratio1 = 0.1; ratio2 = 0.9; // Player pushes bot/enemy
+                } else if (isPlayer2 && !isStatic1 && (e1.isBot || (!e1.isBoss && e1.type !== 'train'))) {
+                    ratio1 = 0.9; ratio2 = 0.1; // Bot/enemy bounces off player
+                } else if (e1 === window.game.player && isStatic2) { ratio1 = 1; ratio2 = 0; } 
+                else if (e2 === window.game.player && isStatic1) { ratio1 = 0; ratio2 = 1; }
 
 
                 e1.x += nx * overlap * ratio1;
@@ -1250,10 +1483,13 @@
 
         window.ui = {
             showIntro() {
-                /* Video Removed */
+                const s = el('intro-screen');
+                s.classList.remove('hidden');
+                setTimeout(() => { s.style.opacity = 0; setTimeout(() => s.classList.add('hidden'), 1000); }, 3500);
             },
             closeIntro() {
-                /* Video Removed */
+                const s = el('intro-screen');
+                s.style.opacity = 0; setTimeout(() => s.classList.add('hidden'), 1000);
             },
             hud() {
                 if(!window.game.player) return; const p = window.game.player;
@@ -1292,6 +1528,13 @@
                 } else if(window.game.conf.mode === 'zone_control') {
                     el('hud-objective').innerText = `Zone: ${Math.floor(window.game.zoneProgress)}%`;
                     el('hud-objective').classList.remove('hidden');
+                } else if(window.game.conf.mode === 'team_battle' || window.game.conf.mode === 'ctf') {
+                    if(window.game.teamScore === undefined) window.game.teamScore = 0;
+                    if(window.game.enemyScore === undefined) window.game.enemyScore = 0;
+                    const icon = window.game.conf.mode === 'ctf' ? '🚩' : '🔵';
+                    const icon2 = window.game.conf.mode === 'ctf' ? '🚩' : '🔴';
+                    el('hud-objective').innerHTML = `<span class="text-blue-400">${icon} ${window.game.teamScore}</span> - <span class="text-red-400">${icon2} ${window.game.enemyScore}</span>`;
+                    el('hud-objective').classList.remove('hidden');
                 } else {
                     el('hud-objective').classList.add('hidden');
                 }
@@ -1326,7 +1569,16 @@
             notif(m,c) { const d=document.createElement('div'); d.className='text-2xl font-black italic drop-shadow-2xl animate-bounce text-center px-4 py-1 bg-black/60 rounded-xl border border-white/10 backdrop-blur-sm shadow-xl'; d.style.color=c; d.innerText=m; el('notif-area').appendChild(d); setTimeout(()=>d.remove(),2000); },
             flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
             feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
-            levelUp() { const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ const b=document.createElement('button'); b.className='glass-panel p-4 text-left flex items-center gap-4 active:scale-95 transition bg-blue-900/40 border border-blue-500/30'; b.innerHTML=`<div class="text-3xl">${p.icon}</div><div><div class="font-bold text-yellow-400 text-lg">${p.name}</div><div class="text-xs text-gray-300">${p.desc}</div></div>`; b.onclick=()=>{p.fn(window.game.player); s.classList.add('hidden'); window.game.state='PLAYING';}; c.appendChild(b); }); },
+            levelUp() { 
+                const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); 
+                PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ 
+                    const b=document.createElement('button'); 
+                    b.className='glass-panel p-5 text-left flex items-center gap-5 active:scale-95 transition-all duration-300 cursor-pointer group hover:border-yellow-400/50 hover:shadow-[0_0_20px_rgba(250,204,21,0.2)] w-full relative overflow-hidden'; 
+                    b.innerHTML=`<div class="absolute inset-0 bg-yellow-400/5 opacity-0 group-hover:opacity-100 transition duration-500"></div><div class="text-4xl filter drop-shadow-lg group-hover:scale-110 transition duration-300 relative z-10">${p.icon}</div><div class="relative z-10"><div class="font-black font-tech text-yellow-400 text-xl tracking-wide group-hover:text-yellow-300 transition">${p.name.toUpperCase()}</div><div class="text-sm text-gray-300 font-bold">${p.desc}</div></div>`; 
+                    b.onclick=()=>{p.fn(window.game.player); s.classList.add('hidden'); window.game.state='PLAYING';}; 
+                    c.appendChild(b); 
+                }); 
+            },
             drawMinimap() { const cvs = el('minimap'); if(!cvs) return; const ctx = cvs.getContext('2d'); const scale = cvs.width / window.game.world; ctx.clearRect(0, 0, cvs.width, cvs.height);
                 (window.game.ents||[]).forEach(e => { if(e.hidden)return; ctx.fillStyle = (e.isBoss || e.isBot) ? '#ef4444' : (e.type==='core'||e.type==='train'||e.type==='terminal'?'#3b82f6':'#f87171'); const r = (e.isBoss || e.isBot || e.type==='core' || e.type==='train' || e.type==='terminal') ? 4 : 2; ctx.beginPath(); ctx.arc(e.x * scale, e.y * scale, r, 0, Math.PI * 2); ctx.fill(); });
                 (window.game.map||[]).forEach(w => { if(w.type === 1) ctx.fillStyle = 'rgba(34, 197, 94, 0.8)'; else if(w.type === 3) ctx.fillStyle = '#d97706'; else ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.fillRect(w.x * scale, w.y * scale, w.w * scale, w.h * scale); });
@@ -1336,26 +1588,30 @@
                 const c = el('trophy-list'); c.innerHTML = '';
                 const maxTrophies = RANKS[RANKS.length-1].t;
                 const pct = Math.min(100, (USER.trophies / maxTrophies) * 100);    
-                c.innerHTML += `<div class="glass-panel p-4 mb-2 bg-gradient-to-r from-cyan-900/50 to-purple-900/50">
-                    <div class="flex justify-between mb-1 text-xs font-bold text-gray-300"><span>PROGRESSION</span><span>${USER.trophies} / ${maxTrophies} 🏆</span></div>
-                    <div class="h-4 bg-black/50 rounded-full overflow-hidden"><div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500" style="width:${pct}%"></div></div>
+                c.innerHTML += `<div class="glass-panel p-5 mb-4 bg-gradient-to-r from-cyan-900/40 to-purple-900/40 border border-white/10 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
+                    <div class="flex justify-between mb-2 text-xs font-black tracking-widest text-cyan-400"><span>PROGRESSION</span><span class="text-white">${USER.trophies} / ${maxTrophies} 🏆</span></div>
+                    <div class="h-3 bg-black/50 rounded-full overflow-hidden border border-white/5 relative">
+                        <div class="absolute inset-0 bg-white/5 animate-pulse"></div>
+                        <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 shadow-[0_0_10px_rgba(56,189,248,0.5)] transition-all duration-1000" style="width:${pct}%"></div>
+                    </div>
                 </div>`;
                 RANKS.forEach((r, i) => {
                     if (i === 0) return;
                     const reached = USER.trophies >= r.t;
                     const claimed = USER.claimedRanks && USER.claimedRanks.includes(i);
                     let btn = '';
-                    if(claimed) btn = `<div class="text-green-400 font-bold text-[10px] flex items-center gap-1 bg-green-900/30 px-2 py-1 rounded">✅ RÉCUPÉRÉ</div>`;
-                    else if(reached) btn = `<button onclick="window.ui.claimRankReward(${i})" class="bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-1 px-3 rounded animate-pulse text-xs shadow-lg shadow-yellow-500/50">RÉCUPÉRER</button>`;
-                    else btn = `<div class="text-gray-500 font-bold text-[10px] bg-black/30 px-2 py-1 rounded">🔒 ${r.t} 🏆</div>`;
-                    c.innerHTML += `<div class="glass-panel p-3 flex items-center justify-between border-l-4 ${reached ? 'bg-white/5' : 'opacity-60 grayscale'}" style="border-color:${r.c}">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded bg-black/40 flex items-center justify-center text-lg shadow-inner">🏆</div>
+                    if(claimed) btn = `<div class="text-green-400 font-bold text-[10px] flex items-center gap-1 bg-green-900/20 px-3 py-1.5 rounded-lg border border-green-500/30">✅ RÉCUPÉRÉ</div>`;
+                    else if(reached) btn = `<button onclick="window.ui.claimRankReward(${i})" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:scale-105 transition text-black font-black py-1.5 px-4 rounded-lg animate-pulse text-xs shadow-[0_0_10px_rgba(234,179,8,0.4)] border border-yellow-400/50">RÉCUPÉRER</button>`;
+                    else btn = `<div class="text-gray-500 font-bold text-[10px] bg-black/40 px-3 py-1.5 rounded-lg border border-white/5">🔒 ${r.t} 🏆</div>`;
+                    
+                    c.innerHTML += `<div class="glass-panel p-4 flex items-center justify-between border-l-4 transition-all duration-300 group hover:bg-white/5 hover:translate-x-1 ${reached ? 'bg-gradient-to-r from-white/5 to-transparent' : 'opacity-60 grayscale'}" style="border-color:${r.c}">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-2xl shadow-inner border border-white/5 group-hover:scale-110 transition duration-300">🏆</div>
                             <div>
-                                <div class="font-bold text-sm" style="color:${r.c}">${r.n}</div>
-                                <div class="text-[10px] text-gray-400 flex gap-2">
-                                    <span class="text-yellow-400">+1000 🪙</span>
-                                    <span class="text-purple-400">+25 💎</span>
+                                <div class="font-black text-sm tracking-wide mb-1" style="color:${r.c}; text-shadow: 0 0 10px ${r.c}40">${r.n}</div>
+                                <div class="text-[10px] text-gray-400 flex gap-3 font-bold">
+                                    <span class="text-yellow-400 drop-shadow-sm">+1000 🪙</span>
+                                    <span class="text-purple-400 drop-shadow-sm">+25 💎</span>
                                 </div>
                             </div>
                         </div>
@@ -1390,7 +1646,7 @@
                 if(id === 'shop') this.renderShop(); 
                 if(id === 'profile') this.renderProfile(); 
                 if(id === 'emotes') this.renderEmotes(); 
-                if(id === 'play') this.updateDifficultyButtons(); 
+                if(id === 'play') { this.updateDifficultyButtons(); this.renderBotSelector(); } 
                 
                 this.updateMenu(); // Force menu refresh
             },
@@ -1404,6 +1660,29 @@
                 document.querySelectorAll('.mod-btn').forEach(btn => btn.classList.remove('active'));
                 const modBtn = el(`mod-${window.game.conf.modifier}`);
                 if(modBtn) modBtn.classList.add('active');
+            },
+            renderBotSelector() {
+                 let c = el('bot-selector');
+                 if(!c) {
+                     const tab = el('tab-play');
+                     if(!tab) return;
+                     const div = document.createElement('div');
+                     div.id = 'bot-selector';
+                     div.className = 'glass-panel p-3 mb-4 border border-white/10';
+                     // Insert after first child which is usually header, or just append
+                     if(tab.children.length > 2) tab.insertBefore(div, tab.children[2]);
+                     else tab.appendChild(div);
+                     c = div;
+                 }
+                 
+                 const cur = (window.game && window.game.conf) ? (window.game.conf.bots || 0) : 0;
+                 let html = '<div class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wider">Escouade (Bots Alliés)</div><div class="flex gap-2">';
+                 [0,1,2,3].forEach(n => {
+                     const active = cur === n ? 'selected text-cyan-400' : 'text-gray-400';
+                     html += `<button onclick="window.game.setBots(${n})" class="glass-btn flex-1 py-3 rounded-lg font-bold ${active} transition text-sm">${n}</button>`;
+                 });
+                 html += '</div>';
+                 c.innerHTML = html;
             },
             refreshShop(force = false) {
                 if (force) {
@@ -1469,24 +1748,25 @@
                 USER.shop.items.forEach((item, idx) => {
                     let icon = item.type==='coins'?'🪙':(item.type==='gems'?'💎':(item.type==='xp'?'🎫':(item.type==='skin'?'👕':'📦')));
                     let curIcon = item.curr==='coins'?'🪙':(item.curr==='gems'?'💎':'🎁');
-                    let color = item.curr==='free' ? 'free-item' : 'bg-white/5';
-                    let btnClass = item.curr==='free' ? 'bg-green-600 hover:bg-green-500' : (item.curr==='gems'?'bg-purple-600 hover:bg-purple-500':'bg-yellow-600 hover:bg-yellow-500');
+                    let color = item.curr==='free' ? 'border-green-500/30 bg-green-900/10' : 'bg-white/5';
+                    let btnClass = item.curr==='free' ? 'bg-green-600 hover:bg-green-500 shadow-green-900/50' : (item.curr==='gems'?'bg-purple-600 hover:bg-purple-500 shadow-purple-900/50':'bg-yellow-600 hover:bg-yellow-500 shadow-yellow-900/50');
                     let costDisplay = `${item.cost} ${curIcon}`;
                     let discountBadge = '';
                     if(item.discount) {
                         const newCost = Math.floor(item.cost * (1 - item.discount/100));
                         costDisplay = `<span class="line-through text-gray-400 text-xs mr-2">${item.cost}</span> ${newCost} ${curIcon}`;
                         item.realCost = newCost;
+                        discountBadge = `<div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded-bl-lg shadow-lg z-10">-${item.discount}%</div>`;
                     } else {
                         item.realCost = item.cost;
                     }
                     if(item.curr === 'free') costDisplay = 'GRATUIT';
-                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition border border-white/10 ${color} relative overflow-hidden">
+                    c.innerHTML += `<div class="glass-panel p-6 text-center flex flex-col items-center active:scale-95 transition border border-white/10 ${color} relative overflow-hidden group hover:border-white/30 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
                         ${discountBadge}
-                        <div class="text-5xl mb-2">${icon}</div>
-                        <div class="font-bold text-lg">${item.name}</div>
-                        <div class="text-xs text-gray-400 mb-4">${item.type==='skin' ? 'Skin Rare' : `+${item.val} ${icon}`}</div>
-                        <button onclick="window.ui.buySpecial(${idx})" class="w-full ${btnClass} py-3 rounded-xl font-bold text-sm">${costDisplay}</button>
+                        <div class="text-5xl mb-3 transform group-hover:scale-110 transition duration-300 drop-shadow-lg">${icon}</div>
+                        <div class="font-black text-lg mb-1 tracking-wide">${item.name}</div>
+                        <div class="text-xs text-gray-400 mb-4 font-bold uppercase tracking-wider">${item.type==='skin' ? 'Skin Rare' : `+${item.val} ${icon}`}</div>
+                        <button onclick="window.ui.buySpecial(${idx})" class="w-full ${btnClass} py-3 rounded-xl font-bold text-sm shadow-xl transition-all hover:scale-105 active:scale-95 border border-white/10 uppercase tracking-widest">${costDisplay}</button>
                     </div>`;
                 });
             },
@@ -1495,13 +1775,13 @@
                 const status = el('pass-pro-status');
                 if(status) {
                     if(USER.mPassMax) { 
-                        status.innerHTML = '<span class="text-yellow-400 font-black text-xl glow">mPASS MAX ACTIVÉ</span>'; 
+                        status.innerHTML = '<span class="text-yellow-400 font-black text-xl drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]">mPASS MAX ACTIVÉ</span>'; 
                     } else if(USER.mPassPro) {
-                        status.innerHTML = `<div class="flex gap-2 items-center"><span class="text-purple-400 font-bold">PRO ACTIVÉ</span> <button onclick="window.ui.buyPass('upgrade')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-4 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition animate-pulse">UPGRADE MAX (40💎)</button></div>`;
+                        status.innerHTML = `<div class="flex gap-2 items-center"><span class="text-purple-400 font-bold drop-shadow-md">PRO ACTIVÉ</span> <button onclick="window.ui.buyPass('upgrade')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-4 py-2 rounded-xl font-bold text-xs shadow-lg hover:scale-105 transition animate-pulse border border-yellow-300/30">UPGRADE MAX (40💎)</button></div>`;
                     } else { 
                         status.innerHTML = `<div class="flex gap-2">
-                            <button onclick="window.ui.buyPass('pro')" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-3 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition">mPASS PRO (159💎)</button>
-                            <button onclick="window.ui.buyPass('max')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-3 py-2 rounded-lg font-bold text-xs shadow-lg hover:scale-105 transition border border-white/20">mPASS MAX (199💎)</button>
+                            <button onclick="window.ui.buyPass('pro')" class="bg-gradient-to-r from-purple-600 to-indigo-600 px-4 py-2 rounded-xl font-bold text-xs shadow-lg hover:scale-105 transition border border-purple-400/30">mPASS PRO (159💎)</button>
+                            <button onclick="window.ui.buyPass('max')" class="bg-gradient-to-r from-yellow-500 to-amber-600 px-4 py-2 rounded-xl font-bold text-xs shadow-lg hover:scale-105 transition border border-yellow-300/30">mPASS MAX (199💎)</button>
                         </div>`; 
                     }
                 }
@@ -1517,8 +1797,8 @@
                     const [type, value] = rewardString.split(':');
                     const val = parseInt(value) || 1;
                     let icon = '🎁', text = '';
-                    if(type === 'coins') { icon = '🪙'; text = `+${val} Pièces`; }
-                    else if(type === 'gems') { icon = '💎'; text = `+${val} Gemmes`; }
+                    if(type === 'coins') { icon = '🪙'; text = `+${val}`; }
+                    else if(type === 'gems') { icon = '💎'; text = `+${val}`; }
                     else if(type === 'box' || type === 'mega_caisse_loot') { icon = '📦'; text = 'Caisse'; }
                     else if(type.startsWith('emote')) { icon = EMOTE_LIST.find(e => e.id === type.split(':')[1])?.i || '😀'; text = 'Emote'; }
                     else if(type.startsWith('skin')) { icon = '👕'; text = 'Skin'; }
@@ -1541,46 +1821,41 @@
                     
                     let proLocked = !USER.mPassPro && !USER.mPassMax;
                     let maxLocked = !USER.mPassMax;
-                    
-                    let freeState = claimedF ? 'claimed' : (unlocked ? 'active cursor-pointer' : 'locked');
-                    let proState = claimedP ? 'claimed' : ((unlocked && !proLocked) ? 'active cursor-pointer pro' : 'locked pro');
-                    let maxState = claimedM ? 'claimed' : ((unlocked && !maxLocked) ? 'active cursor-pointer max' : 'locked max');
-                    
+
+                    // Manual color mappings
+                    let fClass = claimedF ? "border-green-500/20 bg-green-900/10 opacity-60 grayscale" : (unlocked ? "border-blue-400 bg-blue-900/30 shadow-[0_0_10px_rgba(56,189,248,0.3)] cursor-pointer hover:scale-105 active:scale-95" : "border-white/5 bg-black/20 opacity-50");
+                    let pClass = claimedP ? "border-purple-500/20 bg-purple-900/10 opacity-60 grayscale" : (unlocked ? (proLocked ? "border-purple-500/20 bg-purple-900/10 opacity-70 cursor-not-allowed" : "border-purple-500 bg-purple-900/30 shadow-[0_0_10px_rgba(168,85,247,0.3)] cursor-pointer hover:scale-105 active:scale-95") : "border-white/5 bg-black/20 opacity-50");
+                    let mClass = claimedM ? "border-yellow-500/20 bg-yellow-900/10 opacity-60 grayscale" : (unlocked ? (maxLocked ? "border-yellow-500/20 bg-yellow-900/10 opacity-70 cursor-not-allowed" : "border-yellow-500 bg-yellow-900/30 shadow-[0_0_10px_rgba(234,179,8,0.3)] cursor-pointer hover:scale-105 active:scale-95") : "border-white/5 bg-black/20 opacity-50");
+
                     let fnF = (unlocked && !claimedF) ? `onclick="window.ui.claimPass(${i}, 'free', '${freeRwdStr}')"` : '';
                     let fnP = (unlocked && !claimedP && !proLocked) ? `onclick="window.ui.claimPass(${i}, 'pro', '${proRwdStr}')"` : (proLocked ? `onclick="window.ui.notif('ACHÈTE LE mPASS PRO !', '#a855f7')"` : '');
                     let fnM = (unlocked && !claimedM && !maxLocked) ? `onclick="window.ui.claimPass(${i}, 'max', '${maxRwdStr}')"` : (maxLocked ? `onclick="window.ui.notif('ACHÈTE LE mPASS MAX !', '#facc15')"` : '');
                     
-                    let contentF = claimedF ? `<div class="check-mark">✅</div>` : '';
-                    contentF += `<div class="text-3xl mb-1 ${claimedF ? 'opacity-20' : ''}">${displayF.icon}</div>
-                                 <div class="text-[9px] font-bold ${claimedF ? 'opacity-50' : ''} text-center leading-tight px-1">${displayF.text}</div>`;
-
-                    let contentP = claimedP ? `<div class="check-mark">✅</div>` : '';
-                    contentP += `<div class="text-3xl mb-1 ${claimedP ? 'opacity-20' : ''}">${displayP.icon}</div>
-                                 <div class="text-[9px] font-bold ${claimedP ? 'opacity-50' : ''} text-center leading-tight px-1">${displayP.text}</div>`;
-
-                    let contentM = claimedM ? `<div class="check-mark">✅</div>` : '';
-                    contentM += `<div class="text-3xl mb-1 ${claimedM ? 'opacity-20' : ''}">${displayM.icon}</div>
-                                 <div class="text-[9px] font-bold ${claimedM ? 'opacity-50' : ''} text-center leading-tight px-1">${displayM.text}</div>`;
+                    const tierBadge = `<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-black/80 px-2 py-0.5 rounded text-[8px] font-bold border border-white/10 text-gray-400 whitespace-nowrap">PALIER ${i}</div>`;
+                    
+                    const content = (chk, icon, txt) => chk ? `<div class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl z-10"><div class="text-2xl">✅</div></div><div class="opacity-20 flex flex-col items-center"><div class="text-2xl mb-1">${icon}</div><div class="text-[9px] font-bold">${txt}</div></div>` : `<div class="flex flex-col items-center"><div class="text-3xl mb-1 drop-shadow-md transition-transform group-hover:scale-110">${icon}</div><div class="text-[10px] font-bold tracking-wide">${txt}</div></div>`;
 
                     freeHtml += `
-                        <div id="pass-free-tier-${i}" class="pass-step ${freeState} shrink-0" ${fnF}>
-                            <div class="tier-badge">PALIER ${i}</div>
-                            ${contentF}
+                        <div id="pass-free-tier-${i}" class="glass-panel w-24 h-28 shrink-0 rounded-xl border relative flex items-center justify-center transition-all duration-300 group ${fClass}" ${fnF}>
+                            ${tierBadge}
+                            ${content(claimedF, displayF.icon, displayF.text)}
                         </div>`;
                     proHtml += `
-                        <div id="pass-pro-tier-${i}" class="pass-step ${proState} shrink-0" ${fnP}>
-                            <div class="tier-badge">PALIER ${i}</div>
-                            ${contentP}
+                        <div id="pass-pro-tier-${i}" class="glass-panel w-24 h-28 shrink-0 rounded-xl border relative flex items-center justify-center transition-all duration-300 group ${pClass}" ${fnP}>
+                             ${tierBadge}
+                             ${content(claimedP, displayP.icon, displayP.text)}
+                             ${proLocked ? '<div class="absolute top-1 right-1 text-xs">🔒</div>' : ''}
                         </div>`;
                     maxHtml += `
-                        <div id="pass-max-tier-${i}" class="pass-step ${maxState} shrink-0" ${fnM}>
-                            <div class="tier-badge">MAX ${i}</div>
-                            ${contentM}
+                        <div id="pass-max-tier-${i}" class="glass-panel w-24 h-28 shrink-0 rounded-xl border relative flex items-center justify-center transition-all duration-300 group ${mClass}" ${fnM}>
+                             ${tierBadge}
+                             ${content(claimedM, displayM.icon, displayM.text)}
+                             ${maxLocked ? '<div class="absolute top-1 right-1 text-xs">🔒</div>' : ''}
                         </div>`;
                 }
-                tr.innerHTML = freeHtml;
-                trPro.innerHTML = proHtml;
-                trMax.innerHTML = maxHtml;
+                tr.innerHTML = `<div class="flex gap-4 p-4">${freeHtml}</div>`;
+                trPro.innerHTML = `<div class="flex gap-4 p-4">${proHtml}</div>`;
+                trMax.innerHTML = `<div class="flex gap-4 p-4">${maxHtml}</div>`;
 
                 const scrollContainer = el('pass-scroll-container');
                 const currentTierIndex = USER.pass.tier;
@@ -1610,37 +1885,44 @@
 
                 const sl = el('list-starters'); sl.innerHTML = '';
                 Object.keys(sortedStarters).forEach(k => {
-                    const s = sortedStarters[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k ? 'border-blue-500 bg-blue-900/20' : 'bg-white/5 border-white/5';
+                    const s = sortedStarters[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k;
                     const rarity = RARITY[s.rarity] || RARITY.common;
-                    const borderColor = active.includes('border-blue-500') ? '' : `border-color: ${rarity.color}40;`;
-                    const bgStyle = active.includes('bg-blue-900') ? '' : `background: linear-gradient(135deg, ${rarity.color}10, rgba(255,255,255,0.02));`;
-                    sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="${borderColor} ${bgStyle}" class="glass-panel p-4 cursor-pointer active:scale-95 transition ${active} ${unlocked?'':'locked'} relative group border flex flex-col items-center text-center">
+                    
+                    sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="--r-color:${rarity.color}" class="glass-panel p-3 cursor-pointer active:scale-95 transition-all duration-300 ${active ? 'bg-blue-900/40 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : `border-${rarity.color}/30 border-opacity-30 hover:border-${rarity.color}/60`} ${unlocked?'':'locked opacity-50 grayscale'} relative group border hover:shadow-lg hover:-translate-y-1 overflow-hidden flex flex-col items-center text-center">
+                        <div class="absolute inset-0 bg-gradient-to-br from-[var(--r-color)] to-transparent opacity-5 group-hover:opacity-15 transition-opacity"></div>
                         ${(window.QuestSystem && window.QuestSystem.hasQuest('play', {hero: k})) ? '<div class="absolute top-1 left-1 text-lg z-20 animate-bounce">📜</div>' : ''}
-                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider text-white shadow-sm" style="background-color:${rarity.color}">${rarity.name}</div>
-                        <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-3xl mb-2">${s.icon}</div>
-                        <div class="font-black text-sm uppercase tracking-wider" style="color:${rarity.color}">${s.name}</div>
-                        <div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden">${s.desc}</div>
-                        <div class="text-[9px] font-bold text-blue-300 mb-1">Niv. ${lvl}</div>
+                        <div class="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider text-white shadow-sm z-10 backdrop-blur-md" style="background-color:${rarity.color}">${rarity.name}</div>
+                        <div class="w-14 h-14 rounded-2xl bg-black/40 flex items-center justify-center text-3xl mb-3 shadow-inner group-hover:scale-110 transition-transform duration-300 relative z-10">${s.icon}</div>
+                        <div class="font-black font-tech text-sm uppercase tracking-wider mb-1 relative z-10" style="color:${rarity.color}">${s.name}</div>
+                        <div class="text-[10px] text-gray-400 leading-tight mb-2 h-6 overflow-hidden relative z-10">${s.desc}</div>
+                        <div class="text-[9px] font-bold text-blue-300 bg-blue-900/30 px-2 py-0.5 rounded-full border border-blue-500/30 relative z-10">Niv. ${lvl}</div>
                     </div>`;
                 });
+                
                 const ml = el('list-modes'); ml.innerHTML = ''; 
                 Object.keys(MODES).forEach(k => { 
                     const m = MODES[k]; 
-                    const specialClass = m.special ? 'season-gold' : 'bg-white/5 border-white/5'; 
-                    const active = currentMode === k ? 'border-purple-500 bg-purple-900/20' : specialClass; 
-                    ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${active} active:scale-95 transition border relative">
+                    const isSelected = currentMode === k;
+                    const specialClass = m.special ? 'season-gold' : ''; 
+                    
+                    ml.innerHTML += `<div onclick="window.game.setMode('${k}')" class="glass-panel p-4 cursor-pointer flex items-center gap-4 ${isSelected ? 'border-purple-500 bg-purple-900/20 shadow-[0_0_15px_rgba(168,85,247,0.2)]' : ''} ${specialClass} active:scale-95 transition-all duration-300 relative group overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         ${(window.QuestSystem && (window.QuestSystem.hasQuest('play', {mode: k}) || window.QuestSystem.hasQuest('win', {mode: k}))) ? '<div class="absolute top-2 right-2 text-xl animate-bounce">📜</div>' : ''}
-                        <div class="text-4xl p-2 bg-black/30 rounded-full icon-box">${m.icon}</div><div class="text-left flex-1"><div class="font-black text-lg">${m.name}</div><div class="text-xs text-gray-400">${m.desc}</div></div><div class="text-2xl text-gray-600">➜</div></div>`; 
+                        <div class="text-4xl p-3 bg-black/40 rounded-full shadow-lg group-hover:scale-110 transition-transform duration-300">${m.icon}</div>
+                        <div class="text-left flex-1 relative z-10"><div class="font-black font-tech text-lg group-hover:text-purple-300 transition-colors">${m.name}</div><div class="text-xs text-gray-400 font-bold">${m.desc}</div></div>
+                        <div class="text-2xl text-gray-600 group-hover:text-white transition-colors">➜</div>
+                    </div>`; 
                 }); 
+                
                 const al = el('list-arenas'); al.innerHTML = ''; 
                 Object.keys(ARENAS).forEach(k => { 
                     const a = ARENAS[k]; 
-                    const specialClass = a.special ? 'season-gold text-yellow-100' : 'bg-white/5 border-white/5 text-gray-400'; 
-                    const active = currentArena === k ? 'border-green-500 bg-green-900/20 text-white' : specialClass; 
-                al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${active} active:scale-95 transition border font-bold text-xs uppercase tracking-widest relative">
-                    ${a.name}
-                    ${(window.QuestSystem && window.QuestSystem.hasQuest('play', {arena: k}) || window.QuestSystem.hasQuest('win', {arena: k})) ? '<div class="absolute -top-1 -right-1 text-xs animate-bounce">📜</div>' : ''}
-                </div>`; 
+                    const isSelected = currentArena === k;
+                    al.innerHTML += `<div onclick="window.game.setArena('${k}')" class="glass-panel p-3 cursor-pointer text-center ${isSelected ? 'border-cyan-500 bg-cyan-900/20 shadow-[0_0_15px_rgba(34,211,238,0.2)] text-cyan-300' : 'text-gray-400'} active:scale-95 transition-all duration-300 group overflow-hidden relative font-bold text-xs uppercase tracking-widest">
+                         <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 z-0 opacity-50"></div>
+                         <div class="relative z-10 group-hover:text-cyan-300 transition-colors">${a.name}</div>
+                         ${(window.QuestSystem && (window.QuestSystem.hasQuest('play', {arena: k}) || window.QuestSystem.hasQuest('win', {arena: k}))) ? '<div class="absolute -top-1 -right-1 text-xs animate-bounce">📜</div>' : ''}
+                    </div>`; 
                 });
             },
             openHeroDetails(k) {
@@ -1660,10 +1942,10 @@
                 // NOUVEAU : Affichage des stats détaillées
                 const maxHp = 600, maxDmg = 150, maxSpd = 10;
                 const statsData = [
-                    { label: 'SANTÉ', base: s.hp, scale: s.scale.hp, max: maxHp, color: 'bg-green-500' },
-                    { label: 'DÉGÂTS', base: s.dmg, scale: s.scale.dmg, max: maxDmg, color: 'bg-red-500' },
+                    { label: 'SANTÉ', base: s.hp, scale: s.scale.hp, max: maxHp, color: 'bg-green-500', shadow: 'shadow-green-500/50' },
+                    { label: 'DÉGÂTS', base: s.dmg, scale: s.scale.dmg, max: maxDmg, color: 'bg-red-500', shadow: 'shadow-red-500/50' },
                     // La vitesse n'augmente pas par niveau, mais on affiche sa valeur
-                    { label: 'VITESSE', base: s.spd, scale: 0, max: maxSpd, color: 'bg-yellow-400' } 
+                    { label: 'VITESSE', base: s.spd, scale: 0, max: maxSpd, color: 'bg-yellow-400', shadow: 'shadow-yellow-400/50' } 
                 ];
 
                 let statsHTML = '';
@@ -1688,8 +1970,8 @@
                                 <div class="stat-label text-sm text-gray-400 uppercase font-bold">${stat.label}</div>
                                 <div class="text-sm font-black text-white">${currentValue} ${gainText}</div>
                             </div>
-                            <div class="stat-track h-2 bg-gray-800 rounded-full overflow-hidden">
-                                <div class="stat-fill h-full ${stat.color} transition-all duration-300" style="width: ${Math.min(100, barWidth)}%;"></div>
+                            <div class="stat-track h-2 bg-gray-900/50 rounded-full overflow-hidden border border-white/5">
+                                <div class="stat-fill h-full ${stat.color} transition-all duration-300 shadow-lg ${stat.shadow}" style="width: ${Math.min(100, barWidth)}%;"></div>
                             </div>
                         </div>
                     `;
@@ -1783,13 +2065,13 @@
                         const status = q.claimed ? '<span class="text-green-500 font-bold text-xs">OUI</span>' : (q.completed ? `<button onclick="window.QuestSystem.claim('${typeList}', '${q.id}')" class="bg-green-600 hover:bg-green-500 text-white font-bold px-3 py-1 rounded text-xs animate-pulse">RÉCUPÉRER</button>` : `<span class="text-gray-500 text-xs">${q.progress}/${q.target}</span>`);
                         const style = q.completed ? (q.claimed ? 'border-green-900/30 opacity-50' : 'border-green-500 bg-green-900/20') : 'border-white/10 bg-black/40';
                         
-                        c.innerHTML += `<div class="p-3 rounded-lg border ${style} flex justify-between items-center transition">
+                        c.innerHTML += `<div class="glass-panel p-3 rounded-lg border flex justify-between items-center transition ${style}">
                             <div class="flex-1">
-                                <div class="text-sm font-bold text-white mb-1">${q.desc}</div>
-                                <div class="w-full h-1.5 bg-gray-800 rounded-full overflow-hidden"><div class="h-full bg-blue-500 transition-all" style="width:${pct}%"></div></div>
+                                <div class="text-sm font-bold text-white mb-1.5 drop-shadow-md">${q.desc}</div>
+                                <div class="w-full h-1.5 bg-black/50 rounded-full overflow-hidden border border-white/5"><div class="h-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.6)] transition-all" style="width:${pct}%"></div></div>
                             </div>
                             <div class="ml-4 flex flex-col items-end gap-1">
-                                <div class="text-xs font-bold text-yellow-400">+${q.reward.val}${rIcon}</div>
+                                <div class="text-xs font-black text-yellow-400 drop-shadow-sm">+${q.reward.val}${rIcon}</div>
                                 ${status}
                             </div>
                         </div>`;
@@ -1800,7 +2082,7 @@
                     renderQ(USER.quests.season, 'season-quests-list', 'season');
                 }
             },
-            openAvatarSelector() { const grid = el('avatar-grid'); grid.innerHTML = ''; ICONS.forEach(icon => { grid.innerHTML += `<button onclick="window.ui.selectAvatar('${icon}')" class="w-14 h-14 text-3xl bg-white/10 hover:bg-blue-600 rounded-xl transition flex items-center justify-center border border-white/10">${icon}</button>`; }); el('avatar-selector').classList.remove('hidden'); },
+            openAvatarSelector() { const grid = el('avatar-grid'); grid.innerHTML = ''; ICONS.forEach(icon => { grid.innerHTML += `<button onclick="window.ui.selectAvatar('${icon}')" class="glass-panel w-16 h-16 text-4xl flex items-center justify-center hover:bg-blue-600/50 hover:scale-110 hover:border-blue-400 active:scale-95 transition cursor-pointer rounded-2xl border border-white/5 shadow-lg">${icon}</button>`; }); el('avatar-selector').classList.remove('hidden'); },
             selectAvatar(icon) { USER.avatar = icon; Storage.save(); el('avatar-selector').classList.add('hidden'); this.renderProfile(); },
             
             uploadAvatar(input) {
@@ -1832,20 +2114,20 @@
 
                 USER.equippedEmotes.forEach(id => { 
                     const e = EMOTE_LIST.find(em => em.id === id); 
-                    equipped.innerHTML += `<div class="w-12 h-12 bg-black/40 rounded-lg flex items-center justify-center text-2xl border border-blue-500/50 relative group cursor-pointer" onclick="window.ui.unequipEmote('${id}')">${e?.i || '❓'}<div class="emote-remove-btn">×</div></div>`; 
+                    equipped.innerHTML += `<div class="glass-panel w-14 h-14 rounded-xl flex items-center justify-center text-2xl border border-blue-500/50 relative group cursor-pointer hover:bg-red-900/20 transition" onclick="window.ui.unequipEmote('${id}')">${e?.i || '❓'}<div class="emote-remove-btn absolute -top-2 -right-2 bg-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold shadow-lg scale-0 group-hover:scale-100 transition duration-200">×</div></div>`; 
                 }); 
                 
                 // Slots vides
                 for(let i=USER.equippedEmotes.length; i < maxEquipped; i++) {
-                     equipped.innerHTML += `<div class="w-12 h-12 bg-gray-900/50 rounded-lg flex items-center justify-center text-xl border border-gray-700/50 text-gray-700">#${i+1}</div>`;
+                     equipped.innerHTML += `<div class="w-14 h-14 bg-black/20 rounded-xl flex items-center justify-center text-xl border border-white/5 text-gray-700">#${i+1}</div>`;
                 }
 
                 EMOTE_LIST.forEach(e => { 
                     const unlocked = USER.emotes.includes(e.id); 
                     const selected = USER.equippedEmotes.includes(e.id); 
-                    const priceTag = unlocked ? '' : `<div class="absolute bottom-1 right-1 text-[8px] font-bold bg-black/50 px-1 rounded text-purple-400">${e.price}💎</div>`; 
+                    const priceTag = unlocked ? '' : `<div class="absolute bottom-1 right-1 text-[8px] font-bold bg-black/50 px-1 rounded text-purple-400 backdrop-blur-sm">${e.price}💎</div>`; 
                     const clickAction = unlocked ? `window.ui.equipEmote('${e.id}')` : `window.ui.buyEmote('${e.id}', ${e.price})`; 
-                    list.innerHTML += `<div onclick="${clickAction}" class="emote-grid-item ${unlocked ? 'unlocked' : 'locked'} ${selected ? 'selected' : ''}">${e.i}${priceTag}</div>`; 
+                    list.innerHTML += `<div onclick="${clickAction}" class="glass-panel w-16 h-16 flex items-center justify-center text-3xl cursor-pointer transition active:scale-95 rounded-xl border ${unlocked ? 'hover:bg-white/10 hover:border-white/30 border-white/10' : 'opacity-50 grayscale border-white/5'} ${selected ? 'border-green-500 bg-green-900/20 shadow-[0_0_15px_rgba(34,197,94,0.3)]' : ''}">${e.i}${priceTag}</div>`; 
                 }); 
             },
             unequipEmote(id) { USER.equippedEmotes = USER.equippedEmotes.filter(e => e !== id); Storage.save(); this.renderEmotes(); this.toggleEmoteWheel(); },
@@ -2017,11 +2299,12 @@
             },
             openSettings() {
                 el('settings-modal').classList.remove('hidden');
-                el('setting-name').value = USER.name || '';
+                // FIX: Clear default values to avoid "JoueurPSEUDO" or default bio concatenation
+                el('setting-name').value = (USER.name === 'Joueur') ? '' : (USER.name || '');
                 el('setting-email').value = USER.email || '';
                 el('setting-phone').value = USER.phone || '';
                 el('setting-dob').value = USER.dob || '';
-                el('setting-bio').value = USER.bio || '';
+                el('setting-bio').value = (USER.bio === 'Aucune bio définie...') ? '' : (USER.bio || '');
                 
                 // Render Theme Selector in Settings
                 const themeContainer = el('profile-theme-selector');
@@ -2041,6 +2324,24 @@
                 
                 if (USER.mPassPro) el('theme-lock-icon').innerText = "DÉBLOQUÉ";
                 else el('theme-lock-icon').innerText = "Requis : mPass Pro";
+            },
+            saveSettings() {
+                const name = el('setting-name').value;
+                const bio = el('setting-bio').value;
+                const email = el('setting-email').value;
+                const phone = el('setting-phone').value;
+                const dob = el('setting-dob').value;
+                
+                if(name) USER.name = name;
+                if(bio !== undefined) USER.bio = bio;
+                if(email !== undefined) USER.email = email;
+                if(phone !== undefined) USER.phone = phone;
+                if(dob !== undefined) USER.dob = dob;
+
+                Storage.save();
+                this.renderProfile();
+                this.closeSettings();
+                this.notif("PROFIL MIS À JOUR !", "#22c55e");
             },
             closeSettings() {
                 el('settings-modal').classList.add('hidden');
@@ -2137,6 +2438,75 @@
             z.addEventListener('touchend',e=>h(e,true)); 
         }};
         class Entity{constructor(x,y,r,c){this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false; this.hitTimer = 300;} draw(ctx){ ctx.save(); ctx.translate(this.x, this.y); let isHidden = false; if (window.game.map) { for(let w of window.game.map) { if(w.type === 1 && ColRect(this, w)) { isHidden = true; break; } } } if(isHidden && this === window.game.player) { ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.font = "20px Arial"; ctx.fillText("👁️", -10, -this.r - 10); ctx.beginPath(); ctx.moveTo(-10, -this.r - 5); ctx.lineTo(10, -this.r - 25); ctx.strokeStyle = 'red'; ctx.lineWidth = 2; ctx.stroke(); } if(isHidden) ctx.globalAlpha = 0.5; ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15; ctx.beginPath(); ctx.arc(0, 0, this.r, 0, Math.PI*2); ctx.fillStyle = this.c; ctx.fill(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.arc(-5, -5, this.r*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill(); ctx.globalAlpha = 1; if(this.emoteTimer > 0) { ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(0, -this.r - 30, 20, 0, Math.PI*2); ctx.fill(); ctx.font = "24px Arial"; ctx.fillStyle = 'black'; ctx.textAlign = 'center'; ctx.fillText(this.emote, 0, -this.r - 22); this.emoteTimer--; } ctx.restore(); }}
+        class Flag extends Entity {
+            constructor(team, x, y) {
+                super(x, y, 15, team === 'blue' ? '#3b82f6' : '#ef4444');
+                this.team = team;
+                this.baseX = x; this.baseY = y;
+                this.carrier = null;
+                this.isHome = true;
+                this.returnTimer = 0;
+            }
+            update() {
+                if (this.carrier) {
+                    if (this.carrier.dead) { this.drop(); }
+                    else { this.x = this.carrier.x; this.y = this.carrier.y - 20; this.isHome = false; }
+                } else {
+                    if (!this.isHome) {
+                        this.returnTimer--;
+                        if (this.returnTimer <= 0) this.returnToBase();
+                    }
+                    let inRange = [window.game.player, ...window.game.ents].filter(e => !e.dead && Dist(this, e) < this.r + e.r && !(e instanceof Flag));
+                    for (let e of inRange) {
+                        let isFriend = (e.friend && this.team === 'blue') || (!e.friend && this.team === 'red');
+                        if (!isFriend) { this.pickUp(e); break; }
+                        else {
+                            if (!this.isHome) { this.returnToBase(); break; }
+                            else if (window.game.flags) { 
+                                let other = window.game.flags.find(f => f.team !== this.team);
+                                if (other && other.carrier === e) {
+                                    if (this.team === 'blue') { 
+                                        window.game.teamScore++; 
+                                        window.ui.notif("POINT BLEU !", "#3b82f6"); 
+                                    } else {
+                                        window.game.enemyScore++;
+                                        window.ui.notif("POINT ROUGE !", "#ef4444");
+                                    }
+                                    other.returnToBase(); 
+                                    if(window.game.teamScore >= 3) window.game.over("VICTOIRE");
+                                    if(window.game.enemyScore >= 3) window.game.over("DÉFAITE");
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            drop() {
+                this.carrier = null; this.returnTimer = 600;
+                window.ui.notif(`DRAPEAU ${this.team==='blue'?'BLEU':'ROUGE'} TOMBÉ !`, this.c);
+            }
+            pickUp(e) {
+                if (this.carrier) return;
+                this.carrier = e; this.isHome = false;
+                window.ui.notif(`DRAPEAU LEVÉ !`, this.c);
+            }
+            returnToBase() {
+                this.x = this.baseX; this.y = this.baseY;
+                this.carrier = null; this.isHome = true;
+                window.ui.notif(`DRAPEAU ${this.team==='blue'?'BLEU':'ROUGE'} RETOURNÉ !`, this.c);
+            }
+            draw(ctx) {
+                ctx.save(); ctx.translate(this.x, this.y);
+                ctx.fillStyle = 'white'; ctx.fillRect(-2, -30, 4, 30);
+                ctx.fillStyle = this.c; ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(20, -20); ctx.lineTo(0, -10); ctx.fill();
+                if (this.isHome) {
+                    ctx.strokeStyle = this.c; ctx.globalAlpha = 0.3; ctx.lineWidth = 2;
+                    ctx.beginPath(); ctx.arc(0, 0, 25, 0, Math.PI * 2); ctx.stroke();
+                }
+                ctx.restore();
+            }
+        }
         class Wall{constructor(x,y,w,h,t){this.x=x;this.y=y;this.w=w;this.h=h;this.type=t;} draw(ctx,c){ 
             // Ambiance ombre sous les murs
             ctx.save();
@@ -2180,6 +2550,7 @@
             this.hp=this.stats.hp; 
             this.maxHp=this.stats.hp; 
             this.xp=0;this.xpMax=100;this.lvl=1;this.super=0;this.cd=0;this.dashT=0;this.angle=0;
+            this.friend = true; // FIX: Player is friendly
             // FIX 1: Initialize ammo based on hero stats
             this.ammo=s.ammo;
             this.ammoMax=s.ammo;
@@ -2253,6 +2624,9 @@
             if(window.game.gasRadius && Dist(this, {x:window.game.world/2, y:window.game.world/2}) > window.game.gasRadius) { this.hp -= 10; this.hitTimer = 0; window.ui.flash(); if(this.hp<=0) window.game.over("Tué par le Gaz"); } 
             if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; this.hitTimer = 0; if(this.hp<=0) window.game.over("Empoisonné"); } 
         } move(dx,dy){const nx=this.x+dx,ny=this.y+dy;let cx=0,cy=0;for(let w of window.game.map){if(w.type===1)continue;if(w.collide({x:nx,y:this.y,r:this.r}))cx=1;if(w.collide({x:this.x,y:ny,r:this.r}))cy=1;}if(!cx)this.x=Math.max(this.r,Math.min(window.game.world-this.r,nx));if(!cy)this.y=Math.max(this.r,Math.min(window.game.world-this.r,ny));} shoot(){ 
+            // FIX: Define timeScale from modifier (ReferenceError Fix)
+            const mod = window.game.activeModifier || window.game.conf.modifier;
+            const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
             window.game.shake = 2;
             const selectedHero = STARTERS[USER.selected];
             if (selectedHero.name === 'Harpy' && this.cd > 0) {
@@ -2269,7 +2643,7 @@
                 // Le projectile corps-à-corps a une vie très courte (1 frame)
                 window.game.projs.push({
                     x: this.x + Math.cos(this.angle) * 25, y: this.y + Math.sin(this.angle) * 25,
-                    vx: 0, vy: 0, dmg: this.stats.dmg * (1 + this.cubes * 0.1), life: 1,
+                    vx: 0, vy: 0, dmg: this.stats.dmg * (1 + this.cubes * 0.1), life: 3,
                     r: pStats.r, c: pStats.color, friend: true, shape: pStats.shape, trailColor: pStats.trailColor, melee: true
                 });
                 return;
@@ -2331,10 +2705,13 @@
                 for(let e of window.game.ents) {
                     if(Dist(this, e) < 300) { 
                         e.isStunned = 120; 
+                        e.flashColor = '#facc15'; e.flashTimer = 10;
                         window.game.parts.push({x:e.x,y:e.y,vx:Rnd(-2,2),vy:Rnd(-2,2),life:30,c:'#facc15',r:5}); 
                     }
                 }
             }
+            if(t==="turret") { window.game.ents.push(new Turret(this.x, this.y, true)); window.ui.notif("TOURELLE DÉPLOYÉE", "#fbbf24"); }
+            if(t==="dash") { this.dashT = 0; this.dash(); }
             if(t==="invis") { this.invisible = 180; window.ui.notif("INVISIBLE !", "#94a3b8"); }
         } draw(ctx){ 
             ctx.save(); 
@@ -2360,81 +2737,125 @@
             ctx.restore(); 
         } }
         class Bot extends Player{ 
-            constructor(){ 
+            constructor(isFriendly = false){ 
                 super(USER.selected==='soldier'?'tank':'soldier'); 
-                this.c='#ef4444'; 
+                this.c= isFriendly ? '#3b82f6' : '#ef4444'; 
                 this.isBot=true; 
+                this.friend = isFriendly;
                 this.x=100; 
                 this.y=100; 
                 this.mode='CHASE'; 
                 this.target=null; 
-                this.isStunned = 0; // Ajout du stun
+                this.isStunned = 0; 
                 this.hitTimer = 300; 
-                // Buff PV
                 this.hp += ENEMY_HP_BUFF;
                 this.maxHp += ENEMY_HP_BUFF;
                 
-                // Difficulty Scaling for Bots
                 const diffMult = DIFFICULTY[window.game.conf.difficulty].mult;
                 this.hp *= diffMult;
                 this.maxHp *= diffMult;
                 this.stats.dmg *= diffMult;
-                // Vitesse légèrement augmentée en difficulté supérieure
                 this.stats.spd *= (1 + (diffMult - 1) * 0.3);
 
                 if(window.game.conf.modifier === 'oneshot') { this.hp = 1; this.maxHp = 1; }
             } 
             update(){ 
-                if (this.isStunned > 0) { this.isStunned--; return; } // Stunned = skip update
-                this.hitTimer++; // Incrémenter le timer de non-hit
+                if (this.isStunned > 0) { this.isStunned--; return; }
+                this.hitTimer++;
                 
                 if(this.cd>0)this.cd--; 
-                const p=window.game.player, d=Dist(this,p); 
-                this.angle=Math.atan2(p.y-this.y,p.x-this.x); 
-                let playerHidden = false; 
+                
+                // Logic Target Selection
+                let target = null;
+                if (!this.friend) {
+                    // Enemy Bot Target Selection (Player or Friendly Bots)
+                    let maxDist = 9999;
+                    // Check dist to player
+                    if (window.game.player && !window.game.player.dead) {
+                        const d = Dist(this, window.game.player);
+                        target = window.game.player;
+                        maxDist = d;
+                    }
+                    // Check dist to friendly bots
+                    window.game.ents.forEach(e => {
+                        if (e.friend && e !== window.game.player && !e.dead) {
+                            const d = Dist(this, e);
+                            if (d < maxDist) {
+                                maxDist = d;
+                                target = e;
+                            }
+                        }
+                    });
+                } else {
+                     let minD = 500;
+                    window.game.ents.forEach(e => {
+                        if ((!e.friend || (e.isBot && !e.friend) || (e.type && typeof e.type === 'string' && e.type.match(/basic|fast|tank|boss|mini_boss/))) && !e.dead && e !== this) {
+                            // Friendly bot targeting enemy
+                            if (this.friend && !e.friend) {
+                                const d = Dist(this, e);
+                                if (d < minD) { minD = d; target = e; }
+                            }
+                            // Enemy bot targeting friendlies (Player or Friendly Bots)
+                            else if (!this.friend && e.friend) {
+                                const d = Dist(this, e);
+                                if (d < minD) { minD = d; target = e; }
+                            }
+                        }
+                    });
+                    
+                    if (!target && this.friend) { // If friendly bot has no enemy target, chase player
+                        if (window.game.player && !window.game.player.dead) {
+                            target = window.game.player;
+                        }
+                    }
+                }
+                
+                if (!target) return; // No target, do nothing (or wander)
+
+                const d=Dist(this,target); 
+                this.angle=Math.atan2(target.y-this.y,target.x-this.x); 
+                
+                let targetHidden = false; 
                 // Fix Vision
-                const distV = Math.hypot(p.x - this.x, p.y - this.y);
+                const distV = Math.hypot(target.x - this.x, target.y - this.y);
                 const stepsV = Math.min(10, Math.floor(distV / 50));
                 for(let i = 1; i < stepsV; i++) {
-                    const cx = this.x + (p.x - this.x) * (i / stepsV);
-                    const cy = this.y + (p.y - this.y) * (i / stepsV);
+                    const cx = this.x + (target.x - this.x) * (i / stepsV);
+                    const cy = this.y + (target.y - this.y) * (i / stepsV);
                     for(let w of window.game.map) {
                         if(w.type !== 1 && ColRect({x:cx, y:cy, r:5}, w)) {
-                            playerHidden = true;
+                            targetHidden = true;
                             break;
                         }
                     }
-                    if(playerHidden) break;
+                    if(targetHidden) break;
                 } 
 
-                if (window.game.player.invisible > 0) playerHidden = true; // Bot can't see invisible player
+                if (target.invisible > 0) targetHidden = true;
                 
                 // Logique de tir
-                if(d < 500 && !playerHidden && this.cd <= 0) {
+                if(d < 500 && !targetHidden && this.cd <= 0) {
                     this.shoot();
-                } else if(this.mode === 'CHASE' && Math.random()<0.05) {
+                } else if(this.mode === 'CHASE' && Math.random()<0.05 && d < 600) {
                     this.shoot();
                 }
                 
-                // Logique de Mouvement (IA Améliorée)
                 let tx,ty; 
                 if(this.mode==='CHASE'){ 
-                    // Logique d'Esquive/Strafe (IA 2.0)
-                    let strafe = Math.sin(window.game.frame * 0.08) * 150; // Strafe plus prononcé
-                    tx = p.x + Math.cos(this.angle + Math.PI/2) * strafe; 
-                    ty = p.y + Math.sin(this.angle + Math.PI/2) * strafe; 
+                    let strafe = Math.sin(window.game.frame * 0.08) * 150; 
+                    tx = target.x + Math.cos(this.angle + Math.PI/2) * strafe; 
+                    ty = target.y + Math.sin(this.angle + Math.PI/2) * strafe; 
                 } else if(this.mode==='CHASE_TRAIN') {
-                    tx = this.target.x; ty = this.target.y;
+                    tx = this.target.x; ty = this.target.y; // Warning: this.target might be different logic in subclasses, keeping for safety
                 } else { 
                     if(window.game.conf.mode === 'duel') { 
                         if(!this.target || Dist(this,this.target)<50) this.target={x:window.game.world/2 + Rnd(-300,300), y:window.game.world/2 + Rnd(-300,300)};
                     } else {
-                        // Feature 5: Ramassage Rapide (le bot aussi ramasse)
                         let item = window.game.items.find(i => Dist(this, i) < 300); 
                         if(item) { this.target = item; } 
                         else if(!this.target || Dist(this,this.target)<50 || Math.random()<0.02) { this.target={x:Rnd(100,window.game.world-100), y:Rnd(100,window.game.world-100)}; }
                     }
-                    tx=this.target.x; ty=this.target.y; 
+                    tx=this.target?.x || this.x; ty=this.target?.y || this.y; 
                 } 
                 const a=Math.atan2(ty-this.y, tx-this.x); 
                 let speed = this.stats.spd * 0.96;
@@ -2444,18 +2865,84 @@
                 
                 this.move(Math.cos(a)*speed, Math.sin(a)*speed); 
                 if(Math.random()<0.01) this.dash(); 
-                // FIX 2: Régénération HP après 5s sans dégâts (bots aussi)
                 if(window.game.frame%60===0 && this.hp<this.maxHp && this.hitTimer > 300 && window.game.conf.modifier !== 'oneshot')this.hp += Math.max(1, Math.floor(this.maxHp * 0.01)); 
                 if(window.game.gasRadius && Dist(this, {x:window.game.world/2, y:window.game.world/2}) > window.game.gasRadius) this.hp -= 10; 
                 if(this.activeEffects.poison > 0) { this.hp -= 1; this.activeEffects.poison--; } 
             } 
             shoot(){ 
                 if(this.cd>0)return; 
-                this.cd=Math.ceil(20 * RATE_FACTOR); // Appliquer le facteur de tir aux bots
-                window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:false, shape: 'circle', trailColor: this.c}); // Bot uses simple projectile
+                this.cd=Math.ceil(20 * RATE_FACTOR); 
+                window.game.projs.push({x:this.x,y:this.y,vx:Math.cos(this.angle)*15*1.08,vy:Math.sin(this.angle)*15*1.08,dmg:10,life:60,r:6,c:this.c,friend:this.friend, shape: 'circle', trailColor: this.c});
             } 
         }
-        class Enemy extends Entity{ constructor(t,m=1){ const diffMult = DIFFICULTY[window.game.conf.difficulty].mult; const enemyMult = m * diffMult; super(0,0,20,'#ef4444'); let safe=false; while(!safe){ this.x=Rnd(100,window.game.world-100);this.y=Rnd(100,window.game.world-100); let wallCol = false; for(let w of window.game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; } if(!wallCol && Dist(this,window.game.player)>600) safe=true; } this.type=t; let hp=60,s=2.0, dmg=1; 
+        class Turret extends Entity {
+            constructor(x, y, isFriendly) {
+                super(x, y, 15, isFriendly ? '#10b981' : '#ef4444');
+                this.friend = isFriendly;
+                this.type = 'turret';
+                this.hp = 800; this.maxHp = 800;
+                this.cd = 0;
+                this.life = 900; // 15 seconds
+                this.angle = 0;
+            }
+            update() {
+                this.life--;
+                if(this.life <= 0) { this.hp = 0; return; }
+                if(this.cd > 0) this.cd--;
+                
+                let target = null;
+                let minD = 400;
+                for(let e of window.game.ents) {
+                    if(e !== this && !e.dead) {
+                        const isEnemy = this.friend ? (!e.friend || (e.isBot && !e.friend) || (e.type && typeof e.type === 'string' && e.type.match(/basic|fast|tank|boss|mini_boss/))) : (e.friend);
+                        if(isEnemy) {
+                            const d = Dist(this, e);
+                            if(d < minD) { minD = d; target = e; }
+                        }
+                    }
+                }
+                
+                if(target) {
+                    this.angle = Math.atan2(target.y - this.y, target.x - this.x);
+                    if(this.cd <= 0) this.shoot();
+                } else {
+                    this.angle += 0.05; // Scan
+                }
+            }
+            shoot() {
+                this.cd = 15;
+                window.game.projs.push({
+                    x: this.x + Math.cos(this.angle)*20, y: this.y + Math.sin(this.angle)*20,
+                    vx: Math.cos(this.angle) * 18, vy: Math.sin(this.angle) * 18,
+                    dmg: 12, life: 60, r: 5, c: this.friend ? '#34d399' : '#f87171', friend: this.friend, shape: 'circle', trailColor: this.friend ? '#10b981' : '#ef4444'
+                });
+            }
+            draw(ctx) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                // Tripod legs
+                ctx.fillStyle = '#1e293b';
+                for(let i=0; i<3; i++) {
+                    ctx.save(); ctx.rotate(i * (Math.PI*2/3)); 
+                    ctx.fillRect(-2, 0, 4, 20);
+                    ctx.restore();
+                }
+                // Head
+                ctx.rotate(this.angle);
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(-10, -10, 20, 20); // Base
+                ctx.fillStyle = this.c;
+                ctx.fillRect(0, -6, 24, 12); // Barrel
+                ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill(); // Top
+                ctx.restore();
+                
+                // Life bar
+                const lp = this.hp / this.maxHp;
+                ctx.fillStyle = 'red'; ctx.fillRect(this.x-15, this.y-25, 30, 4);
+                ctx.fillStyle = '#0f0'; ctx.fillRect(this.x-15, this.y-25, 30*lp, 4);
+            }
+        }
+        class Enemy extends Entity{ constructor(t,m=1){ const diffMult = DIFFICULTY[window.game.conf.difficulty].mult; const enemyMult = m * diffMult; super(0,0,20,'#ef4444'); let safe=false; while(!safe){ this.x=Rnd(100,window.game.world-100);this.y=Rnd(100,window.game.world-100); let wallCol = false; for(let w of window.game.map) { if(w.type!==1 && w.collide({x:this.x, y:this.y, r:this.r})) wallCol=true; } if(!wallCol && Dist(this,window.game.player)>600) safe=true; } this.type=t; this.friend = false; let hp=60,s=2.0, dmg=1; 
             // Vitesse des ennemis ajustée par le facteur global
             s = s * SPEED_FACTOR;
             
@@ -2655,6 +3142,7 @@
                 // Initialize conf with loaded/default values
                 if(typeof window.game.conf.difficulty === 'undefined') window.game.conf.difficulty = 'normal';
                 if(typeof window.game.conf.modifier === 'undefined') window.game.conf.modifier = 'normal';
+                if(typeof window.game.conf.bots === 'undefined') window.game.conf.bots = 0;
                 window.ui.updateMenu(); 
                 if('ontouchstart' in window)el('mobile-controls').classList.remove('hidden'); 
                 this.loop(); 
@@ -2664,6 +3152,7 @@
                 this.cvs.height=window.innerHeight; 
                 CFG.w=this.cvs.width; CFG.h=this.cvs.height; 
             }, 
+            setBots(n){this.conf.bots=n; Storage.save(); window.ui.renderBotSelector();}, 
             setStarter(k){USER.selected=k; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setMode(m){this.conf.mode=m; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
             setArena(a){this.conf.arena=a; Storage.save(); window.ui.updateMenu(); window.ui.showTab('play');}, 
@@ -2680,6 +3169,37 @@
                 this.player=new Player(USER.selected); 
                 this.ents=[]; this.projs=[]; this.parts=[]; this.bgParts = []; this.items=[]; this.texts=[]; this.score=0; this.wave=1; this.gasRadius=0; this.timeLeft = 3 * 60 * 60; 
                 this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
+                this.map=[]; this.train = null; this.lootCollected = 0; this.hackProgress = 0; this.killCount = 0; this.zoneProgress = 0;
+                this.teamScore = 0; this.enemyScore = 0; this.bossKills = 0;
+                
+                // Objective Notification
+                setTimeout(() => {
+                    let obj = "SURVIVRE";
+                    if(this.conf.mode === 'heist') obj = "DÉTRUIS LE COFFRE";
+                    else if(this.conf.mode === 'rampage') obj = "50 KILLS";
+                    else if(this.conf.mode === 'team_battle') obj = "40 KILLS D'ÉQUIPE";
+                    else if(this.conf.mode === 'ctf') obj = "3 DRAPEAUX";
+                    else if(this.conf.mode === 'defense') obj = "PROTÈGE LE CRISTAL";
+                    else if(this.conf.mode === 'train_defense') obj = "PROTÈGE LE TRAIN";
+                    else if(this.conf.mode === 'cyber_hack') obj = "PIRATE LE TERMINAL";
+                    else if(this.conf.mode === 'escape') obj = "ATTEINS L'EXTRACTION";
+                    else if(this.conf.mode === 'zone_control') obj = "CAPTURE LA ZONE";
+                    else if(this.conf.mode === 'thief') obj = "VOLE 10 SACS";
+                    
+                    window.ui.notif("OBJECTIF : " + obj, "#22d3ee");
+                }, 1000);
+
+                // SPAWN USER BOTS (Escouade)
+                if(this.conf.bots > 0 && this.conf.mode !== 'team_battle' && this.conf.mode !== 'ctf') {
+                    for(let i=0; i<this.conf.bots; i++) {
+                        const bot = new Bot(true); // Is Friendly
+                        // Spawn around player
+                        bot.x = this.player.x + Math.cos(i/this.conf.bots * Math.PI*2)*80;
+                        bot.y = this.player.y + Math.sin(i/this.conf.bots * Math.PI*2)*80;
+                        this.ents.push(bot);
+                    }
+                    window.ui.notif(`${this.conf.bots} ALLIÉ(S) !`, "#3b82f6");
+                }
                 
                 for(let i=0;i<25;i++){const w=Math.random()*150+50,h=Math.random()*150+50,x=Math.random()*(this.world-w),y=Math.random()*(this.world-h);if(Math.hypot(x-this.world/2,y-this.world/2)>400)this.map.push(new Wall(x,y,w,h,0));} 
                 // FIX 1: Réduction du nombre de buissons (40 -> 38)
@@ -2693,7 +3213,12 @@
                 } else if(this.conf.mode==='boss_rush') { 
                     this.ents.push(new Enemy('boss', 3)); window.ui.notif("BOSS RUSH !", "#ef4444"); 
                 } else if(this.conf.mode==='titan_raid') { 
-                    this.ents.push(new Enemy('boss', 5)); window.ui.notif("RAID TITAN !", "#ef4444"); 
+                    for(let i=0; i<5; i++) {
+                        const boss = new Enemy('boss', 3);
+                        boss.x = this.world/2 + Rnd(-200, 200); boss.y = this.world/2 + Rnd(-200, 200);
+                        this.ents.push(boss);
+                    }
+                    window.ui.notif("RAID TITAN (5 BOSS) !", "#ef4444"); 
                 } else if(this.conf.mode === 'train_defense') {
                     this.train = new Train();
                     this.ents.push(this.train);
@@ -2726,6 +3251,11 @@
                 } else if(this.conf.mode === 'zone_control') {
                     // Zone centrale
                     window.ui.notif("CONTRÔLE LA ZONE", "#a855f7");
+                } else if(this.conf.mode === 'defense') {
+                    const core = new Enemy('chest', 5); core.type = 'core'; core.x = this.world/2; core.y = this.world/2; core.c = '#3b82f6';
+                    this.ents.push(core);
+                    this.map = this.map.filter(w => Math.hypot(w.x-core.x, w.y-core.y) > 400);
+                    window.ui.notif("PROTÈGE LE CRISTAL !", "#3b82f6");
                 } else if(this.conf.mode === 'sniper_duel') {
                     const bot = new Bot(); bot.x = this.world/2 + 600; bot.y = this.world/2; 
                     bot.c = '#a855f7'; // Sniper color
@@ -2736,8 +3266,9 @@
                     boss.x = this.world/2; boss.y = this.world/2; boss.r = 80; boss.name = "GÉANT";
                     this.ents.push(boss); window.ui.notif("CHASSE AU GÉANT", "#ef4444");
                 } else if(this.conf.mode === 'golden_chase') {
-                    for(let i=0; i<30; i++) this.items.push({x:Rnd(100,this.world-100), y:Rnd(100,this.world-100), type:'coins', val: 50});
-                    window.ui.notif("RUÉE VERS L'OR !", "#eab308");
+                    for(let i=0; i<30; i++) this.items.push({x:Rnd(100,this.world-100), y:Rnd(100,this.world-100), t:'coins', val: 50});
+                    this.timeLeft = 120 * 60; // 2 Minutes
+                    window.ui.notif("SURVIVRE & COLLECTER !", "#eab308");
                 } else if(this.conf.mode === 'infection_hard') {
                     // Start with more enemies
                     for(let i=0; i<20; i++) this.ents.push(new Enemy('fast', 1.5));
@@ -2747,6 +3278,29 @@
                     this.ents.push(exit);
                     window.ui.notif("SPEED RUN !", "#22d3ee");
 
+                } else if(this.conf.mode === 'team_battle') {
+                    // Spawn Friendly Bots
+                    for(let i=0; i<3; i++) {
+                        const fb = new Bot(true);
+                        fb.x = this.player.x + Rnd(-200, 200); fb.y = this.player.y + Rnd(-200, 200);
+                        this.ents.push(fb);
+                    }
+                    // Enemy bots will be spawned by loop but let's spawn 4 immediately
+                    for(let i=0; i<4; i++) {
+                        const eb = new Bot(false);
+                        eb.x = this.world - 200 + Rnd(-100, 100); eb.y = this.world - 200 + Rnd(-100, 100);
+                        this.ents.push(eb);
+                    }
+                    window.ui.notif("BATAILLE D'ÉQUIPE !", "#3b82f6");
+                } else if(this.conf.mode === 'ctf') {
+                    for(let i=0; i<3; i++) { const fb = new Bot(true); fb.x = this.player.x + Rnd(-200, 200); fb.y = this.player.y + Rnd(-200, 200); this.ents.push(fb); }
+                    for(let i=0; i<4; i++) { const eb = new Bot(false); eb.x = this.world - 200 + Rnd(-100, 100); eb.y = this.world - 200 + Rnd(-100, 100); this.ents.push(eb); }
+                    this.flags = [];
+                    const blueFlag = new Flag('blue', this.player.x, this.player.y - 50);
+                    const redFlag = new Flag('red', this.world - 200, this.world - 200);
+                    this.flags.push(blueFlag, redFlag);
+                    this.ents.push(blueFlag, redFlag);
+                    window.ui.notif("CAPTURE LE DRAPEAU !", "#facc15");
                 } else { 
                     window.ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); 
                 } 
@@ -2781,7 +3335,7 @@
                 let gt = 1 + Math.floor(finalScore / 100) * 2; 
                 if(this.boost) gt *= 2; 
                 if(this.boost) gt *= 2; 
-                if((this.conf.mode==='duel' || this.conf.mode==='heist' || this.conf.mode==='boss_rush' || this.conf.mode==='titan_raid' || this.conf.mode==='train_defense' || this.conf.mode==='cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control') && r==="VICTOIRE") { gt += 20; USER.stats.wins++; } 
+                if((this.conf.mode==='duel' || this.conf.mode==='heist' || this.conf.mode==='boss_rush' || this.conf.mode==='titan_raid' || this.conf.mode==='train_defense' || this.conf.mode==='cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control' || this.conf.mode === 'team_battle') && r==="VICTOIRE") { gt += 20; USER.stats.wins++; } 
                 let gc = Math.floor(finalScore/10); 
                 if(r==="VICTOIRE") gc += 50; 
                 if(finalScore >= 200 || r==="VICTOIRE") { 
@@ -2842,6 +3396,10 @@
                 else if(arena === 'crystal') { spawnRate = 0.6; color = 'rgba(192, 132, 252, 0.6)'; vy = -1; vx = 0; size = 4; } // Glitter
                 else if(arena === 'solaris') { spawnRate = 0.5; color = 'rgba(253, 186, 116, 0.6)'; vy = -4; size = 5; } // Sparks
                 else if(arena === 'atlantis') { spawnRate = 0.7; color = 'rgba(147, 197, 253, 0.4)'; vy = -2; size = 6; } // Bubbles
+                else if(arena === 'dungeon') { spawnRate = 0.4; color = 'rgba(20, 20, 20, 0.8)'; vy = 3; size = 4; vx = 0; } // Darkness drops
+                else if(arena === 'swamp') { spawnRate = 0.8; color = 'rgba(100, 255, 50, 0.4)'; vy = -1; vx = 0.5; size = 5; } // Spores & Bubbles
+                else if(arena === 'factory') { spawnRate = 1.0; color = Math.random()>0.5 ? 'rgba(255, 120, 0, 0.8)' : 'rgba(100, 100, 100, 0.5)'; vy = -3; vx = 1; size = 3; } // Smoke & Sparks
+                else if(arena === 'void') { spawnRate = 0.6; color = 'rgba(139, 92, 246, 0.6)'; vy = (Math.random()-0.5)*2; vx = (Math.random()-0.5)*2; size = 4; } // Cosmic Dust
                 
                 if(Math.random() < spawnRate) { 
                     this.bgParts.push({ 
@@ -2891,6 +3449,10 @@
                         this.timeLeft--;
                         if(this.timeLeft <= 0) { this.over("TEMPS ÉCOULÉ"); return; }
                     }
+                    if(this.conf.mode === 'golden_chase') {
+                        this.timeLeft--;
+                        if(this.timeLeft <= 0) { this.over("VICTOIRE"); return; }
+                    }
                     if((this.conf.mode === 'heist') && this.frame % (20*60) === 0) { 
                             const chest = this.ents.find(e => e.type === 'chest'); 
                             if(chest) { 
@@ -2900,8 +3462,8 @@
                     if(!this.ents) this.ents = []; if(!this.map) this.map = []; 
                     
                     // SPAWN LOGIC
-                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control'){ 
-                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit')){ 
+                    if(this.conf.mode === 'survival' || this.conf.mode === 'ranked' || this.conf.mode === 'train_defense' || this.conf.mode === 'thief' || this.conf.mode === 'cyber_hack' || this.conf.mode === 'escape' || this.conf.mode === 'rampage' || this.conf.mode === 'zone_control' || this.conf.mode === 'golden_chase' || this.conf.mode === 'infection' || this.conf.mode === 'infection_hard' || this.conf.mode === 'heist' || this.conf.mode === 'defense' || this.conf.mode === 'treasure' || this.conf.mode === 'gungame'){ 
+                        if(!this.ents.find(e=>e.isBoss && e.type !== 'train' && e.type !== 'terminal' && e.type !== 'exit' && e.type !== 'core' && e.type !== 'chest')){ 
                             let max=5+Math.floor(this.wave*1.5); 
                             if(this.conf.mode === 'rampage') max *= 2; // Double spawn for rampage
                             const enemyWaveMult = 1+(this.conf.mode==='ranked'?0.2:0.1)*this.wave; 
@@ -2909,10 +3471,10 @@
                             // Feature 1: Mini-Boss Spawn (Vague 3 & 6)
                             if(this.frame%1800===0){
                                 this.wave++;
-                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control'){
+                                if(this.wave % 5 === 0 && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase'){
                                     this.ents.push(new Enemy('boss', enemyWaveMult * 2));
                                     window.ui.notif("BOSS !!!","#ef4444");
-                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control') {
+                                } else if ((this.wave === 3 || this.wave === 6) && this.conf.mode !== 'thief' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape' && this.conf.mode !== 'rampage' && this.conf.mode !== 'zone_control' && this.conf.mode !== 'golden_chase') {
                                     this.ents.push(new Enemy('mini_boss', enemyWaveMult * 1.5));
                                     window.ui.notif("MINI BOSS !","#facc15");
                                 } else {
@@ -2939,6 +3501,20 @@
                             } 
                             
                         } 
+                            
+                            
+                            // Respawn logic for Team Battle & CTF
+                    } else if(this.conf.mode === 'team_battle' || this.conf.mode === 'ctf') {
+                         
+                         const friendlies = this.ents.filter(e => e.friend && e.isBot).length;
+                         const enemies = this.ents.filter(e => !e.friend && e.isBot).length;
+                         
+                         if(friendlies < 3 && this.frame%120===0) {
+                             const fb = new Bot(true); fb.x = this.player.x; fb.y = this.player.y; this.ents.push(fb);
+                         }
+                         if(enemies < 4 && this.frame%120===0) {
+                             const eb = new Bot(false); eb.x = Rnd(100, this.world-100); eb.y = Rnd(100, this.world-100); this.ents.push(eb);
+                         }
                     } else if(this.ents.length===0 && this.conf.mode !== 'train_defense' && this.conf.mode !== 'cyber_hack' && this.conf.mode !== 'escape') this.over("VICTOIRE"); 
                     
                     this.player.update(); 
@@ -3239,6 +3815,29 @@
                         } else if (p.shape === 'flame') {
                             ctx.font = `${p.r * 1.5}px Arial`;
                             ctx.fillText("🔥", p.x - p.r, p.y + p.r / 2);
+                        } else if (p.shape === 'shark') {
+                            ctx.font = `${p.r * 2}px Arial`;
+                            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(Math.atan2(p.vy, p.vx));
+                            ctx.fillText("🦈", -p.r, p.r/2);
+                            ctx.restore();
+                        } else if (p.shape === 'arrow') {
+                            ctx.font = `${p.r * 2}px Arial`;
+                            ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(Math.atan2(p.vy, p.vx)+Math.PI/2); // Rotation 90deg for arrow
+                            ctx.fillText("🏹", -p.r, p.r/2);
+                            ctx.restore();
+                        } else if (p.shape === 'sniper') {
+                            ctx.fillStyle = p.c;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                            ctx.fill();
+                            // Crosshair effect
+                            ctx.strokeStyle = 'white';
+                            ctx.lineWidth = 1;
+                            ctx.beginPath(); ctx.moveTo(p.x-p.r*1.5, p.y); ctx.lineTo(p.x+p.r*1.5, p.y); ctx.stroke();
+                            ctx.beginPath(); ctx.moveTo(p.x, p.y-p.r*1.5); ctx.lineTo(p.x, p.y+p.r*1.5); ctx.stroke();
+                        } else if (p.shape === 'paw') {
+                            ctx.font = `${p.r * 1.5}px Arial`;
+                            ctx.fillText("🐾", p.x - p.r, p.y + p.r / 2);
                         } else if (p.shape === 'melee') {
                             // Melee est un simple arc très rapide pour simuler un coup
                             ctx.save();
@@ -3293,6 +3892,10 @@
                     }
                 }
 
+                if(this.conf.mode === 'golden_chase' && Math.random() < 0.6) {
+                    this.items.push({x:e.x, y:e.y, t:'coins'});
+                }
+
                 if(Math.random()<0.3) {
                      const r = Math.random();
                      let t = 'xp';
@@ -3311,9 +3914,32 @@
                 window.QuestSystem.check('kill', {}); // Quest Check
                 window.ui.feed("Toi",e.isBot?"Rival":(e.type==='chest'?"COFFRE":e.name),true); 
                 if(this.player.xp>=this.player.xpMax){this.player.xp=0;this.player.xpMax*=1.2;this.player.lvl++;this.player.hp=this.player.maxHp;this.state='LEVELUP';window.ui.levelUp();} 
+                if(this.conf.mode === 'team_battle') {
+                     if(!e.friend) this.teamScore++; else this.enemyScore++;
+                     // Win Condition: 40 Kills
+                     if(this.teamScore >= 40) this.over("VICTOIRE");
+                     else if(this.enemyScore >= 40) this.over("DÉFAITE");
+                }
+
+                // FIXES WIN CONDITIONS
+                if(this.conf.mode === 'heist' && e.type === 'chest') this.over("VICTOIRE");
+                if(this.conf.mode === 'defense' && e.type === 'core') this.over("DÉFAITE");
+                if(this.conf.mode === 'boss_rush' && e.isBoss) {
+                    this.bossKills = (this.bossKills || 0) + 1;
+                    if(this.bossKills >= 3) this.over("VICTOIRE");
+                    else {
+                        const newBoss = new Enemy('boss', 3 + this.bossKills);
+                        this.ents.push(newBoss);
+                        window.ui.notif("BOSS SUIVANT !", "#ef4444");
+                    }
+                }
+                if(this.conf.mode === 'titan_raid' && e.isBoss) {
+                    this.bossKills = (this.bossKills || 0) + 1;
+                    if(this.bossKills >= 5) this.over("VICTOIRE");
+                }
             } 
         };
         
-        window.onload=function(){ if(window.game) window.game.init(); };
+        window.onload=function(){ if(window.game) { window.game.init(); window.ui.showIntro(); } };
     </script>
 </body></html>
