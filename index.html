@@ -1,7 +1,7 @@
- <!DOCTYPE html><html lang="fr"><head>
+<!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.3.2 - Saison 2</title>
+    <title>mBattle v1.3.5 - Cyber Future</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -16,6 +16,14 @@
             --neon-blue: #00f3ff;
             --neon-purple: #bc13fe;
         }
+
+        /* --- VISUAL FX --- */
+        @keyframes coin-pop { 0% { transform: scale(1); filter: brightness(1); } 50% { transform: scale(1.4); filter: brightness(1.5); } 100% { transform: scale(1); filter: brightness(1); } }
+        .flash-coins { animation: coin-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #facc15 !important; text-shadow: 0 0 15px gold; }
+        .flash-gems { animation: coin-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); color: #d8b4fe !important; text-shadow: 0 0 15px #a855f7; }
+        
+        @keyframes shiny-wipe { 0% { left: -100%; opacity: 0; } 50% { opacity: 0.5; } 100% { left: 200%; opacity: 0; } }
+
 
         body { 
             margin: 0; 
@@ -96,6 +104,8 @@
         }
         
         .glass-btn:active { transform: scale(0.96); filter: brightness(1.2); }
+        .glass-btn::after { content: ''; position: absolute; top:0; left:-100%; width:100%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transform: skewX(-20deg); transition: 0s; pointer-events: none; }
+        .glass-btn:active::after { animation: shiny-wipe 0.4s; transition: 0s; }
         .glass-btn:hover { 
             border-color: rgba(255,255,255,0.4); 
             background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.05) 100%); 
@@ -103,11 +113,11 @@
         }
         
         .glass-btn.selected { 
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.1)); 
-            border-color: #22d3ee; 
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.25) inset, 0 0 10px rgba(34, 211, 238, 0.3); 
-            color: #fff;
-            text-shadow: 0 0 5px rgba(34, 211, 238, 0.8);
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(59, 130, 246, 0.1)) !important; 
+            border-color: #22d3ee !important; 
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.25) inset, 0 0 10px rgba(34, 211, 238, 0.3) !important; 
+            color: #fff !important;
+            text-shadow: 0 0 5px rgba(34, 211, 238, 0.8) !important;
         }
 
         /* --- NAVIGATION --- */
@@ -419,7 +429,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.3.2</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.3.5</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -635,8 +645,26 @@
                     
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
                     <div class="glass-panel p-6 text-sm text-gray-300">
-                        <div class="patch-note relative overflow-hidden">
-                            <div class="absolute top-0 right-0 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded-bl-lg z-10 animate-pulse shadow-lg">NOUVEAU</div><h3>v1.3.2 (SMART UPDATE)</h3><ul><li>🧠 <b>IA Intelligente :</b> Les bots jouent les objectifs (CTF, Wagon) !</li><li>🛒 <b>Wagon :</b> Les alliés aident à pousser.</li><li>🛠️ <b>Optimisation :</b> Nettoyage du code.</li></ul></div>
+                    <div class="patch-note relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded-bl-lg z-10 animate-pulse shadow-lg">NOUVEAU</div>
+                        <h3>v1.3.5 (TROPHY UPDATE)</h3>
+                        <ul>
+                            <li>🏆 <b>Trophy Road :</b> Extension massive ! 25 Paliers jusqu'à 20 000 Trophées.</li>
+                            <li>🎁 <b>Récompenses :</b> Nouveaux paliers Elite, Master, Legend et Cyber God.</li>
+                            <li>✨ <b>Visuel :</b> Interface de progression améliorée et plus fluide.</li>
+                            <li>🐛 <b>Correctifs :</b> Optimisation du code et corrections diverses.</li>
+                        </ul>
+                    </div>
+                    <div class="patch-note">
+                        <h3>v1.3.4 (SOCIAL UPDATE)</h3>
+                        <ul>
+                            <li>🤖 <b>Bot Emotes :</b> Les bots expriment leurs émotions (Joie, Colère) !</li>
+                            <li>💢 <b>Réactions :</b> Emotes quand ils sont touchés ou tués.</li>
+                            <li>✨ <b>Immersion :</b> Le monde semble plus vivant.</li>
+                        </ul>
+                    </div>
+                    <div class="patch-note"><h3>v1.3.3 (VISUAL ENHANCED)</h3><ul><li>✨ <b>VFX Engine :</b> Physique de particules, rotations et nouvelles formes !</li><li>💬 <b>Textes :</b> Animation "Pop" fluide pour les dégâts.</li><li>💥 <b>Impact :</b> Muzzle flash et débris améliorés.</li></ul></div>
+                    <div class="patch-note"><h3>v1.3.2 (SMART UPDATE)</h3><ul><li>🧠 <b>IA Intelligente :</b> Les bots jouent les objectifs (CTF, Wagon) !</li><li>🛒 <b>Wagon :</b> Les alliés aident à pousser.</li><li>🛠️ <b>Optimisation :</b> Nettoyage du code.</li></ul></div>
                         <div class="patch-note"><h3>v1.3.1 (VISUAL UPDATE)</h3><ul><li>🔥 <b>Kill Streaks :</b> Enchaînez les kills pour des effets spéciaux !</li><li>✨ <b>Effets :</b> Nouveaux VFX et animations d'UI.</li><li>🐛 <b>Fixes :</b> Corrections de bugs (Bio, Score).</li></ul></div>
                         <div class="patch-note"><h3>v1.3 (CYBER FUTURE)</h3><ul><li>🚃 <b>Nouveau Mode :</b> Payload (Convoi) ! Poussez le wagon jusqu'à la fin.</li><li>☄️ <b>Nouveaux Héros :</b> Cosmo (Mythique) et Brick (Commun).</li><li>⚡ <b>Nouvelle Arène :</b> Réacteur.</li><li>💰 <b>Golden Chase :</b> Plus de pièces !</li></ul></div>
                         <div class="patch-note"><h3>v1.2.9 (Crash Fix)</h3><ul><li>🛠️ <b>CRITIQUE :</b> Correction du crash "timeScale" (Slow Mo).</li><li>⚡ <b>Optimisation :</b> Stabilité améliorée.</li></ul></div>
@@ -670,7 +698,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.2.9</div>
+                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.3.4</div>
                     </div>
                 <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
                         <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">
@@ -777,7 +805,7 @@
         </div>
     </div>
     <script>
-        /* mBATTLE v1.2.9 - SAISON 2 */
+        /* mBATTLE v1.3.3 - SAISON 2 */
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
@@ -901,6 +929,8 @@
                        proj: { r: 15, speed: 0, life: 1, shape: 'melee', color: '#b91c1c', trailColor: '#fca5a5' },
                        skins: [{id:'default', name:'Brawler', c:'#b91c1c'}, {id:'gold', name:'Champion', c:'#eab308', price: 2000}, {id:'street', name:'Rue', c:'#475569', price: 1000}, {id:'lucha', name:'Luchador', c:'#16a34a', price: 1500}, {id:'robot', name:'Cyborg', c:'#64748b', price: 2500}] },
 
+            doc: { name: "Doc", rarity: 'rare', icon: "👨‍⚕️", hp: 130, dmg: 12, spd: 5.2 * SPEED_FACTOR, rate: Math.ceil(15 * RATE_FACTOR), ammo: 10, reload: Math.ceil(25 * RELOAD_FACTOR), price: PRICE_RARE, scale: {hp: 10, dmg: 2}, color: '#22c55e', type: 'normal', desc: "Soigne les alliés et le joueur.", gadget: "heal", lore: "Chirurgien de combat.", passive: "Regen Rapide", proj: { r: 5, speed: Math.ceil(25 * PROJ_SPEED_FACTOR), life: 60, shape: 'cross', color: '#22c55e', trailColor: '#86efac' }, skins: [{id:'default', name:'Doc', c:'#22c55e'}, {id:'plague', name:'Peste', c:'#1e293b', price: 2000}, {id:'combat', name:'Combat', c:'#b91c1c', price: 2500}, {id:'angel', name:'Ange', c:'#fcd34d', price: 3000}, {id:'cyber', name:'Cyber-Doc', c:'#0ea5e9', price: 3500}] },
+
             grenadier: { name: "Grenadier", rarity: 'rare', icon: "🧨", hp: 140, dmg: 35, spd: 5.0 * SPEED_FACTOR, rate: Math.ceil(25 * RATE_FACTOR), ammo:3, reload:Math.ceil(45 * RELOAD_FACTOR), price: PRICE_RARE, scale:{hp:10, dmg:4}, color: '#ea580c', type: 'shotgun', desc: "Lance-grenades.", gadget: "knockback", lore: "Expert en démolition.", passive: "Explosion+",
                          proj: { r: 8, speed: Math.ceil(18 * PROJ_SPEED_FACTOR), life: 50, shape: 'circle', color: '#ea580c', trailColor: '#fdba74' },
                          skins: [{id:'default', name:'Grenadier', c:'#ea580c'}, {id:'military', name:'Militaire', c:'#3f6212', price: 1500}, {id:'party', name:'Fête', c:'#db2777', price: 2000}, {id:'toxic', name:'Toxique', c:'#84cc16', price: 1800}, {id:'ice', name:'Givre', c:'#bae6fd', price: 2200}] },
@@ -997,7 +1027,8 @@
             speed_run: { name: "Speed Run", icon: "⚡", desc: "Extraction Rapide.", ranked: false },
             team_battle: { name: "Team Battle", icon: "🛡️", desc: "4 vs 4 !", ranked: false },
             ctf: { name: "Capture Drapeau", icon: "🚩", desc: "Vole le drapeau !", ranked: false },
-            payload: { name: "Convoi", icon: "🚃", desc: "Pousse le wagon !", ranked: false }
+            payload: { name: "Convoi", icon: "🚃", desc: "Pousse le wagon !", ranked: false },
+            royale: { name: "Battle Royale", icon: "🚁", desc: "Survivre à la zone !", ranked: false }
         };
         const ARENAS = { 
             tokyo: { name: "Neon Tokyo", color: '#050b14', grid: 'rgba(59,130,246,0.15)', wall: '#1e293b' }, 
@@ -1094,8 +1125,8 @@
             chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_3';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_3_5';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_3', 'mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -1605,6 +1636,10 @@
                     const icon2 = window.game.conf.mode === 'ctf' ? '🚩' : '🔴';
                     el('hud-objective').innerHTML = `<span class="text-blue-400">${icon} ${window.game.teamScore}</span> - <span class="text-red-400">${icon2} ${window.game.enemyScore}</span>`;
                     el('hud-objective').classList.remove('hidden');
+                } else if(window.game.conf.mode === 'royale') {
+                    const survivors = window.game.ents.filter(e => e.isBot && !e.dead).length + 1;
+                    el('hud-objective').innerText = `SURVIVANTS: ${survivors}`;
+                    el('hud-objective').classList.remove('hidden');
                 } else {
                     el('hud-objective').classList.add('hidden');
                 }
@@ -1709,6 +1744,7 @@
                 const c = el('trophy-list'); c.innerHTML = '';
                 const maxTrophies = RANKS[RANKS.length-1].t;
                 const pct = Math.min(100, (USER.trophies / maxTrophies) * 100);    
+                
                 c.innerHTML += `<div class="glass-panel p-5 mb-4 bg-gradient-to-r from-cyan-900/40 to-purple-900/40 border border-white/10 shadow-[0_0_15px_rgba(34,211,238,0.2)]">
                     <div class="flex justify-between mb-2 text-xs font-black tracking-widest text-cyan-400"><span>PROGRESSION</span><span class="text-white">${USER.trophies} / ${maxTrophies} 🏆</span></div>
                     <div class="h-3 bg-black/50 rounded-full overflow-hidden border border-white/5 relative">
@@ -1716,27 +1752,39 @@
                         <div class="h-full bg-gradient-to-r from-cyan-400 to-purple-500 shadow-[0_0_10px_rgba(56,189,248,0.5)] transition-all duration-1000" style="width:${pct}%"></div>
                     </div>
                 </div>`;
+                
                 RANKS.forEach((r, i) => {
-                    if (i === 0) return;
+                    if(i === 0) return; // Skip base rank
+                    
                     const reached = USER.trophies >= r.t;
                     const claimed = USER.claimedRanks && USER.claimedRanks.includes(i);
-                    let btn = '';
-                    if(claimed) btn = `<div class="text-green-400 font-bold text-[10px] flex items-center gap-1 bg-green-900/20 px-3 py-1.5 rounded-lg border border-green-500/30">✅ RÉCUPÉRÉ</div>`;
-                    else if(reached) btn = `<button onclick="window.ui.claimRankReward(${i})" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:scale-105 transition text-black font-black py-1.5 px-4 rounded-lg animate-pulse text-xs shadow-[0_0_10px_rgba(234,179,8,0.4)] border border-yellow-400/50">RÉCUPÉRER</button>`;
-                    else btn = `<div class="text-gray-500 font-bold text-[10px] bg-black/40 px-3 py-1.5 rounded-lg border border-white/5">🔒 ${r.t} 🏆</div>`;
+                    const isNext = !reached && USER.trophies >= RANKS[i-1].t;
                     
-                    c.innerHTML += `<div class="glass-panel p-4 flex items-center justify-between border-l-4 transition-all duration-300 group hover:bg-white/5 hover:translate-x-1 ${reached ? 'bg-gradient-to-r from-white/5 to-transparent' : 'opacity-60 grayscale'}" style="border-color:${r.c}">
-                        <div class="flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-xl bg-black/40 flex items-center justify-center text-2xl shadow-inner border border-white/5 group-hover:scale-110 transition duration-300">🏆</div>
+                    // Dynamic Style based on Rank Color
+                    let bgStyle = reached 
+                        ? `background: linear-gradient(90deg, ${r.c}22, transparent); border-color: ${r.c}66;` 
+                        : `background: rgba(0,0,0,0.3); border-color: rgba(255,255,255,0.05);`;
+                    
+                    if(isNext) bgStyle = `background: linear-gradient(90deg, ${r.c}15, transparent); border-color: ${r.c}55; box-shadow: 0 0 20px ${r.c}15;`;
+
+                    let btn = '';
+                    if(claimed) btn = `<div class="text-green-400 font-bold text-[10px] flex items-center gap-1 bg-green-900/20 px-3 py-1.5 rounded-lg border border-green-500/30 shadow-[0_0_10px_rgba(34,197,94,0.1)]">✅ RÉCUPÉRÉ</div>`;
+                    else if(reached) btn = `<button onclick="window.ui.claimRankReward(${i})" class="bg-gradient-to-r from-yellow-500 to-amber-600 hover:scale-105 transition text-black font-black py-2 px-5 rounded-lg animate-pulse text-xs shadow-[0_0_20px_rgba(234,179,8,0.5)] border border-yellow-400/50 flex items-center gap-2"><span class="text-lg">🎁</span> RÉCUPÉRER</button>`;
+                    else btn = `<div class="text-gray-500 font-bold text-[10px] bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 flex items-center gap-2 opacity-50"><span class="text-xs">🔒</span> ${r.t} 🏆</div>`;
+                    
+                    c.innerHTML += `<div class="glass-panel p-4 flex items-center justify-between border-l-4 transition-all duration-300 group hover:translate-x-1 mb-2 relative overflow-hidden ${reached ? '' : 'grayscale opacity-60 hover:opacity-100 hover:grayscale-0'}" style="${bgStyle} border-left-color: ${r.c};">
+                        ${isNext ? `<div class="absolute inset-0 bg-white/5 animate-pulse pointer-events-none"></div>` : ''}
+                        <div class="flex items-center gap-4 relative z-10">
+                            <div class="w-14 h-14 rounded-xl bg-black/40 flex items-center justify-center text-3xl shadow-[inset_0_0_10px_rgba(0,0,0,0.5)] border border-white/10 group-hover:scale-110 transition duration-300" style="text-shadow: 0 0 15px ${r.c}">🏆</div>
                             <div>
-                                <div class="font-black text-sm tracking-wide mb-1" style="color:${r.c}; text-shadow: 0 0 10px ${r.c}40">${r.n}</div>
-                                <div class="text-[10px] text-gray-400 flex gap-3 font-bold">
-                                    <span class="text-yellow-400 drop-shadow-sm">+1000 🪙</span>
-                                    <span class="text-purple-400 drop-shadow-sm">+25 💎</span>
+                                <div class="font-black text-sm tracking-widest mb-1 uppercase" style="color:${r.c}; text-shadow: 0 0 15px ${r.c}50">${r.n}</div>
+                                <div class="text-[10px] text-gray-400 flex gap-2 font-bold items-center">
+                                    <div class="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded text-yellow-400 border border-yellow-500/10"><span class="text-xs">🪙</span> 1000</div>
+                                    <div class="flex items-center gap-1 bg-black/30 px-2 py-0.5 rounded text-purple-400 border border-purple-500/10"><span class="text-xs">💎</span> 25</div>
                                 </div>
                             </div>
                         </div>
-                        <div>${btn}</div>
+                        <div class="relative z-10 pl-2">${btn}</div>
                     </div>`;
                 });
             },
@@ -1774,14 +1822,32 @@
             },
             updateDifficultyButtons() {
                 if(!window.game || !window.game.conf) return; 
-                document.querySelectorAll('.diff-btn').forEach(btn => btn.classList.remove('selected', 'active'));
-                const activeBtn = el(`diff-${window.game.conf.difficulty}`);
-                if (activeBtn) activeBtn.classList.add('selected');
+                console.log("[UI] Update Difficulty Buttons:", window.game.conf.difficulty, window.game.conf.modifier);
                 
-                // Also update modifier buttons
-                document.querySelectorAll('.mod-btn').forEach(btn => btn.classList.remove('selected', 'active'));
-                const modBtn = el(`mod-${window.game.conf.modifier}`);
-                if(modBtn) modBtn.classList.add('selected');
+                // Update Difficulty Buttons
+                document.querySelectorAll('.diff-btn').forEach(btn => {
+                    btn.classList.remove('selected', 'active');
+                    btn.style.borderColor = ''; // Reset inline style
+                });
+                
+                const activeBtn = document.getElementById(`diff-${window.game.conf.difficulty}`);
+                if (activeBtn) {
+                     activeBtn.classList.add('selected');
+                }
+                
+                // Update Modifier Buttons
+                document.querySelectorAll('.mod-btn').forEach(btn => {
+                    btn.classList.remove('selected', 'active');
+                    btn.style.borderColor = ''; // Reset inline style
+                });
+                
+                const mod = window.game.conf.modifier;
+                if(mod) {
+                    const modBtn = document.getElementById(`mod-${mod}`);
+                    if(modBtn) {
+                        modBtn.classList.add('selected');
+                    }
+                }
             },
             renderBotSelector() {
                  let c = el('bot-selector');
@@ -2563,7 +2629,16 @@
             z.addEventListener('touchmove',e=>h(e,false),{passive:false}); 
             z.addEventListener('touchend',e=>h(e,true)); 
         }};
-        class Entity{constructor(x,y,r,c){this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false; this.hitTimer = 300;} draw(ctx){ ctx.save(); ctx.translate(this.x, this.y); let isHidden = false; if (window.game.map) { for(let w of window.game.map) { if(w.type === 1 && ColRect(this, w)) { isHidden = true; break; } } } if(isHidden && this === window.game.player) { ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.font = "20px Arial"; ctx.fillText("👁️", -10, -this.r - 10); ctx.beginPath(); ctx.moveTo(-10, -this.r - 5); ctx.lineTo(10, -this.r - 25); ctx.strokeStyle = 'red'; ctx.lineWidth = 2; ctx.stroke(); } if(isHidden) ctx.globalAlpha = 0.5; ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15; ctx.beginPath(); ctx.arc(0, 0, this.r, 0, Math.PI*2); ctx.fillStyle = this.c; ctx.fill(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.arc(-5, -5, this.r*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill(); ctx.globalAlpha = 1; if(this.emoteTimer > 0) { ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(0, -this.r - 30, 20, 0, Math.PI*2); ctx.fill(); ctx.font = "24px Arial"; ctx.fillStyle = 'black'; ctx.textAlign = 'center'; ctx.fillText(this.emote, 0, -this.r - 22); this.emoteTimer--; } ctx.restore(); }}
+        class Entity{
+            constructor(x,y,r,c){
+                this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false; this.hitTimer = 300;
+                this.emote = ''; this.emoteTimer = 0;
+            } 
+            triggerEmote(emoji) {
+                this.emote = emoji;
+                this.emoteTimer = 120;
+            }
+            draw(ctx){ ctx.save(); ctx.translate(this.x, this.y); let isHidden = false; if (window.game.map) { for(let w of window.game.map) { if(w.type === 1 && ColRect(this, w)) { isHidden = true; break; } } } if(isHidden && this === window.game.player) { ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.font = "20px Arial"; ctx.fillText("👁️", -10, -this.r - 10); ctx.beginPath(); ctx.moveTo(-10, -this.r - 5); ctx.lineTo(10, -this.r - 25); ctx.strokeStyle = 'red'; ctx.lineWidth = 2; ctx.stroke(); } if(isHidden) ctx.globalAlpha = 0.5; ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 15; ctx.beginPath(); ctx.arc(0, 0, this.r, 0, Math.PI*2); ctx.fillStyle = this.c; ctx.fill(); ctx.shadowBlur = 0; ctx.beginPath(); ctx.arc(-5, -5, this.r*0.3, 0, Math.PI*2); ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.fill(); ctx.globalAlpha = 1; if(this.emoteTimer > 0) { ctx.fillStyle = 'white'; ctx.beginPath(); ctx.arc(0, -this.r - 30, 20, 0, Math.PI*2); ctx.fill(); ctx.font = "24px Arial"; ctx.fillStyle = 'black'; ctx.textAlign = 'center'; ctx.fillText(this.emote, 0, -this.r - 22); this.emoteTimer--; } ctx.restore(); }}
         class Flag extends Entity {
             constructor(team, x, y) {
                 super(x, y, 15, team === 'blue' ? '#3b82f6' : '#ef4444');
@@ -2797,8 +2872,8 @@
                 window.game.projs.push({
                     x: this.x + Math.cos(this.angle) * 25,
                     y: this.y + Math.sin(this.angle) * 25,
-                    vx: Math.cos(a) * pStats.speed * timeScale,
-                    vy: Math.sin(a) * pStats.speed * timeScale,
+                    vx: Math.cos(a) * pStats.speed, // FIX: Remove timeScale (handeled in loop)
+                    vy: Math.sin(a) * pStats.speed, // FIX: Remove timeScale (handeled in loop)
                     dmg: dmg,
                     life: pStats.life,
                     r: pStats.r,
@@ -2809,7 +2884,19 @@
                     trailColor: pStats.trailColor // NOUVEAU
                 }); 
             } 
-        } dash(){ if(this.dashT>0)return; this.dashT=60; window.game.shake=10; const stepSize = 20; const totalDist = 180; const steps = totalDist / stepSize; const dx = Math.cos(this.angle) * stepSize; const dy = Math.sin(this.angle) * stepSize; for(let i=0; i<steps; i++) { this.move(dx, dy); } for(let i=0;i<8;i++)window.game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4}); } useGadget() { 
+            
+            // Muzzle Flash
+            const muzzleX = this.x + Math.cos(this.angle)*25;
+            const muzzleY = this.y + Math.sin(this.angle)*25;
+            for(let i=0; i<5; i++) {
+                 window.game.parts.push({
+                     x: muzzleX, y: muzzleY, 
+                     vx: Math.cos(this.angle+Rnd(-0.5,0.5))*3, 
+                     vy: Math.sin(this.angle+Rnd(-0.5,0.5))*3, 
+                     life: 8, c: '#fff', r: Rnd(2,5), decay: 0.5, shape: 'spark', angle: this.angle, vRot: 0
+                 });
+            }
+        } dash(){ if(this.dashT>0)return; this.dashT=60; window.game.shake=10; const stepSize = 20; const totalDist = 180; const steps = totalDist / stepSize; const dx = Math.cos(this.angle) * stepSize; const dy = Math.sin(this.angle) * stepSize; for(let i=0; i<steps; i++) { this.move(dx, dy); } for(let i=0;i<8;i++)window.game.parts.push({x:this.x,y:this.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:20,c:'#fff',r:4, gravity:false}); } useGadget() { 
             if(this.gadgetCharges <= 0) return; 
             this.gadgetCharges--; 
             window.ui.notif("GADGET!", "#22c55e"); 
@@ -2863,8 +2950,8 @@
             ctx.restore(); 
         } }
         class Bot extends Player{ 
-            constructor(isFriendly = false){ 
-                super(USER.selected==='soldier'?'tank':'soldier'); 
+            constructor(isFriendly = false, heroType = null){ 
+                super(heroType || (USER.selected==='soldier'?'tank':'soldier')); 
                 this.c= isFriendly ? '#3b82f6' : '#ef4444'; 
                 this.isBot=true; 
                 this.friend = isFriendly;
@@ -2889,6 +2976,13 @@
                 if (this.isStunned > 0) { this.isStunned--; return; }
                 this.hitTimer++;
                 
+                // Bot Random Emote Logic
+                if (Math.random() < 0.002) { // 0.2% chance per frame (approx once every 8-10 seconds)
+                    const happyEmotes = ['😀', '😎', '👍', '💪', '👑', '😂', '👻', '🤖'];
+                    const em = happyEmotes[Math.floor(Math.random() * happyEmotes.length)];
+                    this.triggerEmote(em);
+                }
+
                 if(this.cd>0)this.cd--; 
                 
                 // Logic Target Selection
@@ -3165,8 +3259,14 @@
             if(this.type === 'boss' || this.type === 'mini_boss') { 
                 const d = Dist(this, p); 
                 const a = Math.atan2(p.y - this.y, p.x - this.x); 
-                this.x += Math.cos(a) * this.spd; 
-                this.y += Math.sin(a) * this.spd; 
+                // Boss Movement with Slow Mo Support
+                let bossSpd = this.spd;
+                const mod = window.game.activeModifier || window.game.conf.modifier;
+                if(mod === 'speed') bossSpd *= 2;
+                if(mod === 'slow_mo') bossSpd *= 0.5;
+
+                this.x += Math.cos(a) * bossSpd; 
+                this.y += Math.sin(a) * bossSpd; 
                 if(this.cd > 0) this.cd--; 
                 if(this.cd <= 0 && d < 800) { 
                     this.cd = Math.ceil(60 * RATE_FACTOR); 
@@ -3259,7 +3359,9 @@
             }
             update() {
                 // Move constantly to the right/across (vitesse du train réduite de 13%)
-                this.x += 1 * SPEED_FACTOR;
+                const mod = window.game.activeModifier || window.game.conf.modifier;
+                const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
+                this.x += 1 * SPEED_FACTOR * timeScale;
                 if(this.x > window.game.world - 100) {
                     this.x = 100; // Loop or just end? Let's loop for defense duration
                 }
@@ -3299,7 +3401,9 @@
                 }
 
                 if(pushing) {
-                     this.x += 1.5 * SPEED_FACTOR;
+                     const mod = window.game.activeModifier || window.game.conf.modifier;
+                     const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
+                     this.x += 1.5 * SPEED_FACTOR * timeScale;
                      if(window.game.frame % 20 === 0) window.game.parts.push({x:this.x-30,y:this.y+20,vx:-2,vy:0,life:20,c:'#555',r:4});
                 }
                 
@@ -3405,6 +3509,7 @@
                     else if(this.conf.mode === 'zone_control') obj = "CAPTURE LA ZONE";
                     else if(this.conf.mode === 'thief') obj = "VOLE 10 SACS";
                     else if(this.conf.mode === 'payload') obj = "POUSSE LE WAGON";
+                    else if(this.conf.mode === 'royale') obj = "SURVIVRE À LA ZONE";
                     
                     window.ui.notif("OBJECTIF : " + obj, "#22d3ee");
                 }, 1000);
@@ -3526,6 +3631,16 @@
                     this.ents.push(this.train);
                     this.map = this.map.filter(w => Math.abs(w.y - this.world/2) > 150); // Clear wider path
                     window.ui.notif("POUSSE LE WAGON !", "#f97316");
+                } else if(this.conf.mode === 'royale') {
+                    this.gasRadius = this.world; 
+                    const heroes = Object.keys(STARTERS);
+                    for(let i=0; i<30; i++) {
+                        const rndHero = heroes[Math.floor(Math.random()*heroes.length)];
+                        const b = new Bot(false, rndHero);
+                        b.x = Rnd(100, this.world-100); b.y = Rnd(100, this.world-100);
+                        this.ents.push(b);
+                    }
+                    window.ui.notif("SURVIVRE À LA ZONE !", "#ef4444");
                 } else { 
                     window.ui.notif(MODES[this.conf.mode].name.toUpperCase(), "#fff"); 
                 } 
@@ -3606,18 +3721,19 @@
                 if(this.state !== 'PLAYING') return; 
                 const arena = this.conf.arena; 
                 let spawnRate = 0.3; let color = 'rgba(255,255,255,0.5)'; let vy = 2; let vx = 0; let size = 3; let life = 200;
+                let isRect = false;
                 
                 // Configs uniques par terrain
                 if(arena === 'ice') { spawnRate = 0.9; color = 'rgba(220,240,255,0.8)'; vy = 3.5; vx = 1; } 
                 else if(arena === 'magma') { spawnRate = 0.6; color = 'rgba(255,80,0,0.6)'; vy = -3; size = 5; } 
-                else if(arena === 'tokyo') { spawnRate = 0.3; color = 'rgba(0, 255, 200, 0.4)'; vy = 5; } 
-                else if(arena === 'cyber_city') { spawnRate = 0.3; color = 'rgba(232, 121, 249, 0.4)'; vy = 6; }
+                else if(arena === 'tokyo') { spawnRate = 0.3; color = 'rgba(0, 255, 200, 0.4)'; vy = 5; isRect = true; } 
+                else if(arena === 'cyber_city') { spawnRate = 0.3; color = 'rgba(232, 121, 249, 0.4)'; vy = 6; isRect = true; }
                 else if(arena === 'sand') { spawnRate = 0.7; color = 'rgba(230,180,50,0.4)'; vy = 4; vx = 3; } 
                 else if(arena === 'jungle') { spawnRate = 0.4; color = 'rgba(50, 200, 100, 0.4)'; vy = 1.5; vx = -0.5; }
                 else if(arena === 'nebula') { spawnRate = 0.6; color = 'rgba(168, 85, 247, 0.5)'; vy = 0.5; vx = 0.5; size = 2; }
-                else if(arena === 'mainframe') { spawnRate = 1.0; color = 'rgba(34, 211, 238, 0.6)'; vy = -4.5; size = 2; } // Code rain up
+                else if(arena === 'mainframe') { spawnRate = 1.0; color = 'rgba(34, 211, 238, 0.6)'; vy = -4.5; size = 2; isRect = true; } // Code rain up
                 else if(arena === 'ruins') { spawnRate = 0.8; color = 'rgba(148, 163, 184, 0.5)'; vy = 5; vx = -1; } // Rain
-                else if(arena === 'moon') { spawnRate = 0.2; color = 'rgba(255, 255, 255, 0.8)'; vy = -0.5; size=1; } // Stars
+                else if(arena === 'moon') { spawnRate = 0.2; color = 'rgba(255, 255, 255, 0.8)'; vy = -0.05; size=1.5; } // Stars
                 else if(arena === 'crystal') { spawnRate = 0.6; color = 'rgba(192, 132, 252, 0.6)'; vy = -1; vx = 0; size = 4; } // Glitter
                 else if(arena === 'solaris') { spawnRate = 0.5; color = 'rgba(253, 186, 116, 0.6)'; vy = -4; size = 5; } // Sparks
                 else if(arena === 'atlantis') { spawnRate = 0.7; color = 'rgba(147, 197, 253, 0.4)'; vy = -2; size = 6; } // Bubbles
@@ -3632,19 +3748,22 @@
                         y: (vy > 0 ? this.cam.y - 10 : this.cam.y + CFG.h + 10), 
                         vx: (Math.random() - 0.5) * 2 + vx, 
                         vy: vy * (0.8 + Math.random() * 0.4), 
-                        life: life, c: color, r: Math.random() * size + 1 
+                        life: life, c: color, r: Math.random() * size + 1,
+                        isRect: isRect
                     }); 
                 } 
                 for(let i=this.bgParts.length-1; i>=0; i--) { 
                     const p = this.bgParts[i]; p.x += p.vx; p.y += p.vy; p.life--; 
                     if(p.life <= 0) { this.bgParts.splice(i, 1); continue; } 
                     
-                    // Optimisation: Suppression hors écran large
                     if(p.x < this.cam.x - 50 || p.x > this.cam.x + CFG.w + 50 || p.y < this.cam.y - 50 || p.y > this.cam.y + CFG.h + 50) { 
                         this.bgParts.splice(i, 1); continue; 
                     } 
                     
-                    this.ctx.fillStyle = p.c; this.ctx.beginPath(); this.ctx.arc(p.x - this.cam.x, p.y - this.cam.y, p.r, 0, Math.PI*2); this.ctx.fill(); 
+                    this.ctx.fillStyle = p.c; this.ctx.beginPath(); 
+                    if(p.isRect) this.ctx.fillRect(p.x - this.cam.x, p.y - this.cam.y, p.r, p.r * 2);
+                    else this.ctx.arc(p.x - this.cam.x, p.y - this.cam.y, p.r, 0, Math.PI*2);
+                    this.ctx.fill(); 
                 } 
             }, 
             loop(){ 
@@ -3667,7 +3786,10 @@
                     if(this.conf.mode === 'heist' || this.conf.mode === 'boss_rush' || this.conf.mode === 'titan_raid' || this.conf.mode === 'train_defense' || this.conf.mode === 'cyber_hack') { 
                         this.timeLeft--; 
                         if(this.timeLeft <= 0) { 
-                            this.over(this.conf.mode === 'cyber_hack' && this.hackProgress < 100 ? "ECHEC PIRATAGE" : "VICTOIRE"); return; 
+                            if(this.conf.mode === 'train_defense') this.over("VICTOIRE");
+                            else if(this.conf.mode === 'cyber_hack') this.over("ECHEC PIRATAGE");
+                            else this.over("TEMPS ÉCOULÉ"); // Heist, Boss Rush, etc = Defeat if time runs out
+                            return; 
                         }
                     }
                     if(this.conf.mode === 'escape') {
@@ -3780,6 +3902,20 @@
                             if(this.zoneProgress >= 100) this.over("VICTOIRE");
                         }
                     }
+                    if(this.conf.mode === 'royale') {
+                        if(this.frame % 30 === 0 && this.gasRadius > 150) {
+                            this.gasRadius -= 5;
+                        }
+                        const survivors = this.ents.filter(e => e.isBot && !e.dead).length;
+                        if(survivors === 0) this.over("TOP 1 - VICTOIRE ROYAL");
+                        
+                        // Gas visual effect
+                        if(this.frame % 20 === 0) {
+                             const angle = Math.random() * Math.PI * 2;
+                             const r = this.gasRadius;
+                             window.game.parts.push({x:this.world/2 + Math.cos(angle)*r, y:this.world/2 + Math.sin(angle)*r, vx:0, vy:0, life:60, c:'#10b981', r:10});
+                        }
+                    }
                     
                     this.ents.forEach(e=>e.update());
                     // Fix: Remove dead entities (e.g. from poison) that didn't go through kill()
@@ -3825,7 +3961,14 @@
                                     USER.stats.dmg+=b.dmg; 
                                     window.QuestSystem.check('dmg', { amount: Math.floor(b.dmg) });
                                 } 
-                                if(window.game.conf.modifier === 'poison') e.activeEffects.poison = 120; 
+                                if(window.game.conf.modifier === 'poison') e.activeEffects.poison = 120;
+                                
+                                // Bot React Emote on Hit
+                                if (e.isBot && Math.random() < 0.3) {
+                                    const angryEmotes = ['😡', '🤬', '😭', '💔', '😵', '🤕'];
+                                    e.triggerEmote(angryEmotes[Math.floor(Math.random() * angryEmotes.length)]);
+                                }
+                                
                                 // FIX: Lifesteal handled for melee
                                 if(b.friend && (USER.selected === 'ronin' || USER.selected === 'reaper')) { // Ronin et Reaper ont le lifesteal
                                     if(window.game.conf.modifier !== 'oneshot') window.game.player.hp = Math.min(window.game.player.maxHp, window.game.player.hp + Math.floor(b.dmg * 0.4));
@@ -3833,8 +3976,8 @@
                                 if(window.game.conf.modifier === 'recoil' && b.friend) { e.x += Math.cos(window.game.player.angle)*20; e.y += Math.sin(window.game.player.angle)*20; } // Knockback enemy
                                 
                                 e.flashColor = b.c; e.flashTimer = 5; // Flash Feedback
-                                for(let k=0;k<3;k++)window.game.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*5,vy:(Math.random()-0.5)*5,life:15,c:'#fff',r:3}); 
-                                this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:'#fff',vy:-2}); 
+                                for(let k=0;k<7;k++)window.game.parts.push({x:e.x,y:e.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:15,c:b.c,r:Rnd(2,4), gravity:true, shape: 'rect', angle: Rnd(0, Math.PI), vRot: Rnd(-0.2, 0.2)}); // Debris
+                                this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:50,c:'#fff',vy:-1.5, scale:1.5}); 
                                 if(window.game.conf.modifier === 'oneshot') e.hp = 0; 
                                 if(e.hp<=0 && !e.dead) this.kill(e); 
                             } 
@@ -3856,7 +3999,7 @@
                                 if(w.type===3 && b.friend) { // Mur destructible par projectile joueur
                                     this.map.splice(k,1); 
                                     this.items.push({x:w.x+30, y:w.y+30, type:'cube'}); 
-                                    for(let j=0;j<5;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-5,5), vy:Rnd(-5,5), life:20, c:'#d97706', r:5}); 
+                                    for(let j=0;j<8;j++) this.parts.push({x:w.x+30, y:w.y+30, vx:Rnd(-6,6), vy:Rnd(-6,6), life:25, c:'#d97706', r:Rnd(4,7), shape:'rect', angle:Rnd(0,6), vRot:Rnd(-0.3,0.3), gravity:true}); 
                                     wh=true; 
                                 } else if (w.type === 3 && !b.friend) {
                                     // Projectiles ennemis ne cassent pas les murs
@@ -3882,9 +4025,16 @@
                                     // Flash Feedback
                                     e.flashColor = b.c; e.flashTimer = 5; 
 
+                                    // Bot React Emote on Hit
+                                    if (e.isBot && Math.random() < 0.3) {
+                                        const angryEmotes = ['😡', '🤬', '😭', '💔', '😵', '🤕'];
+                                        e.triggerEmote(angryEmotes[Math.floor(Math.random() * angryEmotes.length)]);
+                                    }
+
                                     // Feature 6: Dégâts Critiques
-                                    this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg),life:40,c:b.isCrit?'#facc15':'#fff',vy:-2}); 
-                                    for(let k=0;k<5;k++)this.parts.push({x:e.x,y:e.y,vx:(Math.random()-0.5)*8,vy:(Math.random()-0.5)*8,life:20,c:e.c,r:4}); 
+                                    const isCrit = b.isCrit;
+                                    this.texts.push({x:e.x,y:e.y-40,t:Math.floor(b.dmg) + (isCrit?"!":""),life:50,c:isCrit?'#facc15':'#fff',vy:-2, scale: isCrit?2:1.2}); 
+                                    for(let k=0;k<8;k++)this.parts.push({x:e.x,y:e.y,vx:Rnd(-5,5),vy:Rnd(-5,5),life:20,c:e.c,r:4, gravity:true}); 
                                     if(window.game.conf.modifier === 'oneshot') e.hp = 0; 
                                     if(e.hp<=0 && !e.dead) this.kill(e); 
                                     this.projs.splice(i,1); wh=true; break; 
@@ -3932,26 +4082,35 @@
                                 window.QuestSystem.check('collect', { itemType: l.t, amount: 1 });
                                 if(l.t==='hp'){
                                     this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);
-                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#22c55e',r:3}); // VFX
+                                    for(let j=0;j<6;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#22c55e',r:3, shape:'spark', angle:Rnd(0,6), vRot:Rnd(-0.1,0.1)}); // VFX
                                 } else if(l.t==='coins') {
                                     USER.coins += 10;
                                     window.ui.feed("Pièces", "+10 🪙", true);
-                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#eab308',r:3});
+                                    for(let j=0;j<6;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#eab308',r:3, shape:'spark', angle:Rnd(0,6), vRot:Rnd(-0.1,0.1)});
                                 } else if(l.t==='gems') {
                                     USER.gems += 1;
                                     window.ui.feed("Gemme", "+1 💎", true);
-                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3});
+                                    for(let j=0;j<6;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3, shape:'spark', angle:Rnd(0,6), vRot:Rnd(-0.1,0.1)});
                                 } else {
                                     // xp
                                     this.player.xp=Math.min(this.player.xpMax-1, this.player.xp+30); 
                                     window.QuestSystem.check('xp', { amount: 30 }); 
-                                    for(let j=0;j<5;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3}); 
+                                    for(let j=0;j<6;j++) this.parts.push({x:l.x,y:l.y,vx:Rnd(-3,3),vy:Rnd(-3,3),life:20,c:'#a855f7',r:3, shape:'spark', angle:Rnd(0,6), vRot:Rnd(-0.1,0.1)}); 
                                 }
                             }
                             this.items.splice(i,1);
                         }
                     } 
-                    for(let i=this.parts.length-1;i>=0;i--){const p=this.parts[i]; p.x+=p.vx;p.y+=p.vy;p.life--;if(p.life<=0)this.parts.splice(i,1);} 
+                    for(let i=this.parts.length-1;i>=0;i--){
+                        const p=this.parts[i]; 
+                        p.x+=p.vx; p.y+=p.vy;
+                        if(p.vRot) p.angle = (p.angle || 0) + p.vRot; // Rotation update
+                        p.vx *= 0.92; p.vy *= 0.92; // Friction
+                        if(p.gravity) p.vy += 0.25; // Good gravity
+                        p.life--; 
+                        if(p.decay) p.r *= p.decay; else p.r = Math.max(0.1, p.r * 0.95); // Shrink 
+                        if(p.life<=0 || p.r < 0.2) this.parts.splice(i,1);
+                    } 
                     window.ui.hud(); 
                     window.ui.drawMinimap(); 
                 } 
@@ -4005,8 +4164,18 @@
                              ctx.fillStyle = '#10b981'; ctx.font = "bold 30px Orbitron"; ctx.textAlign = 'center';
                              ctx.fillText("EXIT", 0, -40);
                              ctx.restore();
-                         }
-                    } else if(this.conf.mode === 'zone_control') {
+                          }
+                     } else if(this.conf.mode === 'royale') {
+                          ctx.save(); ctx.translate(this.world/2, this.world/2);
+                          ctx.strokeStyle = '#10b981'; ctx.lineWidth = 10;
+                          ctx.beginPath(); ctx.arc(0, 0, Math.max(0, this.gasRadius), 0, Math.PI*2); ctx.stroke();
+                          // Gas overlay outside
+                          ctx.beginPath(); ctx.arc(0, 0, Math.max(0, this.gasRadius), 0, Math.PI*2);
+                          ctx.rect(this.world, -this.world, -this.world*2, this.world*2); // Inverse clip hack? No, simpler just draw giant ring
+                          // Better: Draw full green screen with globalCompositeOperation but that's complex here.
+                          // Just draw the circle limit.
+                          ctx.restore();
+                     } else if(this.conf.mode === 'zone_control') {
                          ctx.save(); ctx.translate(this.world/2, this.world/2);
                          ctx.fillStyle = `rgba(168, 85, 247, 0.2)`;
                          ctx.beginPath(); ctx.arc(0, 0, 200, 0, Math.PI*2); ctx.fill(); 
@@ -4027,7 +4196,18 @@
                         if(o instanceof Wall) o.draw(ctx, map.wall); 
                         else if(o.draw) o.draw(ctx); 
                         else { 
-                            ctx.fillStyle=o.c;ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill(); 
+                            ctx.fillStyle=o.c;
+                            if (o.isRect || o.shape === 'rect') {
+                                ctx.save(); ctx.translate(o.x, o.y); if(o.angle) ctx.rotate(o.angle);
+                                ctx.fillRect(-o.r, -o.r, o.r*2, o.r*2);
+                                ctx.restore();
+                            } else if (o.shape === 'spark') {
+                                ctx.save(); ctx.translate(o.x, o.y); if(o.angle) ctx.rotate(o.angle);
+                                ctx.beginPath(); ctx.moveTo(0, -o.r*1.5); ctx.lineTo(o.r/2, 0); ctx.lineTo(0, o.r*1.5); ctx.lineTo(-o.r/2, 0); ctx.fill();
+                                ctx.restore();
+                            } else {
+                                ctx.beginPath(); ctx.arc(o.x,o.y,o.r,0,Math.PI*2);ctx.fill(); 
+                            }
                         } 
                     }); 
                     
@@ -4071,6 +4251,9 @@
                             ctx.lineWidth = 1;
                             ctx.beginPath(); ctx.moveTo(p.x-p.r*1.5, p.y); ctx.lineTo(p.x+p.r*1.5, p.y); ctx.stroke();
                             ctx.beginPath(); ctx.moveTo(p.x, p.y-p.r*1.5); ctx.lineTo(p.x, p.y+p.r*1.5); ctx.stroke();
+                        } else if (p.shape === 'cross') {
+                             ctx.font = `${p.r * 2}px Arial`;
+                             ctx.fillText("✚", p.x - p.r, p.y + p.r / 2);
                         } else if (p.shape === 'paw') {
                             ctx.font = `${p.r * 1.5}px Arial`;
                             ctx.fillText("🐾", p.x - p.r, p.y + p.r / 2);
@@ -4095,7 +4278,28 @@
                         
                         ctx.shadowBlur=0; 
                     }); 
-                    this.texts.forEach((t,i)=>{t.y+=t.vy;t.life--;ctx.globalAlpha=t.life/40;ctx.fillStyle=t.c;ctx.font="bold 20px Orbitron";ctx.fillText(t.t,t.x,t.y);ctx.globalAlpha=1;if(t.life<=0)this.texts.splice(i,1);}); 
+                    this.texts.forEach((t,i)=>{
+                        t.y+=t.vy; t.life--; 
+                        t.vy *= 0.95; // Float slowing down
+                        
+                        ctx.save();
+                        ctx.translate(t.x, t.y);
+                        // Scale In/Out effect
+                        const maxLife = 50;
+                        let s = t.scale || 1;
+                        const age = maxLife - t.life;
+                        if (age < 10) s = s * Math.sin((age/10) * (Math.PI/2)); // Smooth pop in
+                        if (t.life < 10) { ctx.globalAlpha = t.life/10; s *= 0.9; t.y -= 1; }
+                        
+                        ctx.scale(s, s);
+                        ctx.fillStyle='black'; ctx.lineWidth=3; ctx.strokeText(t.t, 0, 0); // Outline for better visibility
+                        ctx.fillStyle=t.c; ctx.font="900 24px 'Orbitron', 'Arial Black', sans-serif"; 
+                        ctx.textAlign = 'center';
+                        ctx.fillText(t.t,0,0);
+                        ctx.restore();
+                        ctx.globalAlpha=1;
+                        if(t.life<=0)this.texts.splice(i,1);
+                    }); 
                 } 
                 ctx.restore(); 
             }, 
@@ -4124,10 +4328,11 @@
                      if(window.game.conf.modifier !== 'oneshot') this.player.hp=Math.min(this.player.maxHp,this.player.hp+(e.isBoss?50:10)); // Heal on kill for ranged lifesteal
                 }
 
-                // Feature: Bot Emote on Kill (5% chance)
-                if (e.isBot && Math.random() < 0.05) {
-                    const randomEmote = EMOTE_LIST[Math.floor(Math.random() * EMOTE_LIST.length)].i;
-                    window.ui.triggerEmote(randomEmote);
+                // Bot Death Emote (Spawns floating text)
+                if (e.isBot && Math.random() < 0.5) {
+                    const sadEmotes = ['💀', '😭', '💔', '😵', '🏳️', '👻'];
+                    const em = sadEmotes[Math.floor(Math.random() * sadEmotes.length)];
+                    this.texts.push({x:e.x, y:e.y-50, t:em, life:80, c:'#fff', vy:-1, scale:2});
                 }
 
                 // EXPLOSIVE MOD
