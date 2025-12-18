@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="fr"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>mBattle v1.3.5 - Cyber Future</title>
+    <title>mBattle v1.4.2 - Cyber Future</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700;900&display=swap" rel="stylesheet">
     <style>
@@ -429,7 +429,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.3.5</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.4.2</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -455,6 +455,14 @@
                         <div onclick="window.ui.showTab('modes')" class="glass-panel p-4 flex flex-col items-center justify-center aspect-square active:scale-95 transition bg-purple-900/10 border-purple-500/30">
                             <div class="text-[10px] text-purple-300 font-bold mb-2 uppercase">Mission</div><div class="text-5xl mb-2 drop-shadow-xl" id="play-mode-icon">🔥</div><div class="font-black text-lg leading-none" id="play-mode">Survie</div>
                         </div>
+                    </div>
+                    <!-- NOUVEAU BOUTON MAP MAKER -->
+                    <div onclick="window.ui.startMapMaker()" class="w-full max-w-md glass-panel p-3 mt-4 flex items-center justify-between cursor-pointer active:scale-95 transition hover:bg-white/5 border-green-500/30">
+                        <div class="flex items-center gap-3">
+                            <div class="text-2xl">🏗️</div>
+                            <div><div class="font-bold text-green-400">CRÉATIF</div><div class="text-[10px] text-gray-400">Crée ton propre terrain</div></div>
+                        </div>
+                        <div class="text-2xl text-gray-600">➜</div>
                     </div>
                     <div class="w-full max-w-md glass-panel p-4 flex flex-col items-center mt-4">
                         <div class="text-[10px] text-yellow-300 font-bold mb-3 uppercase tracking-widest">DIFFICULTÉ</div>
@@ -488,8 +496,14 @@
                     <div class="flex justify-between items-center mb-4">
                         <h2 class="text-3xl font-black flex items-center gap-2 font-tech"><span class="text-cyan-400">///</span> mPASS</h2>
                         <!-- TITRE S2 ANIMÉ -->
-                        <div class="text-right text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 animate-pulse font-tech tracking-widest drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">SAISON 2: TEMPÊTE CYBER</div>
+                        <div class="text-right">
+                            <div class="text-xl md:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 animate-pulse font-tech tracking-widest drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]">SAISON 2: TEMPÊTE CYBER</div>
+                            <div class="text-[10px] text-gray-400 font-bold tracking-widest uppercase mt-1">Prochaine saison le Samedi 27 Décembre 2025</div>
+                        </div>
                     </div>
+
+
+
                     <div class="glass-panel p-6 mb-6 bg-gradient-to-r from-cyan-900/20 to-transparent border-cyan-500/30">
                         <div class="flex justify-between items-center mb-4">
                              <div><div class="text-2xl font-black text-white">Palier <span id="pass-lvl">1</span></div><div class="text-xs text-gray-400" id="pass-xp-txt">0/100 XP</div></div>
@@ -508,9 +522,59 @@
                         </div>
                     </div>
                 </div>
-                <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div></div>
+                <!-- TAB CLUB (NOUVEAU) -->
+                <div id="tab-clubs" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
+                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-orange-500">///</span> CLUB</h2>
+                     <div id="club-container" class="glass-panel p-6 min-h-[60vh] flex flex-col items-center justify-center text-center">
+                         <div class="text-6xl mb-4">🛡️</div>
+                         <h3 class="text-2xl font-black text-white mb-2">REJOINS UN CLUB</h3>
+                         <p class="text-gray-400 mb-6 text-sm">Discute, joue et progresse avec tes amis !</p>
+                         <button onclick="window.ui.createClub()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl shadow-lg mb-4 w-full max-w-xs">CRÉER UN CLUB</button>
+                         
+                         <!-- SEARCH BAR CLUBS -->
+                         <div class="w-full max-w-md mb-4 relative">
+                             <input type="text" placeholder="Trouver un club..." class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white focus:outline-none focus:border-orange-500 transition" oninput="window.ui.search('clubs', this.value)">
+                             <div class="absolute left-3 top-3.5 text-gray-400">🔍</div>
+                         </div>
+
+                         <div class="grid grid-cols-1 gap-2 w-full max-w-md" id="club-list">
+                             <!-- Dynamic Content -->
+                         </div>
+                     </div>
+                </div>
+
+                <!-- TAB AVENTURES (NOUVEAU) -->
+                <div id="tab-adventures" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
+                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-emerald-500">///</span> AVENTURES</h2>
+                     
+                     <!-- SEARCH BAR ADVENTURES -->
+                     <div class="w-full mb-4 relative">
+                         <input type="text" placeholder="Rechercher une histoire..." class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white focus:outline-none focus:border-emerald-500 transition" oninput="window.ui.search('adventures', this.value)">
+                         <div class="absolute left-3 top-3.5 text-gray-400">🔍</div>
+                     </div>
+
+                     <div id="adventure-list" class="flex flex-col gap-4"></div>
+                </div>
+                <div id="tab-starters" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-blue-500">///</span> ARMURERIE</h2>
+                    <!-- SEARCH BAR HEROES -->
+                    <div class="w-full mb-4 relative">
+                        <input type="text" placeholder="Rechercher un héros..." class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white focus:outline-none focus:border-blue-500 transition" oninput="window.ui.search('starters', this.value)">
+                        <div class="absolute left-3 top-3.5 text-gray-400">🔍</div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-10" id="list-starters"></div>
+                </div>
                 <div id="tab-modes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-purple-500">///</span> MISSIONS</h2><div class="grid grid-cols-1 gap-3 mb-8" id="list-modes"></div><h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-400">TERRAINS</h2><div class="grid grid-cols-1 md:grid-cols-3 gap-3" id="list-arenas"></div></div>
-                <div id="tab-emotes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20"><h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-pink-500">///</span> COLLECTION</h2><div class="glass-panel p-6 mb-4"><div class="text-xs text-gray-400 mb-4 uppercase font-bold">Emotes Équipées (Max 8)</div><div class="flex justify-center gap-4 mb-2 flex-wrap" id="equipped-emotes"></div></div><div class="grid grid-cols-4 md:grid-cols-6 gap-3" id="list-emotes"></div></div>
+                <div id="tab-emotes" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
+                    <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-pink-500">///</span> COLLECTION</h2>
+                    <div class="glass-panel p-6 mb-4"><div class="text-xs text-gray-400 mb-4 uppercase font-bold">Emotes Équipées (Max 8)</div><div class="flex justify-center gap-4 mb-2 flex-wrap" id="equipped-emotes"></div></div>
+                    <!-- SEARCH BAR EMOTES -->
+                    <div class="w-full mb-4 relative">
+                        <input type="text" placeholder="Rechercher une emote..." class="w-full bg-black/30 border border-white/10 rounded-xl px-4 py-3 pl-10 text-white focus:outline-none focus:border-pink-500 transition" oninput="window.ui.search('emotes', this.value)">
+                        <div class="absolute left-3 top-3.5 text-gray-400">🔍</div>
+                    </div>
+                    <div class="grid grid-cols-4 md:grid-cols-6 gap-3" id="list-emotes"></div>
+                </div>
                 <div id="tab-shop" class="tab-content hidden animate-fadeIn w-full max-w-3xl mx-auto pb-20">
                     <h2 class="text-2xl font-black mb-4 flex items-center gap-2 font-tech"><span class="text-yellow-500">///</span> MEGA MALL</h2>
                     <div class="flex justify-between items-center mb-4">
@@ -646,6 +710,24 @@
                     <h3 class="text-xl font-bold mb-4 text-blue-400">PATCH NOTES</h3>
                     <div class="glass-panel p-6 text-sm text-gray-300">
                     <div class="patch-note relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-cyan-500 text-[10px] text-black font-black px-2 py-0.5 rounded-bl-lg z-10 animate-pulse shadow-lg">LATEST</div>
+                        <h3>v1.4.2 (HOLIDAY UPDATE)</h3>
+                        <ul>
+                            <li>🎅 <b>Noël:</b> Il neige ! + Cadeaux en boutique.</li>
+                            <li>🛡️ <b>Clubs:</b> Timestamps dans le chat.</li>
+                            <li>✨ <b>Saison:</b> Date de fin ajoutée.</li>
+                            <li>🐛 <b>Fixes:</b> Optimisation Aventures & Clubs.</li>
+                        </ul>
+                    </div>
+                    <div class="patch-note">
+                        <h3>v1.4.1 (SOUND & STORY)</h3>
+                        <ul>
+                            <li>📜 <b>Nouvelles Aventures:</b> Découvrez les histoires de Scout et Heavy (Tank) !</li>
+                            <li>🔊 <b>Audio HD:</b> Nouveaux effets sonores premium pour les tirs, impacts et victoires.</li>
+                            <li>🐛 <b>Correctifs:</b> Optimisation globale et corrections de bugs mineurs.</li>
+                        </ul>
+                    </div>
+                    <div class="patch-note relative overflow-hidden">
                         <div class="absolute top-0 right-0 bg-red-600 text-[10px] font-black px-2 py-0.5 rounded-bl-lg z-10 animate-pulse shadow-lg">NOUVEAU</div>
                         <h3>v1.3.5 (TROPHY UPDATE)</h3>
                         <ul>
@@ -698,7 +780,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.3.4</div>
+                        <div class="absolute bottom-2 right-2 text-[8px] text-gray-600 font-mono">v1.4.2</div>
                     </div>
                 <div class="glass-panel p-6 mb-6 bg-blue-900/10 border-blue-500/30">
                         <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-400">
@@ -731,10 +813,11 @@
             <div class="w-full glass-nav h-[90px] pb-safe flex justify-around items-center px-2 z-40 relative overflow-x-auto hide-scrollbar">
                 <button onclick="window.ui.showTab('play')" id="nav-play" class="nav-item flex flex-col items-center p-2 min-w-[60px] active selected"><span class="text-2xl icon mb-1">⚔️</span><span class="text-[9px] font-bold">JOUER</span></button>
                 <button onclick="window.ui.showTab('starters')" id="nav-starters" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🦸</span><span class="text-[9px] font-bold">HÉROS</span></button>
+                <button onclick="window.ui.showTab('adventures')" id="nav-adventures" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">📜</span><span class="text-[9px] font-bold">AVENTURE</span></button>
                 <button onclick="window.ui.showTab('pass')" id="nav-pass" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🎫</span><span class="text-[9px] font-bold">PASS</span></button>
-                <button onclick="window.ui.showTab('emotes')" id="nav-emotes" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">😀</span><span class="text-[9px] font-bold">EMOTES</span></button>
+                <button onclick="window.ui.showTab('clubs')" id="nav-clubs" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🛡️</span><span class="text-[9px] font-bold">CLUBS</span></button>
                 <button onclick="window.ui.showTab('shop')" id="nav-shop" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">🛒</span><span class="text-[9px] font-bold">SHOP</span></button>
-                <button onclick="window.ui.showTab('infos')" id="nav-infos" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">ℹ️</span><span class="text-[9px] font-bold">INFOS</span></button>
+                <button onclick="window.ui.showTab('emotes')" id="nav-emotes" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">😀</span><span class="text-[9px] font-bold">EMOTES</span></button>
                 <button onclick="window.ui.showTab('profile')" id="nav-profile" class="nav-item flex flex-col items-center p-2 min-w-[60px]"><span class="text-2xl icon mb-1">👤</span><span class="text-[9px] font-bold">PROFIL</span></button>
             </div>
         </div>
@@ -759,7 +842,7 @@
                 <div class="settings-grp"><label class="settings-label">Bio</label><textarea id="setting-bio" placeholder="Ta description..." class="profile-input resize-none h-20"></textarea></div>
                 <div class="settings-grp pt-2 border-t border-white/10 mt-2"><div class="flex justify-between items-center mb-2"><label class="settings-label text-yellow-400">Thème du Profil <span class="bg-yellow-500 text-black px-1 rounded text-[8px]">PRO</span></label><div id="theme-lock-icon" class="text-[10px] text-gray-500"></div></div><div class="flex gap-2 overflow-x-auto hide-scrollbar p-1" id="profile-theme-selector"></div></div>
                 <button onclick="window.ui.saveSettings()" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl mt-2">ENREGISTRER</button>
-                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.2.9</div></div>
+                <div class="mt-4 pt-4 border-t border-white/10 text-center"><p class="text-[10px] text-gray-500 leading-relaxed">mBattle est un jeu vidéo gratuit conçu par Mathias Tusseau. Les bots sont pilotés par mAI.<br>Si vous rencontrez un problème, rendez vous sur : <a href="https://forms.gle/1PVVdcSi3mYyq3XeA" target="_blank" class="text-blue-400 hover:underline">Support</a></p><div class="text-[8px] text-gray-600 mt-1">v1.4.2</div></div>
              </div>
         </div>
 
@@ -805,7 +888,160 @@
         </div>
     </div>
     <script>
-        /* mBATTLE v1.3.3 - SAISON 2 */
+        /* mBATTLE v1.4.2 - HOLIDAY UPDATE */
+        
+        // --- SOUND MANAGER (v1.4.1) ---
+        // --- SOUND MANAGER (v1.4.1) ---
+        const SoundManager = {
+            ctx: null,
+            init() { 
+                try {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if(AudioContext) this.ctx = new AudioContext(); 
+                } catch(e) { console.error("Audio init failed", e); }
+            },
+            play(id) {
+                if(typeof USER !== 'undefined' && USER.settings && !USER.settings.sound) return;
+                if(!this.ctx) this.init();
+                if(!this.ctx) return;
+
+                const t = this.ctx.currentTime;
+                
+                // Helper for noise
+                const playNoise = (duration, filterFreq) => {
+                    const bufferSize = this.ctx.sampleRate * duration;
+                    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+                    const noise = this.ctx.createBufferSource();
+                    noise.buffer = buffer;
+                    const filter = this.ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(filterFreq || 1000, t);
+                    filter.frequency.exponentialRampToValueAtTime(100, t + duration); // Filter sweep
+                    
+                    const gain = this.ctx.createGain();
+                    gain.gain.setValueAtTime(0.1, t);
+                    gain.gain.exponentialRampToValueAtTime(0.01, t + duration);
+                    
+                    noise.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    noise.start(t);
+                    noise.stop(t + duration);
+                };
+
+                const osc = (type, freq, dur, vol=0.1, sweep=0) => {
+                    const o = this.ctx.createOscillator();
+                    const g = this.ctx.createGain();
+                    o.type = type;
+                    o.frequency.setValueAtTime(freq, t);
+                    if(sweep) o.frequency.exponentialRampToValueAtTime(sweep, t + dur);
+                    
+                    g.gain.setValueAtTime(vol, t);
+                    g.gain.exponentialRampToValueAtTime(0.01, t + dur);
+                    
+                    o.connect(g);
+                    g.connect(this.ctx.destination);
+                    o.start(t);
+                    o.stop(t + dur);
+                };
+
+                if(id === 'click' || id === 'ui') {
+                    osc('sine', 800, 0.05, 0.05, 1200);
+                } else if(id === 'shoot') {
+                    // Layered shoot sound
+                    playNoise(0.1, 800);
+                    osc('square', 150, 0.1, 0.05, 40);
+                } else if(id === 'hit') {
+                    osc('sawtooth', 200, 0.1, 0.05, 50);
+                } else if(id === 'start') {
+                    osc('triangle', 300, 0.5, 0.1, 600);
+                    setTimeout(() => osc('triangle', 600, 0.5, 0.1, 1200), 100);
+                } else if(id === 'win') {
+                    osc('triangle', 440, 0.2, 0.1);
+                    setTimeout(() => osc('triangle', 554, 0.2, 0.1), 100); // C#
+                    setTimeout(() => osc('triangle', 659, 0.4, 0.1), 200); // E
+                } else if(id === 'lose') {
+                    osc('sawtooth', 300, 0.4, 0.1, 100);
+                    setTimeout(() => osc('sawtooth', 200, 0.4, 0.1, 50), 300);
+                } else if(id === 'collect') {
+                    osc('sine', 1200, 0.1, 0.05); // High ping
+                } else if(id === 'purchase') {
+                    osc('sine', 1500, 0.1, 0.05); 
+                    setTimeout(()=>osc('sine', 2000, 0.1, 0.05), 50);
+                } else if(id === 'error') {
+                    osc('sawtooth', 150, 0.2, 0.1, 100);
+                } else if(id === 'levelup') {
+                    osc('triangle', 400, 0.2, 0.1);
+                    setTimeout(()=>osc('triangle', 500, 0.2, 0.1), 100);
+                    setTimeout(()=>osc('triangle', 600, 0.2, 0.1), 200);
+                    setTimeout(()=>osc('triangle', 800, 0.4, 0.2), 300);
+                } else if(id === 'open_chest') {
+                    playNoise(0.5, 300);
+                    osc('sine', 800, 0.3, 0.1, 100);
+                    setTimeout(()=>osc('triangle', 1200, 0.4, 0.1), 200);
+                } else if(id === 'equip') {
+                     osc('square', 300, 0.05, 0.05, 400);
+                } else if(id === 'ui_hover') {
+                     osc('sine', 440, 0.02, 0.01);
+                } else if(id === 'start_game') {
+                     osc('sawtooth', 200, 0.5, 0.1, 50);
+                     setTimeout(()=>osc('sawtooth', 100, 0.5, 0.1), 200);
+                }
+            }
+        };
+
+        // --- MAP MAKER (v1.4.0) ---
+        const MapMaker = {
+            active: false,
+            grid: [],
+            size: 20,
+            init() {
+                this.grid = [];
+                for(let i=0; i<this.size*this.size; i++) this.grid.push(0);
+                this.renderEditor();
+            },
+            renderEditor() {
+                const el = document.getElementById('map-maker-ui');
+                if(!el) {
+                    const d = document.createElement('div');
+                    d.id = 'map-maker-ui';
+                    d.className = 'absolute inset-0 z-[60] bg-black flex flex-col items-center justify-center';
+                    d.innerHTML = `
+                        <div class="absolute top-4 left-4 text-white font-tech text-xl">MAP MAKER <span class="text-green-400">BETA</span></div>
+                        <button onclick="document.getElementById('map-maker-ui').remove()" class="absolute top-4 right-4 text-red-500 text-2xl font-bold">×</button>
+                        <div class="grid grid-cols-20 gap-0.5 bg-gray-900 border border-white/20 p-2" id="mm-grid" style="grid-template-columns: repeat(20, 1fr);">
+                            ${this.grid.map((c,i) => `<div onclick="MapMaker.toggle(${i})" id="cell-${i}" class="w-4 h-4 ${c===1?'bg-white':'bg-gray-800 hover:bg-gray-700'} cursor-pointer"></div>`).join('')}
+                        </div>
+                        <div class="flex gap-4 mt-6">
+                            <button onclick="MapMaker.save()" class="glass-btn px-6 py-2">SAUVEGARDER</button>
+                            <button onclick="MapMaker.clear()" class="glass-btn px-6 py-2 text-red-400">EFFACER</button>
+                        </div>
+                    `;
+                    document.body.appendChild(d);
+                } else {
+                    document.getElementById('mm-grid').innerHTML = this.grid.map((c,i) => `<div onclick="MapMaker.toggle(${i})" id="cell-${i}" class="w-4 h-4 ${c===1?'bg-white':'bg-gray-800 hover:bg-gray-700'} cursor-pointer"></div>`).join('');
+                }
+            },
+            toggle(i) {
+                this.grid[i] = this.grid[i] === 0 ? 1 : 0;
+                document.getElementById(`cell-${i}`).className = `w-4 h-4 ${this.grid[i]===1?'bg-white':'bg-gray-800 hover:bg-gray-700'} cursor-pointer`;
+            },
+            save() {
+                const name = prompt("Nom de la carte ?");
+                if(name) {
+                    if(!USER.maps) USER.maps = [];
+                    USER.maps.push({ name, grid: [...this.grid], date: Date.now() });
+                    Storage.save();
+                    alert("Carte sauvegardée !");
+                    document.getElementById('map-maker-ui').remove();
+                }
+            },
+            clear() { this.grid = this.grid.map(()=>0); this.renderEditor(); }
+        };
+
         window.game = {}; 
 
         const CFG = { w: 0, h: 0, world: 2500 };
@@ -820,11 +1056,81 @@
         const RARITY = { common: { name: 'Commun', color: '#94a3b8', bg: 'bg-gray-500' }, rare: { name: 'Rare', color: '#3b82f6', bg: 'bg-blue-500' }, epic: { name: 'Épique', color: '#a855f7', bg: 'bg-purple-500' }, legendary: { name: 'Légendaire', color: '#eab308', bg: 'bg-yellow-500' }, mythic: { name: 'Mythique', color: '#ef4444', bg: 'bg-red-600' } };
         
         // PRIX STANDARDISÉS
-        const PRICE_COMMON = 0;
-        const PRICE_RARE = 1000;
-        const PRICE_EPIC = 1800;
-        const PRICE_LEGENDARY = 3200;
-        const PRICE_MYTHIC = 5000;
+        // PRIX STANDARDISÉS (Mise à jour v1.4.0)
+        const PRICE_COMMON = 500;
+        const PRICE_RARE = 1500;
+        const PRICE_EPIC = 2500;
+        const PRICE_LEGENDARY = 4000;
+        const PRICE_MYTHIC = 6000;
+
+        // --- NOUVEAUTÉ v1.4.0 : CLUBS & MAITRISES ---
+        const CLUB_ICONS = ["🛡️","⚔️","👑","💀","🔥","❄️","⚡","🌟","🐉","🦁"];
+        const MASTERY_MAX = 10;
+        const MASTERY_XP = [0, 50, 150, 300, 500, 800, 1200, 1700, 2300, 3000]; // XP requis pour chaque niveau
+        
+        // --- NOUVEAUTÉ v1.4.0 : AVENTURES ---
+        // Histoires héroïques
+        const ADVENTURES = {
+            soldier: { title: "Le Déserteur", desc: "La fuite de Soldier vers la liberté.", color: "#3b82f6", bg: "linear-gradient(135deg, #1e3a8a, #3b82f6)", parts: [
+                { type: 'story', text: "2077. Base Lunaire Alpha. L'ordre 66 est donné. Je refuse d'obéir." },
+                { type: 'battle', mode: 'survival', target: 3, desc: "Échappe aux gardes de la base (3 vagues) !" },
+                { type: 'reward', coin: 300, xp: 50 },
+                { type: 'story', text: "L'alarme résonne. Les portes du hangar sont bloquées." },
+                { type: 'battle', mode: 'cyber_hack', target: 50, desc: "Pirate le terminal de sécurité (50%)." },
+                { type: 'reward', coin: 400, gems: 5 },
+                { type: 'battle', mode: 'escape', target: 1, desc: "Rejoins le vaisseau d'extraction !" },
+                { type: 'story', text: "Ils ont envoyé le Capitaine pour m'arrêter..." },
+                { type: 'battle', mode: 'duel', target: 1, desc: "Duel contre le Capitaine !" },
+                { type: 'reward', skin: 'soldier_veteran_free', xp: 200 },
+                { type: 'story', text: "Je suis libre... mais pour combien de temps ?" },
+                { type: 'battle', mode: 'survival', target: 8, desc: "Survivre aux chasseurs de primes (Vague 8)." },
+                { type: 'reward', box: 2, xp: 300 }
+            ]},
+            drone: { title: "Protocole Vengeance", desc: "Un drone solitaire.", color: "#94a3b8", bg: "linear-gradient(135deg, #475569, #94a3b8)", parts: [
+                { type: 'story', text: "Système redémarré. Mémoire corrompue. Seule la vengeance reste." },
+                { type: 'collect', item: 'coins', target: 50, desc: "Récupère des composants (50 pièces)." },
+                { type: 'reward', coin: 100, xp: 50 },
+                { type: 'battle', mode: 'rampage', target: 15, desc: "Élimine 15 ennemis." },
+                { type: 'reward', gems: 10, xp: 100 },
+                { type: 'battle', mode: 'boss_rush', target: 1, desc: "Détruis le boss Pilleur." },
+                { type: 'reward', skin: 'drone_stealth_free' }
+            ]},
+            scout: { title: "Opération Fantôme", desc: "Infiltration et sabotage.", color: "#f59e0b", bg: "linear-gradient(135deg, #b45309, #f59e0b)", parts: [
+                { type: 'story', text: "La mission est simple : entrer, voler les données, sortir." },
+                { type: 'battle', mode: 'escape', target: 1, desc: "Traverse les lignes ennemies sans mourir." },
+                { type: 'reward', coin: 300, xp: 75 },
+                { type: 'story', text: "Le coffre est gardé par un Titan." },
+                { type: 'battle', mode: 'boss_rush', target: 1, desc: "Neutralise le Titan Gardien." },
+                { type: 'reward', coin: 500, gems: 10 },
+                { type: 'battle', mode: 'cyber_hack', target: 100, desc: "Upload les données (100%)." },
+                 { type: 'reward', skin: 'scout_forest_free' }
+            ]},
+            tank: { title: "La Forteresse Mobile", desc: "Un mur infranchissable.", color: "#22c55e", bg: "linear-gradient(135deg, #15803d, #22c55e)", parts: [
+                { type: 'story', text: "Ils arrivent par milliers. Je suis le dernier rempart." },
+                { type: 'battle', mode: 'defense', target: 5, desc: "Défends le noyau (5 mins / vagues)." },
+                { type: 'reward', coin: 400, xp: 100 },
+                { type: 'story', text: "Le noyau surchauffe. Il faut gagner du temps." },
+                { type: 'battle', mode: 'rampage', target: 30, desc: "Fais le ménage (30 ennemis)." },
+                { type: 'reward', coin: 800, skin: 'tank_rusty_free' },
+                 { type: 'battle', mode: 'boss_rush', target: 3, desc: "Survis à l'assaut des Boss (3)." },
+                 { type: 'reward', box: 5 }
+            ]},
+            assassin: { title: "L'Ombre Silencieuse", desc: "La voie du sabre.", color: "#ef4444", bg: "linear-gradient(135deg, #991b1b, #ef4444)", parts: [
+                 { type: 'story', text: "Mon clan a été trahi. L'honneur exige réparation." },
+                 { type: 'battle', mode: 'survival', target: 5, desc: "Survis à l'embuscade (5 vagues)." },
+                 { type: 'reward', coin: 300, xp: 100 },
+                 { type: 'battle', mode: 'duel', target: 1, desc: "Duel contre le Maître Traître." },
+                 { type: 'reward', skin: 'ninja', gems: 20 }
+            ]},
+            reaper: { title: "Le Moissonneur", desc: "La mort vient d'en haut.", color: "#8b5cf6", bg: "linear-gradient(135deg, #5b21b6, #8b5cf6)", parts: [
+                 { type: 'story', text: "Je suis le cauchemar qu'ils ont créé." },
+                 { type: 'battle', mode: 'rampage', target: 50, desc: "Moissonne 50 âmes." },
+                 { type: 'reward', xp: 500, gems: 50 },
+                 { type: 'battle', mode: 'structure_war', target: 1, desc: "Détruis le générateur central." },
+                 { type: 'reward', skin: 'toxic' }
+            ]}
+        };
+
 
         // DÉFINITION DES PROPRIÉTÉS DES PROJECTILES UNIQUES PAR HÉROS
         const STARTERS = { 
@@ -1050,6 +1356,14 @@
             dungeon: { name: "Donjon", color: '#1c1917', grid: 'rgba(120, 113, 108, 0.2)', wall: '#292524', special: false },
             reactor: { name: "Réacteur", color: '#1a202c', grid: 'rgba(132, 204, 22, 0.2)', wall: '#365314', special: false }
         };
+        
+        const CLUBS = [
+            { id: 'c1', name: "Elite Cyber", tag: "ELITE", members: 28, max: 30, trophies: 15400, desc: "Les meilleurs.", open: false, icon: "👑" },
+            { id: 'c2', name: "Mathias Team", tag: "DEV", members: 5, max: 30, trophies: 0, desc: "Club officiel.", open: true, icon: "⚔️" },
+            { id: 'c3', name: "Noob Slayers", tag: "KILL", members: 12, max: 30, trophies: 4500, desc: "Fun only.", open: true, icon: "💀" },
+            { id: 'c4', name: "Golden Boys", tag: "GOLD", members: 29, max: 30, trophies: 25000, desc: "Rich ppl.", open: false, icon: "💎" },
+            { id: 'c5', name: "Neon City", tag: "NEON", members: 18, max: 30, trophies: 8900, desc: "Cyberpunk Vibe.", open: true, icon: "🌆" }
+        ];
 
         const RANKS = [{n:"BRONZE I", t:0, c:"#cd7f32"}, {n:"BRONZE II", t:100, c:"#cd7f32"}, {n:"BRONZE III", t:200, c:"#cd7f32"}, {n:"SILVER I", t:300, c:"#c0c0c0"}, {n:"SILVER II", t:500, c:"#c0c0c0"}, {n:"SILVER III", t:700, c:"#c0c0c0"}, {n:"GOLD I", t:1000, c:"#ffd700"}, {n:"GOLD II", t:1300, c:"#ffd700"}, {n:"GOLD III", t:1600, c:"#ffd700"}, {n:"PLATINUM I", t:2000, c:"#22d3ee"}, {n:"PLATINUM II", t:2500, c:"#22d3ee"}, {n:"DIAMOND", t:3500, c:"#a855f7"}, {n:"mMASTER", t:5000, c:"#ef4444"}];
         
@@ -1125,8 +1439,8 @@
             chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_3_5';
-        const PREVIOUS_KEYS = ['mBattle_Data_v1_3', 'mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_4_2';
+        const PREVIOUS_KEYS = ['mBattle_Data_v1_4_3', 'mBattle_Data_v1_4_1', 'mBattle_Data_v1_4_0', 'mBattle_Data_v1_3_5', 'mBattle_Data_v1_3', 'mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
             coins: 500, gems: 10, trophies: 0, unlocked: ['soldier', 'drone'], levels: { soldier: 1, drone: 1 }, selected: 'soldier',
@@ -1139,9 +1453,15 @@
             skins: {}, 
             ownedSkins: [],
             quests: { daily: [], season: [], lastGenerated: 0 },
-            // NOUVEAUX CHAMPS DE PROFIL
+            // V1.4.0 Features
             bio: "Aucune bio définie...", email: "", phone: "", dob: "", theme: "blue",
-            claimedRanks: []
+            claimedRanks: [],
+            club: null, // { name: "Alpha", role: "Member", messages: [] }
+            mastery: {}, // { soldier: { xp: 0, lvl: 1 } }
+            adventures: {}, // { soldier: 1 } (Chapter unlocked)
+            maps: [], // Custom maps { name: "My Map", data: ... }
+            weaponSkins: {}, // { soldier: 'gold_gun' }
+            settings: { sound: true, music: true }
         };
 
         const PERKS = [
@@ -1592,6 +1912,15 @@
                 const s = el('intro-screen');
                 s.style.opacity = 0; setTimeout(() => s.classList.add('hidden'), 1000);
             },
+             search(context, query) {
+                 query = query.toLowerCase();
+                 // Call specific render functions with filter
+                 if(context === 'starters') this.renderStarters(query);
+                 if(context === 'adventures') this.renderAdventures(query);
+                 if(context === 'clubs') this.renderClubs(query);
+                 if(context === 'emotes') this.renderEmotes(query);
+             },
+
             hud() {
                 if(!window.game.player) return; const p = window.game.player;
                 // FIX 1: Retrait de la transition CSS pour un update immédiat de la barre de vie
@@ -1726,6 +2055,7 @@
             flash() { setStyle('flash-layer', 'opacity', 0.6); setTimeout(()=>setStyle('flash-layer', 'opacity', 0), 100); },
             feed(k,v,g) { const d=document.createElement('div'); d.className=`kill-msg ${g?'':'red'}`; d.innerHTML=`<span class="${g?'text-blue-400':'text-red-400'}">${k}</span> ☠️ ${v}`; const c=el('kill-feed'); if(c){ c.prepend(d); if(c.children.length>4)c.lastChild.remove(); } setTimeout(()=>d.remove(),4000); },
             levelUp() { 
+                if(SoundManager) SoundManager.play('levelup');
                 const s=el('levelup-screen'), c=el('perk-container'); c.innerHTML=''; s.classList.remove('hidden'); 
                 PERKS.sort(()=>0.5-Math.random()).slice(0,3).forEach(p=>{ 
                     const b=document.createElement('button'); 
@@ -1804,6 +2134,7 @@
                 }
             },
             showTab(id) { 
+                if(SoundManager) SoundManager.play('ui');
                 document.querySelectorAll('.tab-content').forEach(e => e.classList.add('hidden')); 
                 document.getElementById('tab-' + id).classList.remove('hidden'); 
                 document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active', 'selected')); 
@@ -1817,8 +2148,382 @@
                 if(id === 'profile') this.renderProfile(); 
                 if(id === 'emotes') this.renderEmotes(); 
                 if(id === 'play') { this.updateDifficultyButtons(); this.renderBotSelector(); } 
+                if(id === 'adventures') this.renderAdventures();
+                if(id === 'clubs') this.renderClubs();
                 
                 this.updateMenu(); // Force menu refresh
+            },
+            startMapMaker() { MapMaker.init(); },
+            renderAdventures(filter='') {
+                const c = document.getElementById('adventure-list');
+                if(!c) return;
+                c.innerHTML = '';
+                
+                // Header Visual Improved
+                c.innerHTML += `<div class="glass-panel p-8 mb-8 relative overflow-hidden text-center bg-gradient-to-r from-blue-900/60 to-purple-900/60 border-blue-500/40 shadow-2xl rounded-3xl group">
+                    <div class="absolute inset-0 bg-[url('https://cdn.tailwindcss.com/img/beams.png')] bg-cover opacity-20 animate-pulse group-hover:opacity-30 transition"></div>
+                    <div class="relative z-10 scale-100 group-hover:scale-105 transition duration-500">
+                        <h2 class="text-4xl md:text-5xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-400 mb-3 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">MODE AVENTURE</h2>
+                        <p class="text-sm md:text-base text-gray-300 font-bold uppercase tracking-[0.2em] mb-4">Découvre l'histoire des héros & Gagne des skins</p>
+                        <div class="h-1 w-24 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto"></div>
+                    </div>
+                </div>`;
+
+                c.innerHTML += `<div class="grid grid-cols-1 gap-8 pb-10">`;
+
+                Object.keys(ADVENTURES).forEach(k => {
+                   const adv = ADVENTURES[k];
+                   if(filter && !adv.title.toLowerCase().includes(filter) && !adv.desc.toLowerCase().includes(filter)) return;
+
+                   const hero = STARTERS[k];
+                   if(!hero) return; 
+                   const progress = (USER.adventures && USER.adventures[k]) ? USER.adventures[k] : { part: 0 };
+                   const totalParts = adv.parts.length;
+                   const pct = Math.floor((progress.part / totalParts) * 100);
+                   const isComplete = progress.part >= totalParts;
+                   
+                   // New MO.CO Style Card: Big, Visual, Chapters list
+                   let chaptersHtml = '';
+                   adv.parts.forEach((p, idx) => {
+                       let stateIcon = '🔒';
+                       let stateClass = 'opacity-40 grayscale';
+                       if(idx < progress.part) { stateIcon = '✅'; stateClass = 'text-green-400'; }
+                       else if(idx === progress.part) { stateIcon = '▶'; stateClass = 'text-white bg-white/10 rounded px-2'; }
+                       
+                       // Only show a few chapters (current + next few) or summary
+                       if(idx >= progress.part - 1 && idx <= progress.part + 2) {
+                           let typeIcon = p.type==='battle'?'⚔️':(p.type==='story'?'📜':'🎁');
+                           let desc = p.type === 'story' ? 'Chapitre Histoire' : (p.type==='battle'? (MODES[p.mode] ? MODES[p.mode].name : p.mode) : 'Récompense');
+                           chaptersHtml += `<div class="flex items-center gap-3 text-xs mb-1 ${stateClass}">
+                               <span class="w-4">${stateIcon}</span>
+                               <span class="opacity-70">${typeIcon}</span>
+                               <span class="truncate max-w-[200px]">${desc}</span>
+                           </div>`;
+                       }
+                   });
+
+                   c.innerHTML += `<div class="glass-panel p-0 flex flex-col md:flex-row relative overflow-hidden group hover:scale-[1.01] transition-all duration-300 border-0 shadow-[0_10px_40px_rgba(0,0,0,0.5)] bg-black/40 rounded-3xl border-t border-white/10">
+                       <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent z-10 pointer-events-none"></div>
+                       
+                       <!-- Background Image / Gradient -->
+                       <div class="absolute inset-0 z-0 opacity-40 group-hover:opacity-60 transition duration-700" style="background:${adv.bg || adv.color}"></div>
+                       
+                       <!-- Left Side: Hero Art -->
+                       <div class="relative z-20 w-full md:w-1/3 min-h-[200px] flex items-center justify-center overflow-hidden">
+                            <div class="text-9xl filter drop-shadow-[0_0_30px_rgba(0,0,0,0.5)] transform group-hover:scale-110 group-hover:-rotate-3 transition duration-500">${hero.icon}</div>
+                            ${isComplete ? '<div class="absolute top-4 left-4 bg-green-500 text-black font-black text-xs px-3 py-1 rounded shadow-lg">COMPLET 100%</div>' : ''}
+                       </div>
+                       
+                       <!-- Right Side: Info & Actions -->
+                       <div class="relative z-20 flex-1 p-6 flex flex-col justify-center bg-black/30 backdrop-blur-sm border-l border-white/5">
+                           <div class="flex justify-between items-start mb-2">
+                               <div>
+                                   <div class="text-5xl font-black italic text-white/5 absolute -top-4 right-0 pointer-events-none select-none">${k.toUpperCase()}</div>
+                                   <h3 class="font-black font-tech text-3xl uppercase text-white mb-1 leading-none drop-shadow-md italic tracking-wide" style="text-shadow: 0 0 20px ${adv.color}88;">${adv.title}</h3>
+                                   <div class="h-1 w-12 rounded bg-white/20 mb-3"></div>
+                               </div>
+                               <div class="text-right">
+                                   <div class="text-2xl font-black" style="color:${adv.color}">${pct}%</div>
+                               </div>
+                           </div>
+                           
+                           <p class="text-sm text-gray-300 font-medium mb-4 italic border-l-2 pl-3 py-1" style="border-color:${adv.color}">${adv.desc}</p>
+                           
+                           <!-- Progress Bar -->
+                           <div class="w-full h-3 bg-gray-900/80 rounded-full overflow-hidden border border-white/10 mb-4 relative">
+                                <div class="absolute inset-0 bg-white/5 animate-pulse"></div>
+                                <div class="h-full shadow-[0_0_15px_currentColor]" style="width:${pct}%; background:${adv.color}"></div>
+                           </div>
+                           
+                           <!-- Chapters Preview -->
+                           <div class="mb-5 pl-2 border-l border-white/10">
+                               ${chaptersHtml}
+                               ${totalParts - progress.part > 3 ? `<div class="text-[10px] text-gray-500 italic pl-6">+ ${totalParts - progress.part - 3} étapes...</div>` : ''}
+                           </div>
+                           
+                           <button class="w-full glass-btn py-4 rounded-xl text-lg font-black tracking-widest uppercase hover:brightness-125 transition border border-white/20 relative overflow-hidden group/btn" 
+                                style="background:linear-gradient(90deg, ${adv.color}66, ${adv.color}33)"
+                                onclick="window.ui.startAdventure('${k}')">
+                                <span class="relative z-10 flex items-center justify-center gap-2">
+                                    ${isComplete ? 'REJOUER L\'HISTOIRE ↺' : (progress.part===0 ? 'COMMENCER L\'AVENTURE ▶' : 'CONTINUER L\'AVENTURE ⏩')}
+                                </span>
+                                <div class="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition duration-300"></div>
+                           </button>
+                       </div>
+                   </div>`;
+                });
+                c.innerHTML += `</div>`;
+            },
+            startAdventure(id) {
+                this.playStory(id);
+            },
+            playStory(id) {
+                const adv = ADVENTURES[id];
+                if(!USER.adventures) USER.adventures = {};
+                let partIdx = (USER.adventures[id]?.part || 0);
+                if(partIdx >= adv.parts.length) { 
+                    this.notif("AVENTURE TERMINÉE !", "#22c55e"); 
+                    // Reset for replayability?
+                    if(confirm("Rejouer l'histoire ?")) { USER.adventures[id].part = 0; this.playStory(id); }
+                    return; 
+                }
+                const part = adv.parts[partIdx];
+                
+                if(part.type === 'story') {
+                    // Show Story Modal with typing animation
+                    const m = document.createElement('div');
+                    m.id = 'story-modal';
+                    m.className = 'fixed inset-0 z-[60] bg-black/95 flex flex-col items-center justify-center p-8 text-center';
+                    m.innerHTML = `<div id="story-text" class="text-xl md:text-3xl text-white font-tech font-bold leading-relaxed mb-8 max-w-2xl"></div><button id="story-next" class="hidden glass-btn px-8 py-3 text-xl animate-pulse">CONTINUER ➜</button>`;
+                    document.body.appendChild(m);
+                    
+                    let i = 0;
+                    const txt = part.text;
+                    if(SoundManager) SoundManager.play('ui');
+                    
+                    const interval = setInterval(() => {
+                        document.getElementById('story-text').innerText += txt[i];
+                        i++;
+                        if(i >= txt.length) {
+                            clearInterval(interval);
+                            const btn = document.getElementById('story-next');
+                            btn.classList.remove('hidden');
+                            btn.onclick = () => {
+                               m.remove();
+                               this.completeAdventurePart(id);
+                            };
+                        }
+                    }, 30);
+                } else if (part.type === 'battle') {
+                    // BEFORE: alert(`MISSION : ${part.desc}`); this.completeAdventurePart(id);
+                    // AFTER: Start actual game with adventure context
+                    window.game.adventure = { id: id, partIdx: partIdx, target: part.target, mode: part.mode, item: part.item };
+                    window.game.conf.mode = part.mode;
+                    
+                    // Special config based on adventure settings
+                    if(part.mode === 'duel') { window.game.conf.bots = 0; } 
+                    else if(part.mode === 'survival') { window.game.conf.bots = 0; }
+                    
+                    window.ui.showTab('play'); 
+                    window.game.start();
+                    window.ui.notif(`MISSION: ${part.desc}`, "#facc15");
+                } else if (part.type === 'reward') {
+                    if(part.coin) {
+                        USER.coins += part.coin;
+                        this.notif(`RÉCOMPENSE : ${part.coin} 🪙`, "#facc15");
+                    }
+                    if(part.gems) {
+                        USER.gems = (USER.gems || 0) + part.gems;
+                        this.notif(`RÉCOMPENSE : ${part.gems} 💎`, "#a855f7");
+                    }
+                    if(part.xp) {
+                         if(USER.pass) USER.pass.xp += part.xp;
+                         if(this.updateClubLevel) this.updateClubLevel(part.xp); 
+                         
+                         if(STARTERS[id]) {
+                             if(!USER.mastery) USER.mastery = {};
+                             if(!USER.mastery[id]) USER.mastery[id] = { xp: 0, lvl: 1 };
+                             USER.mastery[id].xp += part.xp;
+                         }
+                         this.notif(`RÉCOMPENSE : ${part.xp} XP`, "#3b82f6");
+                    }
+                    if(part.box) {
+                         this.notif(`RÉCOMPENSE : ${part.box} CAISSE(S) (TODO)`, "#f59e0b");
+                    }
+                    if(part.skin) {
+                         if(!USER.skins) USER.skins = [];
+                         if(!USER.skins.includes(part.skin)) {
+                             USER.skins.push(part.skin);
+                             this.notif(`SKIN DÉBLOQUÉ : ${part.skin}`, "#a855f7");
+                         }
+                    }
+                    this.completeAdventurePart(id);
+                } else {
+                    this.completeAdventurePart(id);
+                }
+            },
+            completeAdventurePart(id) {
+                if(!USER.adventures[id]) USER.adventures[id] = { part: 0 };
+                USER.adventures[id].part++;
+                Storage.save();
+                this.renderAdventures();
+                setTimeout(() => this.playStory(id), 500); // Chain events
+            },
+            renderClubs(filter='') {
+                const c = document.getElementById('club-container');
+                if(USER.club) {
+                     // Ensure new fields exist
+                     if(!USER.club.level) USER.club.level = 1;
+                     if(!USER.club.xp) USER.club.xp = 0;
+                     if(!USER.club.photo) USER.club.photo = '🛡️';
+                     if(!USER.club.mentions) USER.club.mentions = 0;
+
+                     const nextLvl = USER.club.level * 1000;
+                     const pct = Math.min(100, (USER.club.xp / nextLvl) * 100);
+
+                     c.innerHTML = `<div class="flex flex-col h-full">
+                         <!-- Header Club -->
+                         <div class="glass-panel p-6 mb-4 flex flex-col items-center relative overflow-hidden bg-gradient-to-b from-blue-900/20 to-black/40 border-blue-500/30">
+                             <div class="absolute inset-0 bg-[url('https://cdn.tailwindcss.com/img/beams.png')] bg-cover opacity-5"></div>
+                             
+                             <div class="relative z-10 flex flex-col items-center">
+                                 <button class="text-6xl mb-2 hover:scale-110 transition shadow-[0_0_30px_rgba(59,130,246,0.3)] bg-black/30 rounded-full w-24 h-24 flex items-center justify-center border-2 border-white/10" onclick="window.ui.changeClubIcon()">${USER.club.photo}</button>
+                                 <h3 class="text-3xl font-black text-white mb-0 uppercase tracking-tight flex items-center gap-2">${USER.club.name} ${USER.club.verified ? '<span class="text-blue-400 text-lg" title="Vérifié">☑️</span>' : ''}</h3>
+                                 <div class="text-green-400 font-bold mb-4 text-xs tracking-widest uppercase bg-green-900/20 px-3 py-1 rounded border border-green-500/20">${USER.club.role || 'Membre'}</div>
+                                 
+                                 <div class="w-full max-w-sm">
+                                     <div class="flex justify-between text-[10px] font-bold text-gray-400 mb-1">
+                                         <span>NIVEAU ${USER.club.level}</span>
+                                         <span>${USER.club.xp} / ${nextLvl} XP</span>
+                                     </div>
+                                     <div class="h-3 bg-black/60 rounded-full overflow-hidden border border-white/10 shadow-inner">
+                                         <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400 shadow-[0_0_15px_rgba(59,130,246,0.5)] transition-all duration-1000" style="width:${pct}%"></div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="absolute top-4 right-4 flex flex-col gap-2">
+                                 <button onclick="window.ui.leaveClub()" class="text-red-500 text-[10px] font-bold hover:underline bg-black/30 px-2 py-1 rounded">QUITTER</button>
+                             </div>
+                         </div>
+
+                         <!-- Chat Area -->
+                         <div class="flex-1 glass-panel p-0 flex flex-col relative overflow-hidden mb-4 min-h-[300px]">
+                             <div class="bg-black/20 p-2 border-b border-white/5 text-[10px] font-bold text-gray-400 uppercase tracking-widest flex justify-between">
+                                 <span>Canal de discussion</span>
+                                 <span>${(USER.club.members||[]).length + 1} Membres</span>
+                             </div>
+                             <div class="flex-1 overflow-y-auto p-4 space-y-3 hide-scrollbar" id="club-chat">
+                                 <div class="text-center text-xs text-gray-500 my-4 italic">--- Début de la discussion ---</div>
+                                 ${(USER.club.messages||[]).map(m=>`
+                                     <div class="animate-fadeIn flex flex-col ${m.u===USER.name?'items-end':''}">
+                                         <div class="text-[9px] text-gray-500 font-bold mb-0.5 ${m.u===USER.name?'mr-1':'ml-1'}">${m.u}</div>
+                                         <div class="${m.u===USER.name?'bg-blue-600/80 text-white rounded-tr-sm':'bg-gray-800 text-gray-200 rounded-tl-sm'} px-3 py-2 rounded-xl text-sm max-w-[85%] shadow-md backdrop-blur-sm border border-white/5 break-words">
+                                             ${m.t}
+                                         </div>
+                                     </div>
+                                     <div class="animate-fadeIn flex flex-col ${m.u===USER.name?'items-end':''}">
+                                         <div class="text-[9px] text-gray-500 font-bold mb-0.5 ${m.u===USER.name?'mr-1':'ml-1'}">${m.u} <span class="text-[8px] opacity-50 ml-1">${m.time || ''}</span></div>
+                                         <div class="${m.u===USER.name?'bg-blue-600/80 text-white rounded-tr-sm':'bg-gray-800 text-gray-200 rounded-tl-sm'} px-3 py-2 rounded-xl text-sm max-w-[85%] shadow-md backdrop-blur-sm border border-white/5 break-words">
+                                             ${m.t}
+                                         </div>
+                                     </div>
+                                 `).join('')}
+                             </div>
+                             <!-- Input Area -->
+                             <div class="p-3 bg-black/40 border-t border-white/5">
+                                 <div class="flex gap-2 relative">
+                                     <button onclick="document.getElementById('emoji-picker').classList.toggle('hidden')" class="bg-white/5 hover:bg-white/10 px-3 rounded-xl border border-white/5 transition">😀</button>
+                                     <input type="text" id="club-msg-input" class="flex-1 bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-blue-500/50 focus:outline-none transition" placeholder="Message..." onkeypress="if(event.key==='Enter') window.ui.sendClubMsg()">
+                                     <button onclick="window.ui.sendClubMsg()" class="bg-blue-600 hover:bg-blue-500 px-4 rounded-xl shadow-lg shadow-blue-900/50 transition">➜</button>
+                                     
+                                     <!-- Emoji Picker -->
+                                     <div id="emoji-picker" class="hidden absolute bottom-full left-0 mb-2 bg-gray-900 border border-white/10 rounded-xl p-2 shadow-2xl z-50 grid grid-cols-6 gap-2 w-64">
+                                         ${['😀','😂','🔥','❤️','👍','👋','🎉','💀','🤖','💎','🛡️','⚔️'].map(e=>`<button onclick="window.ui.addClubEmoji('${e}')" class="text-xl hover:bg-white/10 p-1 rounded transition">${e}</button>`).join('')}
+                                     </div>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>`;
+                     
+                     // Scroll to bottom
+                     setTimeout(() => {
+                         const chat = document.getElementById('club-chat');
+                         if(chat) chat.scrollTop = chat.scrollHeight;
+                     }, 100);
+                     
+                } else {
+                     // Empty state - Suggest Clubs
+                     
+                     let html = `<div class="text-center mb-6 h-full flex flex-col items-center justify-center">
+                        <div class="glass-panel p-8 max-w-2xl w-full relative overflow-hidden bg-gradient-to-b from-blue-900/10 to-black/40">
+                             <div class="text-6xl mb-4 animate-bounce">🛡️</div>
+                            <h3 class="text-4xl font-black text-white mb-2 tracking-tighter italic">REJOINS UN CLUB !</h3>
+                            <p class="text-gray-400 mb-8 max-w-md mx-auto">Discute, progresse et gagne des récompenses exclusives avec ton équipe.</p>
+                            
+                            <button onclick="window.ui.createClub()" class="glass-btn px-8 py-4 font-black text-yellow-400 mb-8 border-yellow-500/50 hover:bg-yellow-900/20 text-lg shadow-[0_0_30px_rgba(234,179,8,0.2)]">CRÉER UN CLUB</button>
+                            
+                            <div class="w-full text-left">
+                                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">Clubs Recommandés</h4>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">`;
+                     
+                     let found = false;
+                     CLUBS.forEach(mck => {
+                         if(filter && !mck.name.toLowerCase().includes(filter) && !mck.tag.toLowerCase().includes(filter)) return;
+                         found = true;
+                         html += `<div class="glass-panel p-4 flex justify-between items-center hover:bg-white/5 transition hover:scale-[1.02] cursor-pointer group border-white/5 hover:border-blue-500/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-black/30 flex items-center justify-center text-xl border border-white/5">${mck.icon}</div>
+                                <div>
+                                    <div class="font-bold text-white group-hover:text-blue-400 transition">${mck.name}</div>
+                                    <div class="text-[10px] text-gray-400">${mck.members} membres | "${mck.desc}"</div>
+                                </div>
+                            </div>
+                            <button onclick="window.ui.joinClub('${mck.name}')" class="bg-blue-600 hover:bg-blue-500 px-4 py-1.5 rounded-lg text-xs font-bold shadow-lg shadow-blue-900/20">REJOINDRE</button>
+                         </div>`;
+                     });
+                     if(!found) html += '<div class="col-span-2 text-center text-gray-500 py-4">Aucun club trouvé.</div>';
+                     
+                     html += `</div></div></div></div>`;
+                     c.innerHTML = html;
+                }
+            },
+            addClubEmoji(e) {
+                const inp = document.getElementById('club-msg-input');
+                if(inp) { inp.value += e; inp.focus(); }
+                document.getElementById('emoji-picker').classList.add('hidden');
+            },
+            changeClubIcon() {
+                if(USER.club.role !== 'Chef') { this.notif("Seul le Chef peut changer l'icône !", "#ef4444"); return; }
+                const icons = ['🛡️','⚔️','👑','💀','🔥','💎','🚀','⭐','🤖','👻'];
+                let n = prompt("Choisi une icône :\n" + icons.join("  "));
+                if(icons.includes(n)) {
+                    USER.club.photo = n;
+                    Storage.save();
+                    this.renderClubs();
+                } else if(n) {
+                    this.notif("Icône invalide !", "#ef4444");
+                }
+            },
+            updateClubLevel(xp) {
+                if(!USER.club) return;
+                USER.club.xp = (USER.club.xp || 0) + xp;
+                const next = USER.club.level * 1000;
+                if(USER.club.xp >= next) {
+                    USER.club.level++;
+                    USER.club.xp -= next;
+                    this.notif(`CLUB NIVEAU ${USER.club.level} !`, "#facc15");
+                    // Reward?
+                }
+                Storage.save();
+            },
+            createClub() {
+                const name = prompt("Nom du club ?");
+                if(name) {
+                    USER.club = { name, role: 'Chef', messages: [] };
+                    Storage.save();
+                    this.renderClubs();
+                    this.notif("CLUB CRÉÉ !", "#22c55e");
+                }
+            },
+            joinClub(name) {
+                USER.club = { name, role: 'Recrue', messages: [{u:'Sys', t:'Bienvenue !'}] };
+                Storage.save();
+                this.renderClubs();
+                this.notif("CLUB REJOINT !", "#22c55e");
+            },
+            sendClubMsg() {
+                const inp = document.getElementById('club-msg-input');
+                if(inp && inp.value.trim() !== '') {
+                    const now = new Date();
+                    const ts = now.getHours() + ':' + (now.getMinutes()<10?'0':'') + now.getMinutes();
+                    USER.club.messages.push({u: USER.name, t: inp.value, time: ts});
+                    inp.value = '';
+                    Storage.save();
+                    this.renderClubs();
+                }
+            },
+            leaveClub() {
+                if(confirm("Quitter le club ?")) { USER.club = null; Storage.save(); document.getElementById('club-container').innerHTML = `...`; this.renderClubs(); window.ui.showTab('clubs'); }
             },
             updateDifficultyButtons() {
                 if(!window.game || !window.game.conf) return; 
@@ -1897,6 +2602,11 @@
                     if(freeType === 'coins') USER.shop.items.push({ type: 'coins', cost: 0, val: 150, curr: 'free', name: "Pièces Gratuites" });
                     if(freeType === 'xp') USER.shop.items.push({ type: 'xp', cost: 0, val: 75, curr: 'free', name: "XP Pass Gratuit" });
                     if(freeType === 'gems') USER.shop.items.push({ type: 'gems', cost: 0, val: 10, curr: 'free', name: "Gemmes Gratuites" });
+
+                    // EVENT: NOEL 2025 (Cadeau Spécial)
+                    if(new Date().getMonth() === 11) { // Décembre
+                        USER.shop.items.push({ type: 'box', cost: 0, val: 3, curr: 'free', name: "Cadeau de Noël 🎅", special: 'christmas' });
+                    }
 
                     // ITEMS DE BASE GARANTIS (3 items)
                     USER.shop.items.push({type:'coins',cost:20,val:500,curr:'gems', name: "Mega Pack de Pièces"});
@@ -2062,19 +2772,46 @@
                     }
                 }
                 
+                
                 USER.stats.maxPassTier = Math.max(USER.stats.maxPassTier || 1, USER.pass.tier);
                 Storage.save();
             },
             renderLists() {
+                // EVENT BANNER
                 const currentMode = (window.game && window.game.conf) ? window.game.conf.mode : 'survival';
+                const eventBanner = document.getElementById('event-banner-container');
+                if(!eventBanner) {
+                     const b = document.createElement('div');
+                     b.id = 'event-banner-container';
+                     b.className = 'w-full max-w-md mb-4 glass-panel p-4 bg-gradient-to-r from-pink-900/40 to-purple-900/40 border-pink-500/30 flex justify-between items-center cursor-pointer hover:scale-105 transition';
+                     b.onclick = () => window.ui.notif("ÉVÈNEMENT SEMAINE PROCHAINE !", "#ec4899");
+                     b.innerHTML = `<div><div class="text-xs text-pink-400 font-bold mb-1">ÉVÈNEMENT SPÉCIAL</div><div class="font-black italic text-xl text-white">RAID CYBERNETIQUE</div></div><div class="text-3xl animate-pulse">👾</div>`;
+                     // Insert after Top Rank Widget if possible, or prepended to tab-play
+                     const tab = document.getElementById('tab-play');
+                     if(tab) tab.insertBefore(b, tab.children[1]); // Insert after rank widget
+                }
+
                 const currentArena = (window.game && window.game.conf) ? window.game.conf.arena : 'tokyo';
                 
                 // NOUVEAU: Utiliser la liste triée
                 const sortedStarters = sortStartersByRarity();
 
                 const sl = el('list-starters'); sl.innerHTML = '';
-                Object.keys(sortedStarters).forEach(k => {
-                    const s = sortedStarters[k], unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k;
+                this.renderStarters(); // Initial render with no filter
+                this.renderModesAndArenas();
+            },
+            renderStarters(filter='') {
+                const sl = el('list-starters'); 
+                if(!sl) return;
+                sl.innerHTML = '';
+                
+                const sortedStarters = sortStartersByRarity(); // Assume this helper exists or use STARTERS directly
+                
+                 Object.keys(sortedStarters).forEach(k => {
+                    const s = sortedStarters[k];
+                    if(filter && !s.name.toLowerCase().includes(filter) && !s.desc.toLowerCase().includes(filter)) return;
+
+                    const unlocked = USER.unlocked.includes(k), lvl = USER.levels[k]||1, active = USER.selected === k;
                     const rarity = RARITY[s.rarity] || RARITY.common;
                     
                     sl.innerHTML += `<div onclick="window.ui.openHeroDetails('${k}')" style="--r-color:${rarity.color}" class="glass-panel p-3 cursor-pointer active:scale-95 transition-all duration-300 ${active ? 'bg-blue-900/40 border-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : `border-${rarity.color}/30 border-opacity-30 hover:border-${rarity.color}/60`} ${unlocked?'':'locked opacity-50 grayscale'} relative group border hover:shadow-lg hover:-translate-y-1 overflow-hidden flex flex-col items-center text-center">
@@ -2087,8 +2824,13 @@
                         <div class="text-[9px] font-bold text-blue-300 bg-blue-900/30 px-2 py-0.5 rounded-full border border-blue-500/30 relative z-10">Niv. ${lvl}</div>
                     </div>`;
                 });
+            },
+            renderModesAndArenas() {
+                 
+                 const currentMode = (window.game && window.game.conf) ? window.game.conf.mode : 'survival';
+                 const currentArena = (window.game && window.game.conf) ? window.game.conf.arena : 'tokyo';
                 
-                const ml = el('list-modes'); ml.innerHTML = ''; 
+                 const ml = el('list-modes'); ml.innerHTML = ''; 
                 Object.keys(MODES).forEach(k => { 
                     const m = MODES[k]; 
                     const isSelected = currentMode === k;
@@ -2166,7 +2908,30 @@
                     `;
                 });
                 el('hero-stats-container').innerHTML = statsHTML;
-                // FIN NOUVEAU
+
+                // --- NOUVEAUTÉ v1.4.0 : MAÎTRISE ---
+                const masteryC = document.createElement('div');
+                masteryC.className = 'mb-4 bg-black/30 p-3 rounded-xl border border-yellow-500/20';
+                const mXp = (USER.mastery && USER.mastery[k]) ? USER.mastery[k].xp : 0;
+                let mLvl = 1;
+                for(let i=0; i<MASTERY_XP.length; i++) { if(mXp >= MASTERY_XP[i]) mLvl = i+1; }
+                const nextXp = MASTERY_XP[mLvl] || MASTERY_XP[MASTERY_XP.length-1];
+                const prevXp = MASTERY_XP[mLvl-1] || 0;
+                const mPct = Math.min(100, Math.floor(((mXp - prevXp) / (nextXp - prevXp)) * 100));
+                
+                masteryC.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <div class="text-[10px] uppercase font-bold text-yellow-500 flex items-center gap-1"><span class="text-lg">👑</span> MAÎTRISE</div>
+                        <div class="text-xs font-black text-white">Niv. ${mLvl}</div>
+                    </div>
+                    <div class="h-3 bg-gray-800 rounded-full overflow-hidden border border-white/10 relative">
+                        <div class="absolute inset-0 bg-white/5 animate-pulse"></div>
+                        <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400" style="width:${mPct}%"></div>
+                    </div>
+                    <div class="text-[8px] text-right text-gray-500 mt-1">${mXp} / ${nextXp} XP</div>
+                `;
+                el('hero-stats-container').appendChild(masteryC);
+                // --- FIN MAÎTRISE ---
 
                 const skinsContainer = el('hd-skins-list');
                 skinsContainer.innerHTML = '';
@@ -2183,6 +2948,17 @@
                     });
                 }
                 
+                // --- NOUVEAUTÉ v1.4.0 : SKINS D'ARMES ---
+                const wSkinsC = document.createElement('div');
+                wSkinsC.className = 'mt-3 pt-3 border-t border-white/10';
+                wSkinsC.innerHTML = `<div class="text-[10px] text-gray-400 uppercase font-bold mb-2">SKINS D'ARMES 🔫</div><div class="flex gap-2 overflow-x-auto hide-scrollbar">
+                    <div onclick="window.ui.notif('ARMES ARGENTÉES (Bientôt)', '#ccc')" class="w-12 h-12 rounded border border-white/20 bg-gray-400/20 flex items-center justify-center cursor-pointer grayscale opacity-50"><div class="w-4 h-4 bg-gray-300 rounded-full"></div></div>
+                    <div onclick="window.ui.notif('ARMES OR (5000 🪙)', '#eab308')" class="w-12 h-12 rounded border border-yellow-500/30 bg-yellow-500/10 flex items-center justify-center cursor-pointer"><div class="w-4 h-4 bg-yellow-400 rounded-full shadow-[0_0_10px_orange]"></div></div>
+                     <div onclick="window.ui.notif('ARMES MAGMA (GEMMES)', '#ef4444')" class="w-12 h-12 rounded border border-red-500/30 bg-red-500/10 flex items-center justify-center cursor-pointer"><div class="w-4 h-4 bg-red-600 rounded-full shadow-[0_0_10px_red]"></div></div>
+                </div>`;
+                el('hd-skins-container').appendChild(wSkinsC);
+
+                
                 const actions = el('hd-actions');
                 if(unlocked) {
                     const upgradeCost = lvl * 150;
@@ -2194,7 +2970,7 @@
                 el('hero-details-modal').classList.remove('hidden');
             },
             equipSkin(heroId, skinId) { if(!USER.skins) USER.skins = {}; USER.skins[heroId] = skinId; Storage.save(); this.openHeroDetails(heroId); },
-            buySkin(heroId, skinId, price) { if(USER.coins >= price) { console.log(`[SECURE] Buy Skin: ${heroId}_${skinId} (-${price} coins)`); USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
+            buySkin(heroId, skinId, price) { if(USER.coins >= price) { if(SoundManager) SoundManager.play('purchase'); console.log(`[SECURE] Buy Skin: ${heroId}_${skinId} (-${price} coins)`); USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
             renderProfile() { 
                 setText('profile-display-name', USER.name); 
                 setText('profile-tag', USER.tag);
@@ -2293,7 +3069,7 @@
                 }
             },
 
-            renderEmotes() { 
+            renderEmotes(filter='') { 
                 const list = el('list-emotes'); 
                 list.innerHTML = ''; 
                 const equipped = el('equipped-emotes'); 
@@ -2312,6 +3088,8 @@
                 }
 
                 EMOTE_LIST.forEach(e => { 
+                    if(filter && !e.id.includes(filter)) return;
+
                     const unlocked = USER.emotes.includes(e.id); 
                     const selected = USER.equippedEmotes.includes(e.id); 
                     const priceTag = unlocked ? '' : `<div class="absolute bottom-1 right-1 text-[8px] font-bold bg-black/50 px-1 rounded text-purple-400 backdrop-blur-sm">${e.price}💎</div>`; 
@@ -2333,7 +3111,7 @@
                 } 
                 Storage.save(); this.renderEmotes(); 
             },
-            buyEmote(id, price) { if(USER.gems >= price) { console.log(`[SECURE] Buy Emote: ${id} (-${price} gems)`); USER.gems -= price; USER.emotes.push(id); Storage.save(); this.notif("EMOTE DÉBLOQUÉE!", "#a855f7"); this.renderEmotes(); this.updateMenu(); } else { this.notif("PAS ASSEZ DE GEMMES!", "#ef4444"); } },
+            buyEmote(id, price) { if(USER.gems >= price) { if(SoundManager) SoundManager.play('purchase'); console.log(`[SECURE] Buy Emote: ${id} (-${price} gems)`); USER.gems -= price; USER.emotes.push(id); Storage.save(); this.notif("EMOTE DÉBLOQUÉE!", "#a855f7"); this.renderEmotes(); this.updateMenu(); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ DE GEMMES!", "#ef4444"); } },
             toggleEmoteWheel() { const wheel = el('emote-wheel'); if(wheel.classList.contains('hidden')) { wheel.innerHTML = ''; USER.equippedEmotes.forEach(id => { const e = EMOTE_LIST.find(em => em.id === id); wheel.innerHTML += `<div onclick="window.ui.triggerEmote('${e.i}'); window.ui.toggleEmoteWheel()" class="emote-btn">${e.i}</div>`; }); wheel.classList.remove('hidden'); } else { wheel.classList.add('hidden'); } },
             triggerEmote(emoji) { window.game.player.emote = emoji; window.game.player.emoteTimer = 120; },
             updateMenu() {
@@ -2343,6 +3121,10 @@
                     confMode = window.game.conf.mode;
                 }
                 const m = MODES[confMode] || MODES['survival'];
+
+                // Ensure adventures and clubs are rendered on menu update
+                if(this.renderAdventures) this.renderAdventures(); 
+                if(this.renderClubs) this.renderClubs();
                 
                 let s = STARTERS[USER.selected];
                 if (!s) {
@@ -2374,8 +3156,8 @@
                 setText('stat-unlocked', `${USER.unlocked.length}/${Object.keys(STARTERS).length}`); // Héros débloqués (mis à jour à 25)
                 setText('stat-pass-tier', USER.stats.maxPassTier || 1); // Palier Pass Max
             },
-            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { console.log(`[SECURE] Unlock Hero: ${k} (-${s.price} coins)`); USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
-            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { console.log(`[SECURE] Upgrade Hero: ${k} (-${cost} coins)`); USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
+            unlock(k) { const s = STARTERS[k]; if(USER.coins >= s.price) { if(SoundManager) SoundManager.play('purchase'); console.log(`[SECURE] Unlock Hero: ${k} (-${s.price} coins)`); USER.coins -= s.price; USER.unlocked.push(k); USER.selected = k; Storage.save(); this.notif(`DÉBLOQUÉ!`, "#22c55e"); this.renderLists(); this.updateMenu(); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ!", "#ef4444"); } },
+            upgrade(k) { const cost = (USER.levels[k]||1) * 150; if(USER.coins >= cost) { if(SoundManager) SoundManager.play('purchase'); console.log(`[SECURE] Upgrade Hero: ${k} (-${cost} coins)`); USER.coins -= cost; USER.levels[k]++; Storage.save(); this.notif(`NIVEAU UP!`, "#3b82f6"); this.renderLists(); this.updateMenu(); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ!", "#ef4444"); } },
             claimDaily() { 
                 console.log("[SECURE] Claim Daily Reward");
                 USER.coins += 200; 
@@ -2387,13 +3169,13 @@
                 this.renderLists(); 
                 this.renderShop(); 
             },
-            buy(t, cost, curr) { let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; } if(ok) { if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; this.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; this.notif("+30 💎","#a855f7"); } 
+            buy(t, cost, curr) { let ok = false; if(curr === 'free') ok = true; else if(curr === 'coins' && USER.coins >= cost) { USER.coins -= cost; ok = true; } else if(curr === 'gems' && USER.gems >= cost) { USER.gems -= cost; ok = true; } if(ok) { if(SoundManager) SoundManager.play('purchase'); if(t==='box'){ const r=Math.random(); if(r<0.8){const c=50+Math.floor(Math.random()*100);USER.coins+=c;this.notif(`+${c} 🪙`,"#eab308");} else{const g=2+Math.floor(Math.random()*5);USER.gems+=g;this.notif(`+${g} 💎`,"#a855f7");} } else if(t==='coins') { USER.coins += 300; this.notif("+300 🪙","#eab308"); } else if(t==='gems') { USER.gems += 30; this.notif("+30 💎","#a855f7"); } 
                 
                 // Trigger flash on manual purchase/gain
                 try { if (t === 'coins') { el('top-coins').closest('.currency-badge').classList.add('flash-coins'); setTimeout(() => el('top-coins').closest('.currency-badge').classList.remove('flash-coins'), 300); } } catch(e){}
                 try { if (t === 'gems') { el('top-gems').closest('.currency-badge').classList.add('flash-gems'); setTimeout(() => el('top-gems').closest('.currency-badge').classList.remove('flash-gems'), 300); } } catch(e){}
                 
-                Storage.save(); this.updateMenu(); this.renderShop(); } else this.notif("PAS ASSEZ!", "#ef4444"); },
+                Storage.save(); this.updateMenu(); this.renderShop(); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ!", "#ef4444"); } },
             buySpecial(idx) { 
                 const item = USER.shop.items[idx]; if(!item) return; 
                 let ok = false; 
@@ -2829,6 +3611,7 @@
             const mod = window.game.activeModifier || window.game.conf.modifier;
             const timeScale = mod === 'slow_mo' ? 0.5 : 1.0;
             window.game.shake = 2;
+            if(SoundManager) SoundManager.play('shoot');
             const selectedHero = STARTERS[USER.selected];
             if (selectedHero.name === 'Harpy' && this.cd > 0) {
                  // Harpy a un CD très court (7), pas besoin de bloquer s'il est bas
@@ -3456,7 +4239,7 @@
             ctx:document.getElementById('gameCanvas').getContext('2d'), 
             conf:{mode:'survival', arena:'tokyo', difficulty: 'normal', modifier: 'normal'}, 
             state:'MENU', frame:0, world:2000, cam:{x:0,y:0}, shake:0, gasRadius:0, timeLeft: 0, 
-            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0, killCount: 0, zoneProgress: 0, activeModifier: null, chaosTimer: 0,
+            player:null, ents:[], projs:[], parts:[], bgParts: [], items:[], texts:[], score:0, wave:1, boost:false, train: null, lootCollected: 0, hackProgress: 0, killCount: 0, zoneProgress: 0, activeModifier: null, chaosTimer: 0, adventure: null,
             init() { 
                 this.resize(); 
                 window.onresize=()=>this.resize(); 
@@ -3610,6 +4393,12 @@
                         fb.x = this.player.x + Rnd(-200, 200); fb.y = this.player.y + Rnd(-200, 200);
                         this.ents.push(fb);
                     }
+                    if(this.adventure && this.adventure.mode === 'duel') {
+                         // Force duel opponent only
+                         const opp = new Enemy('boss', 1); opp.isBoss = true; opp.name = "RIVAL";
+                         opp.x = this.world/2; opp.y = this.world/2;
+                         this.ents.push(opp);
+                    }
                     // Enemy bots will be spawned by loop but let's spawn 4 immediately
                     for(let i=0; i<4; i++) {
                         const eb = new Bot(false);
@@ -3649,7 +4438,7 @@
             }, 
             spawnDefenders(cx, cy, count) { for(let i=0; i<count; i++) { const angle = (Math.PI*2/count)*i; const e = new Enemy('basic', 1); e.x = cx + Math.cos(angle)*150; e.y = cy + Math.sin(angle)*150; this.ents.push(e); } }, 
             togglePause(){this.state=this.state==='PLAYING'?'PAUSED':(this.state==='PAUSED'?'PLAYING':this.state);}, 
-            toMenu(){el('gameover-screen').classList.add('hidden');el('menu-screen').classList.remove('hidden');el('hud').classList.add('hidden');this.state='MENU';window.ui.updateMenu();game.boost=false;}, 
+            toMenu(){el('gameover-screen').classList.add('hidden');el('menu-screen').classList.remove('hidden');el('hud').classList.add('hidden');this.state='MENU';window.ui.updateMenu();game.boost=false;this.adventure=null;}, 
             over(r){ 
                 this.state='GAMEOVER'; 
                 el('gameover-screen').classList.remove('hidden'); 
@@ -3713,6 +4502,28 @@
                     if(r === "VICTOIRE") window.QuestSystem.check('win', { mode: this.conf.mode });
                     window.QuestSystem.check('survive', { wave: this.wave });
                 }
+                
+                // --- MASTERY XP & SOUNDS ---
+                if(r === "VICTOIRE") {
+                    if(SoundManager) SoundManager.play('win');
+                    
+                    // ADVENTURE PROGRESSION
+                    if(this.adventure) {
+                        window.ui.completeAdventurePart(this.adventure.id);
+                        this.adventure = null; // Clear active adventure
+                    }
+
+                    const mXpGain = 50;
+                    if(!USER.mastery) USER.mastery = {};
+                    if(!USER.mastery[USER.selected]) USER.mastery[USER.selected] = { xp: 0, lvl: 1 };
+                    USER.mastery[USER.selected].xp += mXpGain;
+                    window.ui.notif(`+${mXpGain} MAÎTRISE`, "#fbbf24");
+                } else {
+                    const mXpGain = 10;
+                    if(!USER.mastery) USER.mastery = {};
+                    if(!USER.mastery[USER.selected]) USER.mastery[USER.selected] = { xp: 0, lvl: 1 };
+                    USER.mastery[USER.selected].xp += mXpGain;
+                }
 
                 Storage.save(); setText('go-rewards', `+${gt}🏆 +${gc}🪙`); 
             }, 
@@ -3772,6 +4583,16 @@
                 const ctx=this.ctx; 
                 if(this.state==='PLAYING'){ 
                     
+                    // ADVENTURE SPECIFIC WIN CONDITIONS
+                    if(this.adventure) {
+                        const adv = this.adventure;
+                        if(adv.mode === 'survival' && this.wave > adv.target) this.over("VICTOIRE");
+                        if(adv.mode === 'collect' && adv.item === 'coins' && USER.coins >= (adv.startCoins || 0) + adv.target) this.over("VICTOIRE"); 
+                        // Note: coins check assumes we track start amount, or simpler: just check session retrieval
+                        // Let's rely on standard mode objectives which usually trigger over("VICTOIRE")
+                        // Rampege: killCount >= target
+                        if(adv.mode === 'rampage' && this.killCount >= adv.target) this.over("VICTOIRE");
+                    }                    
                     // Chaos Modifier Logic
                     if(this.conf.modifier === 'chaos') {
                         if(this.frame % 600 === 0) { // Every 10 seconds
@@ -4037,6 +4858,7 @@
                                     for(let k=0;k<8;k++)this.parts.push({x:e.x,y:e.y,vx:Rnd(-5,5),vy:Rnd(-5,5),life:20,c:e.c,r:4, gravity:true}); 
                                     if(window.game.conf.modifier === 'oneshot') e.hp = 0; 
                                     if(e.hp<=0 && !e.dead) this.kill(e); 
+                                    if(SoundManager) SoundManager.play('hit');
                                     this.projs.splice(i,1); wh=true; break; 
                                 } 
                             } 
@@ -4071,14 +4893,16 @@
                         }
                         
                         if(Dist(l,this.player)<30){
-                            if(l.type==='cube'){this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;window.ui.notif("POWER UP!","#22c55e");}
-                            else if(l.type==='loot_bag'){
+                            if(l.type==='cube'){if(SoundManager)SoundManager.play('collect');this.player.cubes++;this.player.maxHp+=400;this.player.hp+=400;window.ui.notif("POWER UP!","#22c55e");}
+                            if(l.type==='loot_bag'){
                                 this.lootCollected++;
                                 window.QuestSystem.check('collect', { itemType: 'loot_bag', amount: 1 });
+                                if(SoundManager)SoundManager.play('collect');
                                 window.ui.notif(`SAC RÉCUPÉRÉ (${this.lootCollected}/10)`, "#facc15");
                                 if(this.lootCollected >= 10) this.over("VICTOIRE");
                             }
                             else{
+                                if(SoundManager)SoundManager.play('collect');
                                 window.QuestSystem.check('collect', { itemType: l.t, amount: 1 });
                                 if(l.t==='hp'){
                                     this.player.hp=Math.min(this.player.maxHp,this.player.hp+30);
@@ -4395,6 +5219,44 @@
             } 
         };
         
-        window.onload=function(){ if(window.game) { window.game.init(); window.ui.showIntro(); } };
+        window.onload=function(){ 
+            if(window.game) { 
+                window.game.init(); 
+                window.ui.showIntro(); 
+                
+                // EVENT: NOEL SNOW
+                const now = new Date();
+                if(now.getMonth() === 11 || (now.getMonth() === 0 && now.getDate() < 15)) {
+                    // Start snow effect
+                    const c = document.getElementById('season-particles');
+                    if(c) {
+                        for(let i=0; i<50; i++) {
+                            const s = document.createElement('div');
+                            s.className = 'absolute bg-white rounded-full opacity-0 animate-snow';
+                            s.style.width = Math.random()*4 + 2 + 'px';
+                            s.style.height = s.style.width;
+                            s.style.left = Math.random()*100 + '%';
+                            s.style.animationDuration = Math.random()*10 + 5 + 's';
+                            s.style.animationDelay = Math.random()*5 + 's';
+                            s.style.opacity = Math.random()*0.5 + 0.3;
+                            c.appendChild(s);
+                        }
+                        const style = document.createElement('style');
+                        style.innerHTML = `
+                            @keyframes animate-snow { 
+                                0% { top: -10px; transform: translateX(0); } 
+                                100% { top: 100%; transform: translateX(${Math.random()*100 - 50}px); } 
+                            }
+                            .animate-snow { animation-name: animate-snow; animation-iteration-count: infinite; animation-timing-function: linear; }
+                        `;
+                        document.head.appendChild(style);
+                    }
+                    // Visual Banner for Event
+                     setTimeout(() => {
+                        window.ui.notif("Joyeuses Fêtes ! 🎅🎄", "#ef4444");
+                    }, 2000);
+                }
+            } 
+        };
     </script>
 </body></html>
