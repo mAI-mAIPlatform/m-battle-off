@@ -2745,7 +2745,7 @@
                 const i = index !== undefined ? index : USER.friends.findIndex(x => x.name === f.name);
 
                 container.innerHTML += `
-                container.innerHTML += `
+
                     <div class="glass-panel p-3 flex justify-between items-center border border-white/5 hover:bg-white/5 transition">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center text-xl border border-white/10 relative">
@@ -4060,9 +4060,11 @@
             z.addEventListener('touchstart',e=>h(e,false),{passive:false}); 
             z.addEventListener('touchmove',e=>h(e,false),{passive:false}); 
             z.addEventListener('touchend',e=>h(e,true)); 
-        }};
-        class Entity{
-            constructor(x,y,r,c){
+        }
+    };
+
+    class Entity {
+        constructor(x,y,r,c){
                 this.x=x;this.y=y;this.r=r;this.c=c;this.dead=false; this.hitTimer = 300;
                 this.emote = ''; this.emoteTimer = 0;
             } 
