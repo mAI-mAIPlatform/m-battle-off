@@ -429,7 +429,7 @@
             <div class="w-full h-16 flex items-center justify-between px-5 pt-safe z-30 bg-gradient-to-b from-black/80 to-transparent">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-lg bg-cyan-500/20 border border-cyan-400/30 flex items-center justify-center text-xl text-cyan-400">🌀</div>
-                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.4.7</div></div>
+                    <div><div class="font-tech font-bold leading-none text-lg">mBATTLE</div><div class="text-[10px] text-cyan-400 font-bold tracking-widest">v1.4.8</div></div>
                 </div>
                 <div class="flex gap-3">
                     <div class="currency-badge"><span class="text-yellow-400">🪙</span> <span id="top-coins">0</span></div>
@@ -1538,7 +1538,7 @@
             chaos: { name: 'Chaos', color: 'text-purple-500' }
         };
 
-        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_4_6';
+        const CURRENT_VERSION_KEY = 'mBattle_Data_v1_4_8';
         const PREVIOUS_KEYS = ['mBattle_Data_v1_4_4', 'mBattle_Data_v1_4_3', 'mBattle_Data_v1_4_2', 'mBattle_Data_v1_4_1', 'mBattle_Data_v1_4_0', 'mBattle_Data_v1_3_5', 'mBattle_Data_v1_3', 'mBattle_Data_v1_2_9', 'mBattle_Data_v1_2_8', 'mBattle_Data_v1_2_7', 'mBattle_Data_v1_2_5', 'mBattle_Data_v1_2_4', 'mBattle_Data_v1_2_1', 'mBattle_Data_v1_1_5', 'mBattle_Data_v1_1_4', 'mBattle_Data_v1_1_3', 'mBattle_Data_v1_1_2', 'mBattle_Data_v1_1_0', 'mBattle_Data_v1_0_6', 'mBattle_Data_v1_0', 'mBattle_Data_v1_0_5', 'mBattle_Data_v20', 'mBattle_Data_v19', 'mBattle_Data_v18', 'mBattle_Data_v17', 'mBattle_Data_v16'];
         let USER = {
             name: "Joueur", avatar: "👤", tag: "#" + Math.random().toString(36).substr(2, 6).toUpperCase(),
@@ -2045,8 +2045,11 @@
                 if(el) {
                     el.classList.remove('hidden');
                     el.style.opacity = 1;
+                    // Flashy effect
+                    document.querySelector('.intro-text').classList.add('animate-pulse');
+                    if(SoundManager) setTimeout(()=>SoundManager.play('start_game'), 500);
                     el.onclick = () => this.closeIntro();
-                    setTimeout(() => this.closeIntro(), 3000);
+                    setTimeout(() => this.closeIntro(), 3500);
                 }
             },
             closeIntro() {
@@ -2315,6 +2318,16 @@
                         <p class="text-sm md:text-base text-gray-300 font-bold uppercase tracking-[0.2em] mb-4">Découvre l'histoire des héros & Gagne des skins</p>
                         <div class="h-1 w-24 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto"></div>
                     </div>
+                </div>`;
+
+                // CHALLENGE DU JOUR (NOUVEAU)
+                c.innerHTML += `<div class="glass-panel p-6 mb-6 flex justify-between items-center border border-yellow-500/30 bg-yellow-900/10">
+                    <div>
+                        <div class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-1">🔥 CHALLENGE DU JOUR</div>
+                        <div class="text-lg font-black text-white italic">SURVIVRE 10 MIN (MODE SURVIE)</div>
+                        <div class="text-xs text-gray-400">Récompense : 1 Caisse</div>
+                    </div>
+                    <button onclick="window.ui.notif('Challenge lancé !', '#facc15'); window.game.setMode('survival'); window.ui.showTab('play'); window.game.start();" class="bg-yellow-600 hover:bg-yellow-500 text-black font-black px-6 py-3 rounded-xl shadow-lg shadow-yellow-900/40 animate-pulse">GO ▶</button>
                 </div>`;
 
                 c.innerHTML += `<div class="grid grid-cols-1 gap-8 pb-10">`;
@@ -2732,6 +2745,7 @@
                 const i = index !== undefined ? index : USER.friends.findIndex(x => x.name === f.name);
 
                 container.innerHTML += `
+                container.innerHTML += `
                     <div class="glass-panel p-3 flex justify-between items-center border border-white/5 hover:bg-white/5 transition">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-black/40 flex items-center justify-center text-xl border border-white/10 relative">
@@ -2740,10 +2754,11 @@
                             </div>
                             <div class="text-left">
                                 <div class="text-sm font-bold text-white leading-none mb-1">${f.name}</div>
-                                <div class="text-[10px] text-gray-400 font-mono">${statusText}</div>
+                                <div class="text-xs text-gray-400 font-bold flex gap-2"><span>${statusText}</span> <span class="text-yellow-500">🏆 ${f.trophies || 0}</span></div>
                             </div>
                         </div>
                         <div class="flex gap-2">
+                            <button onclick="window.ui.sendGift(${i})" class="w-8 h-8 rounded-lg bg-pink-600/20 hover:bg-pink-600/40 text-pink-400 border border-pink-500/30 flex items-center justify-center transition animate-pulse" title="Envoyer Cadeau">🎁</button>
                             <button onclick="window.ui.inspectFriend(${i})" class="w-8 h-8 rounded-lg bg-blue-600/20 hover:bg-blue-600/40 text-blue-400 border border-blue-500/30 flex items-center justify-center transition" title="Profil">👁️</button>
                             <button onclick="alert('Messagerie bientôt disponible !')" class="w-8 h-8 rounded-lg bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 border border-purple-500/30 flex items-center justify-center transition" title="Message">✉️</button>
                             <button onclick="window.ui.removeFriend(${i})" class="w-8 h-8 rounded-lg bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-500/30 flex items-center justify-center transition" title="Supprimer">🗑️</button>
@@ -2751,6 +2766,20 @@
                     </div>
                 `;
             },
+            sendGift(i) {
+                const f = USER.friends[i];
+                if(f) {
+                    if(USER.coins >= 100) {
+                        if(confirm(`Envoyer un cadeau à ${f.name} pour 100 pièces ?`)) {
+                            USER.coins -= 100;
+                            Storage.save();
+                            this.updateMenu();
+                            this.notif(`CADEAU ENVOYÉ À ${f.name.toUpperCase()} !`, "#ec4899");
+                        }
+                    } else {
+                        this.notif("PAS ASSEZ DE PIÈCES (100) !", "#ef4444");
+                    }
+                },
 
             addFakeFriend(name) {
                  if(!USER.friends) USER.friends = [];
@@ -3397,14 +3426,31 @@
                     });
                 }
                 
-                // --- NOUVEAUTÉ v1.4.0 : SKINS D'ARMES ---
                 const wSkinsC = document.createElement('div');
                 wSkinsC.className = 'mt-3 pt-3 border-t border-white/10';
-                wSkinsC.innerHTML = `<div class="text-[10px] text-gray-400 uppercase font-bold mb-2">SKINS D'ARMES 🔫</div><div class="flex gap-2 overflow-x-auto hide-scrollbar">
-                    <div onclick="window.ui.notif('ARMES ARGENTÉES (Bientôt)', '#ccc')" class="w-12 h-12 rounded border border-white/20 bg-gray-400/20 flex items-center justify-center cursor-pointer grayscale opacity-50"><div class="w-4 h-4 bg-gray-300 rounded-full"></div></div>
-                    <div onclick="window.ui.notif('ARMES OR (5000 🪙)', '#eab308')" class="w-12 h-12 rounded border border-yellow-500/30 bg-yellow-500/10 flex items-center justify-center cursor-pointer"><div class="w-4 h-4 bg-yellow-400 rounded-full shadow-[0_0_10px_orange]"></div></div>
-                     <div onclick="window.ui.notif('ARMES MAGMA (GEMMES)', '#ef4444')" class="w-12 h-12 rounded border border-red-500/30 bg-red-500/10 flex items-center justify-center cursor-pointer"><div class="w-4 h-4 bg-red-600 rounded-full shadow-[0_0_10px_red]"></div></div>
-                </div>`;
+                
+                const wSkins = [
+                    { id: 'default', name: 'Standard', c: 'bg-gray-400', p: 0, hex: '#1e293b' },
+                    { id: 'gold', name: 'Or', c: 'bg-yellow-400', p: 5000, curr: 'coins', hex: '#eab308' },
+                    { id: 'magma', name: 'Magma', c: 'bg-red-600', p: 50, curr: 'gems', hex: '#ef4444' }
+                ];
+
+                let wHtml = `<div class="text-[10px] text-gray-400 uppercase font-bold mb-2">SKINS D'ARMES 🔫</div><div class="flex gap-2 overflow-x-auto hide-scrollbar">`;
+                
+                wSkins.forEach(ws => {
+                    const owned = ws.id === 'default' || (USER.weaponSkins && USER.weaponSkins.includes(ws.id));
+                    const equipped = (USER.equippedWeaponSkin || 'default') === ws.id;
+                    const style = equipped ? 'border-green-500 shadow-[0_0_10px_lime]' : (owned ? 'border-white/30' : 'border-white/5 opacity-70 grayscale');
+                    const click = owned ? `window.ui.equipWeaponSkin('${ws.id}')` : `window.ui.buyWeaponSkin('${ws.id}', ${ws.p}, '${ws.curr}')`;
+                    
+                    wHtml += `<div onclick="${click}" class="w-12 h-12 rounded border-2 ${style} bg-white/5 flex items-center justify-center cursor-pointer relative group transition hover:scale-105">
+                        <div class="w-4 h-4 rounded-full ${ws.c} shadow-[0_0_5px_currentColor]"></div>
+                        ${equipped ? '<div class="absolute -top-2 -right-2 bg-green-500 text-black text-[8px] font-bold px-1 rounded">ON</div>' : ''}
+                        ${!owned ? `<div class="absolute -bottom-3 text-[8px] whitespace-nowrap bg-black px-1 rounded border border-white/10 text-white">${ws.p}${ws.curr==='gems'?'💎':'🪙'}</div>` : ''}
+                    </div>`;
+                });
+                wHtml += `</div>`;
+                wSkinsC.innerHTML = wHtml;
                 el('hd-skins-container').appendChild(wSkinsC);
 
                 
@@ -3420,12 +3466,58 @@
             },
             equipSkin(heroId, skinId) { if(!USER.skins) USER.skins = {}; USER.skins[heroId] = skinId; Storage.save(); this.openHeroDetails(heroId); },
             buySkin(heroId, skinId, price) { if(USER.coins >= price) { if(SoundManager) SoundManager.play('purchase'); console.log(`[SECURE] Buy Skin: ${heroId}_${skinId} (-${price} coins)`); USER.coins -= price; if(!USER.ownedSkins) USER.ownedSkins = []; USER.ownedSkins.push(`${heroId}_${skinId}`); this.notif("SKIN DÉBLOQUÉ !", "#facc15"); this.equipSkin(heroId, skinId); } else { if(SoundManager) SoundManager.play('error'); this.notif("PAS ASSEZ DE PIÈCES !", "#ef4444"); } },
+            equipWeaponSkin(id) { USER.equippedWeaponSkin = id; Storage.save(); this.openHeroDetails(USER.selected); this.notif("ARME ÉQUIPÉE !", "#22c55e"); },
+            buyWeaponSkin(id, price, curr) {
+                let ok = false;
+                if(curr === 'coins' && USER.coins >= price) { USER.coins -= price; ok = true; }
+                else if(curr === 'gems' && USER.gems >= price) { USER.gems -= price; ok = true; }
+                
+                if(ok) {
+                    if(SoundManager) SoundManager.play('purchase');
+                    if(!USER.weaponSkins) USER.weaponSkins = [];
+                    USER.weaponSkins.push(id);
+                    this.equipWeaponSkin(id);
+                    this.notif("SKIN D'ARME ACHETÉ !", "#facc15");
+                } else {
+                    if(SoundManager) SoundManager.play('error');
+                    this.notif("PAS ASSEZ DE FONDS !", "#ef4444");
+                }
+            },
             renderProfile() { 
                 setText('profile-display-name', USER.name); 
                 setText('profile-tag', USER.tag);
                 setText('profile-bio', USER.bio || "Aucune bio définie...");
                 setText('profile-trophies', USER.trophies + " Trophées");
                 
+                // CALCUL STATS
+                let bestHero = 'Aucun';
+                let maxLvl = 0;
+                Object.keys(USER.levels).forEach(k => {
+                   if(USER.levels[k] > maxLvl) { maxLvl = USER.levels[k]; bestHero = STARTERS[k]?.name || k; }
+                });
+
+                // Calc Fav Mode
+                let favMode = 'Aucun';
+                let maxPlays = 0;
+                if(USER.stats.modes) {
+                    Object.keys(USER.stats.modes).forEach(m => {
+                        if(USER.stats.modes[m] > maxPlays) { maxPlays = USER.stats.modes[m]; favMode = MODES[m]?.name || m; }
+                    });
+                }
+                
+                // INJECT NEW STATS
+                const statsDiv = document.querySelector('#profile-main-card .flex-1 .flex.justify-center.gap-4');
+                if(statsDiv) {
+                    // Clear previous injections to avoid dupes
+                    const old1 = document.getElementById('profile-best-hero'); if(old1) old1.remove();
+                    const old2 = document.getElementById('profile-fav-mode'); if(old2) old2.remove();
+
+                    statsDiv.innerHTML += `
+                        <div class="px-3 py-1 rounded bg-black/40 border border-white/10 text-xs font-bold text-cyan-400 flex items-center gap-2" id="profile-best-hero"><span class="text-lg">👑</span> <span>${bestHero}</span></div>
+                        <div class="px-3 py-1 rounded bg-black/40 border border-white/10 text-xs font-bold text-purple-400 flex items-center gap-2" id="profile-fav-mode"><span class="text-lg">🎮</span> <span>${favMode}</span></div>
+                    `;
+                }
+
                 // Theme Update
                 const theme = USER.theme || 'blue';
                 const themeClasses = {
@@ -4280,7 +4372,7 @@
             super.draw(ctx); 
             ctx.translate(this.x,this.y); 
             ctx.rotate(this.angle); 
-            ctx.fillStyle='#1e293b'; 
+            ctx.fillStyle = (USER.equippedWeaponSkin === 'gold') ? '#eab308' : ((USER.equippedWeaponSkin === 'magma') ? '#ef4444' : '#1e293b'); 
             ctx.fillRect(10,-6,28,12); 
             if(this.reloadT > 0 && window.game.conf.modifier !== 'infinite') { 
                 ctx.rotate(-this.angle); 
@@ -4824,6 +4916,11 @@
             start(){ 
                 el('menu-screen').classList.add('hidden'); 
                 el('hud').classList.remove('hidden'); 
+
+                // Track Stats
+                if(!USER.stats.modes) USER.stats.modes = {};
+                USER.stats.modes[this.conf.mode] = (USER.stats.modes[this.conf.mode] || 0) + 1;
+                Storage.save(); 
                 
 
                 setText('hud-lvl', 'LVL ' + (USER.levels[USER.selected]||1));
