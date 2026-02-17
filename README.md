@@ -1,15 +1,35 @@
-## 🌟 mBattle — Préparez-vous, l’arène vous attend.
+# mBattle - Browser Battle Royale
 
-Bienvenue dans **mBattle**, le jeu où **c’est VOUS** contre des bots boostés par mAI.  
-Chaque partie est un **shoot d’adrénaline** : choisissez votre héros, plongez dans l’action et survivez dans des modes ultra-variés — one-shot, poison, vitesse, vampire, munitions infinies… 🎮⚡
+## Overview
+mBattle is a fast-paced browser-based action game. Fight against bots, unlock heroes, skins, and climb the ranks!
 
-Gagnez des combats, montez en niveau, débloquez skins, émotes, gadgets… votre progression dépend uniquement de **votre skill**.  
-Du grade **BRONZE I** jusqu’aux rangs d’élite, chaque victoire vous propulse plus haut 💪🔥.
+## Structure
+The project is organized as follows:
+- `index.html`: Main entry point.
+- `src/css/style.css`: All styles.
+- `src/js/main.js`: Game entry point (initializes Game and UI).
+- `src/js/core/`: Core game logic (Game loop, Input, Storage, etc.).
+- `src/js/entities/`: Game entities (Player, Bot, etc.).
+- `src/js/data/`: Game data (Constants, Heroes, Modes, etc.).
+- `src/js/ui/`: UI components.
 
-**Réagissez avec des emotes, personnalisez votre profil et bien plus !**  
-Créez votre style, imposez votre identité et montrez au monde qui est le vrai boss 😎✨.
+## Deployment
+This project uses native ES Modules. No build step is required.
+Simply serve the root directory.
 
-Optimisé, fluide et dynamique : mBattle vous offre un gameplay rapide, fun et exigeant.  
-Si vous aimez les défis, les surprises et la montée d’adrénaline… vous êtes au bon endroit.
+### GitHub Pages
+1. Push to GitHub.
+2. Enable GitHub Pages in settings pointing to the root branch.
 
-**mBattle : entrez, survivez, dominez.**
+### Vercel
+1. Import the repository.
+2. It should auto-detect the static site.
+
+## Development
+To run locally, you need a local server (to support ES modules):
+```bash
+npx serve .
+# or
+python3 -m http.server
+```
+Then open `http://localhost:8000`.
